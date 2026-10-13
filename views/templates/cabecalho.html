@@ -8,10 +8,10 @@
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/home">Página Principal <span class="sr-only">(página atual)</span></a>
+                    <a class="nav-link" href="/home"><i class="fa-solid fa-house" aria-hidden="true"></i> Página Principal <span class="sr-only">(página atual)</span></a>
                 </li>
                 <li class="nav-item navbar-profile-item">
-                    <a class="nav-link" href="/perfil">Meu Perfil</a>
+                    <a class="nav-link" href="/perfil"><i class="fa-solid fa-user" aria-hidden="true"></i> Meu Perfil</a>
                     <form class="form-inline navbar-search" action="/buscar-usuarios" method="get" role="search">
                         <button class="navbar-search-toggle" type="button" aria-label="Abrir pesquisa" aria-expanded="false" aria-controls="navbar-search-input">
                             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -19,11 +19,11 @@
                                 <path d="m15.5 15.5 4.2 4.2"></path>
                             </svg>
                         </button>
-                        <input class="form-control" id="navbar-search-input" type="search" name="usuario" placeholder="Buscar usuários" aria-label="Buscar usuários" aria-hidden="true" tabindex="-1" disabled required>
+                        <input class="form-control" id="navbar-search-input" type="search" name="usuario" placeholder="O que busca?" aria-label="Buscar usuários" aria-hidden="true" tabindex="-1" disabled required>
                     </form>
                 </li>
             </ul>
-            <a class="btn btn-outline-light navbar-logout" href="/logout">Sair</a>
+            <a class="btn btn-outline-light navbar-logout" href="/logout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sair</a>
         </div>
     </nav>
     {{end}}

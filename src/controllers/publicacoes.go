@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
 	"webapp/src/cookies"
 	"webapp/src/respostas"
 )
 
-// CriarPublicacao chama a API para cadastrar uma publicacao no 	bd
+// CriarPublicacao chama a API para cadastrar uma publicacao no bd
 func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 	dados, erro := cookies.Ler(r)
 	if erro != nil {
@@ -52,4 +53,27 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respostas.JSON(w, response.StatusCode, nil)
+}
+
+//CurtirPublicacao chama a API para curtir uma publicação no bd
+func CurtirPublicacao(w http.ResponseWriter, r *http.Request) {
+	parametros : mux.Vars(r)
+	publicacaoID, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/publicacoes/%d/curtir", config.ApiURL, publicacaoID)
+	response, erro := requisicoes.FazerRequisicaoComAuthorization(r, http.MethodPost, url, nil)
+	if erro != nil {
+		
+	}
+
+
+
+
+
+
+
 }
