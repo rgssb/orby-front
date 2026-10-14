@@ -1,0 +1,54 @@
+body {
+  color: #E5E7EB;
+  background: #0E1013;
+}
+
+.navbar.bg-light {
+  background-color: #121418 !important;
+  border-bottom-color: #292D33;
+}
+
+.navbar.navbar-light .navbar-nav .active > .nav-link,
+.publication-meta i,
+.jumbotron .btn-primary.btn-lg {
+  color: #AAB4D5;
+}
+
+.form-control {
+  background-color: #17191E;
+  border-color: #343840;
+}
+
+.form-control:focus {
+  background-color: #17191E;
+  border-color: #737F9F;
+  box-shadow: 0 0 0 2px rgba(115, 127, 159, 0.14);
+}
+
+.btn-primary {
+  background: #59677F;
+  border-color: #59677F;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active {
+  background: #68758A;
+  border-color: #68758A;
+}
+
+.container-fluid > .row.mt-4 > div:first-child fieldset,
+.jumbotron {
+  background: #15171B;
+  border-color: #2B2E34;
+}
+
+.jumbotron:hover {
+  border-color: #3A3E45;
+}
+
+.jumbotron .btn-primary.btn-lg:hover,
+.jumbotron .btn-primary.btn-lg:focus-visible {
+  color: #C3CAE0;
+}

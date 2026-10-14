@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"webapp/src/config"
 	"webapp/src/cookies"
+	"webapp/src/requisicoes"
 	"webapp/src/respostas"
 
 	"github.com/gorilla/mux"
@@ -131,4 +132,43 @@ func DescurtirPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respostas.JSON(w, response.StatusCode, nil)
+}
+
+// AtualizarPublicacao envia as alterações de uma publicação para a API.
+func AtualizarPublicacao(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	publicacaoID, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	if erro = r.ParseForm(); erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	corpo, erro := json.Marshal(map[string]string{
+		"titulo":   r.FormValue("titulo"),
+		"conteudo": r.FormValue("conteudo"),
+	})
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/publicacoes/%d", config.ApiURL, publicacaoID)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodPut, url, bytes.NewBuffer(corpo))
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
