@@ -25,12 +25,22 @@ function curtirPublicacao(evento) {
     const elemento = $(evento.currentTarget);
     const publicacaoId = elemento.closest('[data-publicacao-id]').data('publicacao-id');
 
+    if (elemento.data('curtindo')) {
+        return;
+    }
+
+    elemento.data('curtindo', true).attr('aria-disabled', 'true');
+
     $.ajax({
         url: `/publicacoes/${publicacaoId}/curtir`,
         method: "POST"
     }).done(function() {
-        window.location = "/home";
+        const contadorDeCurtidas = elemento.next('span');
+        const quantidadeDeCurtidas = parseInt(contadorDeCurtidas.text());
+        contadorDeCurtidas.text(quantidadeDeCurtidas + 1);
     }).fail(function() {
         alert("Erro ao curtir");
+    }).always(function() {
+        elemento.data('curtindo', false).removeAttr('aria-disabled');
     });
 }
