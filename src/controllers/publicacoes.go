@@ -57,10 +57,10 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 	respostas.JSON(w, response.StatusCode, nil)
 }
 
-// CurtirPublicacao chama a API para curtir uma publicação no bd
+// CurtirPublicacao chama a API para curtir uma publicação.
 func CurtirPublicacao(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
-	publicacaoID, erro := strconv.ParseUint(parametros["id"], 10, 64)
+	publicacaoID, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
 	if erro != nil {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
 		return
@@ -73,6 +73,44 @@ func CurtirPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	url := fmt.Sprintf("%s/publicacoes/%d/curtir", config.ApiURL, publicacaoID)
+	requisicao, erro := http.NewRequestWithContext(r.Context(), http.MethodPost, url, nil)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	requisicao.Header.Set("Authorization", "Bearer "+dados["token"])
+	response, erro := http.DefaultClient.Do(requisicao)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	respostas.JSON(w, response.StatusCode, nil)
+}
+
+// DescurtirPublicacao chama a API para remover a curtida de uma publicação.
+func DescurtirPublicacao(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	publicacaoID, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	dados, erro := cookies.Ler(r)
+	if erro != nil {
+		respostas.JSON(w, http.StatusUnauthorized, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/publicacoes/%d/descurtir", config.ApiURL, publicacaoID)
 	requisicao, erro := http.NewRequestWithContext(r.Context(), http.MethodPost, url, nil)
 	if erro != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})

@@ -240,8 +240,20 @@ h1 {
 }
 
 .jumbotron {
+  margin-bottom: 1rem;
+  padding: 1.5rem;
   color: #F1F5F9;
   background-color: #0B0F1A;
+  border: 1px solid #1E293B;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+.jumbotron .display-4 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .jumbotron .lead,
@@ -249,8 +261,126 @@ h1 {
   color: #CBD5E1;
 }
 
+.jumbotron .lead {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.publication-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  color: #94A3B8;
+  font-size: 0.875rem;
+}
+
+.publication-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.publication-meta i {
+  color: #818CF8;
+}
+
 .jumbotron hr {
+  margin: 1rem 0;
   border-top-color: #151B2C;
+}
+
+.publication-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.like-button,
+.publication-action-link {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #CBD5E1;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.like-button:hover,
+.like-button:focus-visible,
+.publication-action-link:hover,
+.publication-action-link:focus-visible {
+  color: #A5B4FC;
+  background-color: rgba(129, 140, 248, 0.12);
+  border-color: rgba(129, 140, 248, 0.25);
+  outline: none;
+}
+
+.like-button.is-liked {
+  color: #F472B6;
+}
+
+.like-button.like-pop i {
+  animation: like-pop 360ms ease-out;
+}
+
+@keyframes like-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.45);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.like-button.is-loading {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.like-button:disabled {
+  pointer-events: none;
+}
+
+.publication-action-link.delete-action {
+  color: #F87171;
+}
+
+.publication-action-link.delete-action:hover,
+.publication-action-link.delete-action:focus-visible {
+  color: #FCA5A5;
+  background-color: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.25);
+}
+
+.like-count {
+  min-width: 1.5rem;
+  color: #CBD5E1;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .like-button,
+  .publication-action-link {
+    transition: none;
+  }
+
+  .like-button.like-pop i {
+    animation: none;
+  }
 }
 
 footer.text-muted {

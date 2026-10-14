@@ -1,4 +1,5 @@
 $('#nova-publicacao').on('submit', criarpublicacao);
+
 $(document).on('click', '.curtir-publicacao', curtirPublicacao);
 
 function criarpublicacao(evento) {
@@ -24,23 +25,47 @@ function curtirPublicacao(evento) {
 
     const elemento = $(evento.currentTarget);
     const publicacaoId = elemento.closest('[data-publicacao-id]').data('publicacao-id');
+    const estavaCurtida = elemento.attr('aria-pressed') === 'true';
 
     if (elemento.data('curtindo')) {
         return;
     }
 
-    elemento.data('curtindo', true).attr('aria-disabled', 'true');
+    elemento
+        .data('curtindo', true)
+        .prop('disabled', true)
+        .addClass('is-loading')
+        .attr('aria-busy', 'true');
 
     $.ajax({
-        url: `/publicacoes/${publicacaoId}/curtir`,
+        url: `/publicacoes/${publicacaoId}/${estavaCurtida ? "descurtir" : "curtir"}`,
         method: "POST"
     }).done(function() {
-        const contadorDeCurtidas = elemento.next('span');
-        const quantidadeDeCurtidas = parseInt(contadorDeCurtidas.text());
-        contadorDeCurtidas.text(quantidadeDeCurtidas + 1);
+        const contadorDeCurtidas = elemento.next('.like-count');
+        const quantidadeDeCurtidas = parseInt(contadorDeCurtidas.text(), 10);
+        contadorDeCurtidas.text(quantidadeDeCurtidas + (estavaCurtida ? -1 : 1));
+
+        elemento
+            .removeClass('is-loading')
+            .toggleClass('is-liked', !estavaCurtida)
+            .attr('aria-pressed', String(!estavaCurtida))
+            .attr('aria-label', estavaCurtida ? 'Curtir publicação' : 'Remover curtida');
+
+        elemento.attr('title', estavaCurtida ? 'Curtir publicação' : 'Remover curtida');
+
+        if (!estavaCurtida) {
+            elemento.addClass('like-pop');
+            window.setTimeout(function() {
+                elemento.removeClass('like-pop');
+            }, 400);
+        }
     }).fail(function() {
-        alert("Erro ao curtir");
+        alert(estavaCurtida ? "Erro ao remover curtida" : "Erro ao curtir");
     }).always(function() {
-        elemento.data('curtindo', false).removeAttr('aria-disabled');
+        elemento
+            .data('curtindo', false)
+            .prop('disabled', false)
+            .removeClass('is-loading')
+            .removeAttr('aria-busy');
     });
 }
