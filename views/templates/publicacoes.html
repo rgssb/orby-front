@@ -1,46 +1,48 @@
-                {{define "curtidas"}}
-                <button type="button" class="like-button curtir-publicacao{{if .CurtidoPorUsuario}} is-liked{{end}}" aria-label="{{if .CurtidoPorUsuario}}Remover curtida{{else}}Curtir publicação{{end}}" aria-pressed="{{.CurtidoPorUsuario}}" title="{{if .CurtidoPorUsuario}}Remover curtida{{else}}Curtir publicação{{end}}">
-                    <i class="fa-solid fa-heart" aria-hidden="true"></i>
-                </button>
-                <span class="like-count">{{.Curtidas}}</span>
-                {{end}}
+{{define "curtidas"}}
+<button type="button" class="like-button curtir-publicacao{{if .CurtidoPorUsuario}} is-liked{{end}}" aria-label="{{if .CurtidoPorUsuario}}Remover curtida{{else}}Curtir publicação{{end}}" aria-pressed="{{.CurtidoPorUsuario}}" title="{{if .CurtidoPorUsuario}}Remover curtida{{else}}Curtir publicação{{end}}">
+    <i class="fa-solid fa-heart" aria-hidden="true"></i>
+</button>
+<span class="like-count">{{.Curtidas}}</span>
+{{end}}
 
-                {{define "editar"}}
-                <a class="publication-action-link" href="/publicacoes/{{.ID}}/atualizar" aria-label="Editar publicação" title="Editar publicação"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></a>
-                {{end}}
+{{define "editar"}}
+<a class="publication-action-link" href="/publicacoes/{{.ID}}/atualizar" aria-label="Editar publicação" title="Editar publicação"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></a>
+{{end}}
 
-                {{define "deletar"}}
-                <a class="publication-action-link delete-action" href="/deletar" aria-label="Excluir publicação" title="Excluir publicação"><i class="fa-solid fa-trash" aria-hidden="true"></i></a>
-                {{end}}
-
-
-                {{define "cabecalho-publicacao"}}
-                <button type="button" class="publication-meta publication-meta-button">
-                    <span><i class="fa-solid fa-user" aria-hidden="true"></i> {{.AutorNick}}</span>
-                    <span><i class="fa-solid fa-clock" aria-hidden="true"></i> {{.CriadaEm.Format "02/01/2006 15:04"}}</span>
-                </button>
-                <h2 class="display-4">{{.Titulo}}</h2>
-                <p class="lead">{{.Conteudo}}</p>
-                <hr class="my-4">
-                {{end}}
+{{define "deletar"}}
+<button type="button" class="publication-action-link delete-action deletar-publicacao" aria-label="Excluir publicação" title="Excluir publicação">
+    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+</button>
+{{end}}
 
 
-                {{define "publicacao-com-permissao"}}
-                <article class="jumbotron" data-publicacao-id="{{.ID}}">
-                    {{template "cabecalho-publicacao" .}}
-                    <div class="publication-actions">
-                        {{template "curtidas" .}}
-                        {{template "editar" .}}
-                        {{template "deletar" .}}
-                    </div>
-                </article>
-                {{end}}
+{{define "cabecalho-publicacao"}}
+<button type="button" class="publication-meta publication-meta-button">
+    <span><i class="fa-solid fa-user" aria-hidden="true"></i> {{.AutorNick}}</span>
+    <span><i class="fa-solid fa-clock" aria-hidden="true"></i> {{.CriadaEm.Format "02/01/2006 15:04"}}</span>
+</button>
+<h2 class="display-4">{{.Titulo}}</h2>
+<p class="lead">{{.Conteudo}}</p>
+<hr class="my-4">
+{{end}}
 
-                {{define "publicacao-sem-permissao"}}
-                <article class="jumbotron" data-publicacao-id="{{.ID}}">
-                    {{template "cabecalho-publicacao" .}}
-                    <div class="publication-actions">
-                        {{template "curtidas" .}}
-                    </div>
-                </article>
-                {{end}}
+
+{{define "publicacao-com-permissao"}}
+<article class="jumbotron" data-publicacao-id="{{.ID}}">
+    {{template "cabecalho-publicacao" .}}
+    <div class="publication-actions">
+        {{template "curtidas" .}}
+        {{template "editar" .}}
+        {{template "deletar" .}}
+    </div>
+</article>
+{{end}}
+
+{{define "publicacao-sem-permissao"}}
+<article class="jumbotron" data-publicacao-id="{{.ID}}">
+    {{template "cabecalho-publicacao" .}}
+    <div class="publication-actions">
+        {{template "curtidas" .}}
+    </div>
+</article>
+{{end}}

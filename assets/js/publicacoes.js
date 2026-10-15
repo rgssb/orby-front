@@ -4,6 +4,8 @@ $(document).on('click', '.curtir-publicacao', curtirPublicacao);
 
 $('#atualizar').on('click', atualizarPublicacao);
 
+$(document).on('click', '.deletar-publicacao', deletarPublicacao);
+
 function criarpublicacao(evento) {
     evento.preventDefault();
     
@@ -93,4 +95,33 @@ function atualizarPublicacao() {
         $(this).prop('disabled', false);
     });
 
+}
+
+function deletarPublicacao(evento) {
+    evento.preventDefault();
+
+    const elemento = $(evento.currentTarget);
+    const publicacao = elemento.closest('[data-publicacao-id]');
+    const publicacaoId = publicacao.data('publicacao-id');
+
+    if (elemento.data('deletando')) {
+        return;
+    }
+
+    elemento.data('deletando', true);
+    elemento.prop('disabled', true);
+
+    $.ajax({
+        url: `/publicacoes/${publicacaoId}`,
+        method: "DELETE"
+    }).done(function() {
+        publicacao.fadeOut("slow", function() {
+            $(this).remove();
+        });
+    }).fail(function() {
+        alert("Erro ao deletar publicação!");
+        elemento
+            .data('deletando', false)
+            .prop('disabled', false);
+    });
 }
