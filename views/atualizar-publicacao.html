@@ -12,9 +12,9 @@
 <body>
         {{template "cabecalho"}}
     <div class="container-fluid">   
-        <div class="container mt-4">
+        <div class="container mt-4"> 
             <div class="col-12">
-                <h3>Editar publicação</h3>
+                <h3>Atualizar publicação</h3>
                 <div class="form-group">
                     <label for="titulo">Título</label>
                     <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite o título da publicação" value="{{.Titulo}}">
@@ -30,5 +30,7 @@
         
     {{template "rodape"}}
     {{template "scripts"}}
+
+    <script src="/assets/js/publicacoes.js"></script>
 
 </body>

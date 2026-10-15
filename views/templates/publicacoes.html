@@ -6,7 +6,7 @@
                 {{end}}
 
                 {{define "editar"}}
-                <a class="publication-action-link" href="/publicacoes/{{.ID}}/editar" aria-label="Editar publicação" title="Editar publicação"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></a>
+                <a class="publication-action-link" href="/publicacoes/{{.ID}}/atualizar" aria-label="Editar publicação" title="Editar publicação"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></a>
                 {{end}}
 
                 {{define "deletar"}}
@@ -15,33 +15,32 @@
 
 
                 {{define "cabecalho-publicacao"}}
-                <h1 class="display-4">{{.Titulo}}</h1>
-                <p class="lead">{{.Conteudo}}</p>
-                <div class="publication-meta">
+                <button type="button" class="publication-meta publication-meta-button">
                     <span><i class="fa-solid fa-user" aria-hidden="true"></i> {{.AutorNick}}</span>
                     <span><i class="fa-solid fa-clock" aria-hidden="true"></i> {{.CriadaEm.Format "02/01/2006 15:04"}}</span>
-                </div>
-                <a class="btn btn-primary btn-lg" href="#" role="button">Ver mais <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                </button>
+                <h2 class="display-4">{{.Titulo}}</h2>
+                <p class="lead">{{.Conteudo}}</p>
                 <hr class="my-4">
                 {{end}}
 
 
                 {{define "publicacao-com-permissao"}}
-                <div class="jumbotron" data-publicacao-id="{{.ID}}">
+                <article class="jumbotron" data-publicacao-id="{{.ID}}">
                     {{template "cabecalho-publicacao" .}}
                     <div class="publication-actions">
                         {{template "curtidas" .}}
                         {{template "editar" .}}
                         {{template "deletar" .}}
                     </div>
-                </div>
+                </article>
                 {{end}}
 
                 {{define "publicacao-sem-permissao"}}
-                <div class="jumbotron" data-publicacao-id="{{.ID}}">
+                <article class="jumbotron" data-publicacao-id="{{.ID}}">
                     {{template "cabecalho-publicacao" .}}
                     <div class="publication-actions">
                         {{template "curtidas" .}}
                     </div>
-                </div>             
+                </article>
                 {{end}}
