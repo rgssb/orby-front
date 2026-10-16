@@ -190,6 +190,7 @@ function deletarPublicacao(evento) {
 
 function sairDaConta(evento) {
     evento.preventDefault();
+    const logoutURL = evento.currentTarget.href;
 
     swalOrby.fire({
         icon: 'question',
@@ -208,6 +209,8 @@ function sairDaConta(evento) {
             showConfirmButton: false,
             allowOutsideClick: false,
             timer: 2000
+        }).then(function() {
+            window.location.assign(logoutURL);
         });
     });
 }
