@@ -58,9 +58,6 @@ async function criarUsuario(evento) {
             icon: "success",
             title: "Conta criada!",
             text: "Seu cadastro foi realizado com sucesso.",
-            background: "#171A25",
-            color: "#E5E7EB",
-            confirmButtonColor: "#5B7FFF",
             customClass: { popup: "swal-orby" },
         }).then(() => window.location.assign("/login"));
     } catch (erro) {

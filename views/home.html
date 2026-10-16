@@ -11,8 +11,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
     <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
     <link rel="stylesheet" href="/assets/css/bootstrap.css">
-    <link rel="stylesheet" href="/assets/css/home.css?v=17">
+    <link rel="stylesheet" href="/assets/css/home.css?v=20">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=3">
+    <script src="/assets/js/tema.js?v=1"></script>
 </head>
 <body>
 
@@ -49,7 +51,7 @@
                 <header class="feed-header">
                     <p class="feed-eyebrow">COMUNIDADE ORBY</p>
                     <h2 id="feed-title">Publicações</h2>
-                    <p>Ideias, novidades e conversas compartilhadas por aqui.</p>
+                    <p>O que o pessoal anda compartilhando por aqui.</p>
                 </header>
                 {{range .Publicacoes}}
                     {{if (eq .AutorID $.UsuarioID)}}

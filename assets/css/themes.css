@@ -1,0 +1,723 @@
+/* ==========================================================
+   Temas do Orby
+   Padrão (Completo) = visual do login. Alternativos via
+   <html data-theme="neutro"> e <html data-theme="claro">.
+   Carregar DEPOIS de home.css / login.css.
+   ========================================================== */
+
+:root {
+  --orby-bg: #07070C;
+  --orby-surface: #0B0F1A;
+  --orby-surface-hover: #0E1424;
+  --orby-border: #151B2C;
+  --orby-border-strong: #26304D;
+  --orby-text: #F1F5F9;
+  --orby-text-muted: #94A3B8;
+  --orby-accent: #818CF8;
+  --orby-accent-strong: #4169E1;
+  --orby-danger: #FDA4AF;
+  --orby-input-bg: #111827;
+  --orby-input-border: #1E293B;
+  --orby-radius: 20px;
+  --orby-radius-sm: 12px;
+  --orby-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  --orby-login-shadow: 0 0 60px rgba(65, 105, 225, 0.1);
+  --orby-btn-bg: linear-gradient(135deg, #4169E1, #5B7FFF);
+  --orby-btn-bg-hover: linear-gradient(135deg, #4F78F0, #6B8CFF);
+  --orby-btn-text: #fff;
+  --orby-btn-shadow: 0 8px 24px rgba(65, 105, 225, 0.35);
+  --orby-page-bg: linear-gradient(180deg, rgba(65, 105, 225, 0.1) 0, rgba(65, 105, 225, 0) 360px), #07070C;
+  --orby-login-bg:
+    radial-gradient(circle at 50% 0%, rgba(65, 105, 225, 0.18), transparent 55%),
+    radial-gradient(circle at 85% 100%, rgba(129, 140, 248, 0.08), transparent 45%),
+    #07070C;
+  --orby-nav-bg: rgba(7, 7, 12, 0.8);
+  --orby-focus-ring: 0 0 0 4px rgba(65, 105, 225, 0.15);
+  color-scheme: dark;
+}
+
+html[data-theme="neutro"] {
+  --orby-bg: #0E1013;
+  --orby-surface: #15171B;
+  --orby-surface-hover: #181B20;
+  --orby-border: #2B2E34;
+  --orby-border-strong: #3A3E45;
+  --orby-text: #E5E7EB;
+  --orby-text-muted: #9AA0AA;
+  --orby-accent: #AAB4D5;
+  --orby-accent-strong: #737F9F;
+  --orby-danger: #E39A9A;
+  --orby-input-bg: #17191E;
+  --orby-input-border: #343840;
+  --orby-radius: 10px;
+  --orby-radius-sm: 8px;
+  --orby-card-shadow: none;
+  --orby-login-shadow: none;
+  --orby-btn-bg: #59677F;
+  --orby-btn-bg-hover: #68758A;
+  --orby-btn-shadow: none;
+  --orby-page-bg: #0E1013;
+  --orby-login-bg: #0E1013;
+  --orby-nav-bg: #121418;
+  --orby-focus-ring: 0 0 0 2px rgba(115, 127, 159, 0.2);
+}
+
+html[data-theme="claro"] {
+  --orby-bg: #FAF7F0;
+  --orby-surface: #FFFFFF;
+  --orby-surface-hover: #FFFDF8;
+  --orby-border: #E9E1CF;
+  --orby-border-strong: #D6C8A6;
+  --orby-text: #231F16;
+  --orby-text-muted: #6F6757;
+  --orby-accent: #8A6616;
+  --orby-accent-strong: #B8892B;
+  --orby-danger: #B4413F;
+  --orby-input-bg: #FFFFFF;
+  --orby-input-border: #DDD3BC;
+  --orby-radius: 16px;
+  --orby-radius-sm: 10px;
+  --orby-card-shadow: 0 1px 2px rgba(60, 45, 10, 0.06), 0 10px 28px rgba(60, 45, 10, 0.06);
+  --orby-login-shadow: 0 1px 2px rgba(60, 45, 10, 0.06), 0 12px 32px rgba(60, 45, 10, 0.07);
+  --orby-btn-bg: linear-gradient(135deg, #B8892B, #D4A94A);
+  --orby-btn-bg-hover: linear-gradient(135deg, #A87B22, #C89A3C);
+  --orby-btn-text: #1F1707;
+  --orby-btn-shadow: 0 8px 22px rgba(184, 137, 43, 0.35);
+  --orby-page-bg: linear-gradient(180deg, rgba(212, 169, 74, 0.13) 0, rgba(212, 169, 74, 0) 360px), #FAF7F0;
+  --orby-login-bg:
+    radial-gradient(circle at 50% 0%, rgba(212, 169, 74, 0.16), transparent 55%),
+    #FAF7F0;
+  --orby-nav-bg: rgba(250, 247, 240, 0.85);
+  --orby-focus-ring: 0 0 0 4px rgba(184, 137, 43, 0.2);
+  color-scheme: light;
+}
+
+/* ---------- Base e navbar ---------- */
+html body {
+  color: var(--orby-text);
+  background: var(--orby-page-bg);
+}
+
+html .navbar.bg-light {
+  background-color: var(--orby-nav-bg) !important;
+  border-bottom-color: var(--orby-border);
+}
+
+html .navbar.navbar-light .navbar-brand {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--orby-text);
+}
+
+html .navbar.navbar-light .navbar-nav .nav-link,
+html .navbar .navbar-search-toggle {
+  color: var(--orby-text-muted);
+}
+
+html .navbar.navbar-light .navbar-nav .nav-link:hover,
+html .navbar.navbar-light .navbar-nav .nav-link:focus,
+html .navbar .navbar-search-toggle:hover,
+html .navbar .navbar-search-toggle:focus {
+  color: var(--orby-text);
+  background-color: color-mix(in srgb, var(--orby-text) 7%, transparent);
+}
+
+html .navbar.navbar-light .navbar-nav .active > .nav-link {
+  color: var(--orby-accent);
+  background-color: color-mix(in srgb, var(--orby-accent-strong) 16%, transparent);
+}
+
+html .navbar .navbar-logout {
+  color: var(--orby-text-muted);
+  border-color: var(--orby-border-strong);
+}
+
+html .navbar .navbar-logout:hover {
+  color: var(--orby-danger);
+  background-color: color-mix(in srgb, var(--orby-danger) 10%, transparent);
+  border-color: color-mix(in srgb, var(--orby-danger) 45%, transparent);
+}
+
+html .navbar.navbar-light .navbar-toggler {
+  border-color: var(--orby-border-strong);
+}
+
+html[data-theme="claro"] .navbar.navbar-light .navbar-toggler-icon {
+  filter: none;
+}
+
+/* ---------- Cartões ---------- */
+html .composer-card,
+html .jumbotron {
+  background: var(--orby-surface);
+  border: 1px solid var(--orby-border);
+  border-radius: var(--orby-radius);
+  box-shadow: var(--orby-card-shadow);
+}
+
+html .composer-card::before {
+  display: none;
+}
+
+html .jumbotron {
+  box-shadow: var(--orby-card-shadow);
+}
+
+html .jumbotron:hover {
+  background-color: var(--orby-surface-hover);
+  border-color: var(--orby-border-strong);
+}
+
+html[data-theme="neutro"] .jumbotron:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+html footer.text-muted {
+  border-color: var(--orby-border);
+}
+
+html .composer-header,
+html .feed-header {
+  border-bottom: 0;
+}
+
+html .composer-header {
+  padding-bottom: 0;
+}
+
+html .jumbotron hr {
+  display: none;
+}
+
+html .jumbotron .publication-actions {
+  margin-top: 0.75rem;
+}
+
+html .composer-header h1,
+html .feed-header h2,
+html .jumbotron .display-4,
+html .publication-meta span:first-child {
+  color: var(--orby-text);
+}
+
+html .composer-header p,
+html .feed-header > p:last-child,
+html footer.text-muted {
+  color: var(--orby-text-muted) !important;
+}
+
+html .publication-meta {
+  color: var(--orby-text-muted);
+}
+
+html .feed-eyebrow {
+  color: var(--orby-accent);
+}
+
+html .jumbotron .lead {
+  color: color-mix(in srgb, var(--orby-text) 82%, var(--orby-bg));
+}
+
+html .composer-icon {
+  color: var(--orby-accent);
+  background: color-mix(in srgb, var(--orby-accent-strong) 18%, transparent);
+  border-color: color-mix(in srgb, var(--orby-accent-strong) 30%, transparent);
+  border-radius: var(--orby-radius-sm);
+}
+
+html .publication-meta-button {
+  background: color-mix(in srgb, var(--orby-accent-strong) 14%, var(--orby-surface));
+  border: 1px solid color-mix(in srgb, var(--orby-accent-strong) 34%, transparent);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+html .publication-meta-button:hover {
+  background: color-mix(in srgb, var(--orby-accent-strong) 20%, var(--orby-surface));
+  border-color: color-mix(in srgb, var(--orby-accent-strong) 55%, transparent);
+}
+
+html .publication-meta-button span:first-child {
+  color: var(--orby-text);
+}
+
+html .publication-meta-button span + span {
+  color: var(--orby-text-muted);
+}
+
+html .publication-meta-button i,
+html .publication-meta-button span:first-child i,
+html .publication-meta-button span + span i {
+  width: auto;
+  height: auto;
+  color: var(--orby-accent);
+  background: transparent;
+}
+
+html[data-theme="neutro"] .composer-icon {
+  box-shadow: none;
+}
+
+html .publication-meta i {
+  color: var(--orby-text-muted);
+}
+
+html .publication-meta span:first-child i {
+  color: var(--orby-accent);
+  background: color-mix(in srgb, var(--orby-accent-strong) 20%, transparent);
+}
+
+html .jumbotron .btn-primary.btn-lg,
+html .jumbotron .btn-primary.btn-lg:hover,
+html .jumbotron .btn-primary.btn-lg:focus-visible {
+  color: var(--orby-accent);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+html .like-button,
+html .publication-action-link,
+html .like-count {
+  color: var(--orby-text-muted);
+}
+
+html .like-button:hover,
+html .like-button:focus-visible,
+html .publication-action-link:hover,
+html .publication-action-link:focus-visible {
+  color: var(--orby-text);
+  background-color: color-mix(in srgb, var(--orby-text) 7%, transparent);
+  border-color: transparent;
+}
+
+html .like-button.is-liked,
+html .like-button.is-liked + .like-count {
+  color: #E26D8A;
+}
+
+html .publication-action-link.delete-action {
+  color: var(--orby-danger);
+}
+
+/* ---------- Campos e botões ---------- */
+html .form-control,
+html #nova-publicacao .form-control,
+html .Orby-form input.form-control,
+html .password-field .password-toggle {
+  color: var(--orby-text);
+  background-color: var(--orby-input-bg);
+  border-color: var(--orby-input-border);
+}
+
+html .form-control::placeholder,
+html .Orby-form input.form-control::placeholder {
+  color: var(--orby-text-muted);
+  opacity: 0.75;
+}
+
+html #nova-publicacao .form-control,
+html .form-control {
+  border-radius: var(--orby-radius-sm);
+}
+
+html .form-control:hover:not(:focus) {
+  border-color: var(--orby-border-strong);
+}
+
+html .form-control:focus,
+html #nova-publicacao .form-control:focus,
+html .Orby-form input.form-control:focus,
+html .password-field .password-toggle:hover,
+html .password-field .password-toggle:focus {
+  color: var(--orby-text);
+  background-color: var(--orby-input-bg);
+  border-color: var(--orby-accent-strong);
+  box-shadow: var(--orby-focus-ring);
+  outline: none;
+}
+
+html #nova-publicacao label {
+  color: var(--orby-text-muted);
+}
+
+html .password-field .password-toggle {
+  color: var(--orby-text-muted);
+}
+
+html .btn-primary,
+html .btn-Orby {
+  color: var(--orby-btn-text);
+  background: var(--orby-btn-bg);
+  border: 0;
+  border-radius: var(--orby-radius-sm);
+  box-shadow: none;
+}
+
+html .btn-primary:hover,
+html .btn-primary:focus,
+html .btn-primary:not(:disabled):not(.disabled):active,
+html .btn-Orby:hover {
+  color: var(--orby-btn-text);
+  background: var(--orby-btn-bg-hover);
+  box-shadow: var(--orby-btn-shadow);
+}
+
+html[data-theme="neutro"] .btn-primary:hover,
+html[data-theme="neutro"] .btn-Orby:hover {
+  transform: none;
+}
+
+html .btn-primary:disabled {
+  opacity: 0.6;
+}
+
+html :focus-visible {
+  outline-color: var(--orby-accent-strong);
+}
+
+/* ---------- Login e cadastro ---------- */
+html .login-container {
+  background: var(--orby-login-bg);
+}
+
+html .login-container > div {
+  background-color: var(--orby-surface);
+  border-color: var(--orby-border);
+  border-radius: var(--orby-radius);
+  box-shadow: var(--orby-login-shadow);
+}
+
+html .Orby-form > span {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--orby-text);
+}
+
+html[data-theme="claro"] .Orby-form > span {
+  background: linear-gradient(135deg, #231F16 0%, #6B4F12 55%, #B8892B 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html:not([data-theme]) .Orby-form > span,
+html[data-theme="completo"] .Orby-form > span {
+  background: linear-gradient(135deg, #FFFFFF 0%, #C7D2FE 45%, #818CF8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html .login-container a {
+  color: var(--orby-accent);
+}
+
+html .login-container a:hover {
+  color: var(--orby-accent-strong);
+}
+
+html .Orby-form label,
+html .login-container label {
+  color: var(--orby-text-muted);
+}
+
+html[data-theme="claro"] .form-message {
+  color: #9B2C2C;
+  background-color: #FDF1F0;
+  border-color: #F2C4C0;
+}
+
+html[data-theme="claro"] .form-message.alert-success {
+  color: #1F6F54;
+  background-color: #EEF8F3;
+  border-color: #B7E0CD;
+}
+
+html[data-theme="neutro"] .orby-glow {
+  display: none;
+}
+
+html[data-theme="neutro"] .orby-mascot::before {
+  box-shadow: none;
+}
+
+/* Mascote no tema Claro: preto e dourado; ao clicar volta ao azul original */
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) {
+  --ring-shadow: rgba(184, 137, 43, 0.75);
+  --orbit-shadow: rgba(212, 169, 74, 0.75);
+  --ring-glow: rgba(212, 169, 74, 0.5);
+  --particle-color: #E2C070;
+}
+
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(1) { stop-color: #8A6616; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(2) { stop-color: #B8892B; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(3) { stop-color: #E2B84F; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(4) { stop-color: #6B500F; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(5) { stop-color: #B8892B; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(6) { stop-color: #D4A94A; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(7) { stop-color: #9C7419; }
+
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(1) { stop-color: #B8892B; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(2) { stop-color: #E2B84F; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(3) { stop-color: #D4A94A; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(4) { stop-color: #8A6616; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(5) { stop-color: #D4A94A; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(6) { stop-color: #B8892B; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(7) { stop-color: #E2B84F; }
+
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(1) { stop-color: #3A2F14; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(2) { stop-color: #15110A; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(3) { stop-color: #050403; }
+
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-sclera { fill: #0B0905; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-body { stroke: rgba(184, 137, 43, 0.4); }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-body-shine { stroke: rgba(240, 214, 140, 0.4); }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-core-orbit { stroke: rgba(212, 169, 74, 0.5); }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-energy-node { fill: #FFF3CC; filter: drop-shadow(0 0 2px #D4A94A); }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-energy-wisp { stroke: #D4A94A; filter: drop-shadow(0 0 2px rgba(212, 169, 74, 0.9)); }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-energy-wisp-alt { stroke: #B8892B; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-sparkles span:nth-child(4) { background: #E2C070; }
+html[data-theme="claro"] .orby-mascot:not(.is-tapped) .orby-sparkles span:nth-child(5) { background: #B8892B; }
+
+html[data-theme="claro"] .orby-mascot:not(.is-tapped)::before {
+  border-color: rgba(184, 137, 43, 0.35);
+  box-shadow: inset 0 0 18px rgba(212, 169, 74, 0.1), 0 0 22px rgba(212, 169, 74, 0.14);
+}
+
+html[data-theme="claro"] .orby-mascot:not(.is-tapped)::after {
+  background: #FFF3CC;
+  box-shadow: 0 0 8px 3px rgba(212, 169, 74, 0.85);
+}
+
+/* Estados do mascote: cores escuras o bastante para aparecer no fundo claro */
+html[data-theme="claro"] .orby-mascot[data-state="typing-email"]:not(.is-tapped) {
+  --ring-color: #B8892B;
+  --orbit-color: #D4A94A;
+  --ring-shadow: rgba(184, 137, 43, 0.7);
+  --orbit-shadow: rgba(212, 169, 74, 0.7);
+  --ring-glow: rgba(212, 169, 74, 0.5);
+}
+
+html[data-theme="claro"] .orby-mascot[data-state="password"]:not(.is-tapped) {
+  --ring-color: #8A6616;
+  --orbit-color: #B8892B;
+  --ring-shadow: rgba(138, 102, 22, 0.7);
+  --orbit-shadow: rgba(184, 137, 43, 0.7);
+  --ring-glow: rgba(184, 137, 43, 0.45);
+}
+
+html[data-theme="claro"] .orby-mascot[data-state="success"]:not(.is-tapped) {
+  --ring-color: #C99A2E;
+  --orbit-color: #E2C070;
+  --ring-shadow: rgba(201, 154, 46, 0.8);
+  --orbit-shadow: rgba(226, 192, 112, 0.8);
+  --ring-glow: rgba(226, 192, 112, 0.6);
+  --particle-color: #D4A94A;
+}
+
+html[data-theme="claro"] .orby-mascot[data-state="error"]:not(.is-tapped) {
+  --ring-color: #D1495B;
+  --orbit-color: #E58A9B;
+  --ring-shadow: rgba(209, 73, 91, 0.7);
+  --orbit-shadow: rgba(229, 138, 155, 0.7);
+  --ring-glow: rgba(209, 73, 91, 0.4);
+  --particle-color: #E58A9B;
+}
+
+html[data-theme="claro"] .orby-mascot[data-state="loading"]:not(.is-tapped) {
+  --ring-color: #8A6616;
+  --orbit-color: #D4A94A;
+  --ring-shadow: rgba(138, 102, 22, 0.7);
+  --orbit-shadow: rgba(212, 169, 74, 0.7);
+  --ring-glow: rgba(212, 169, 74, 0.45);
+  --particle-color: #D4A94A;
+}
+
+/* Clique: no Claro, em vez do laranja, mantém azul e preto originais */
+html[data-theme="claro"] .orby-mascot.is-tapped {
+  --ring-glow: rgba(65, 105, 225, 0.6);
+  --particle-color: #E0F2FE;
+}
+
+html[data-theme="claro"] .orby-mascot.is-tapped svg {
+  filter: none;
+}
+
+/* ---------- SweetAlert2 ---------- */
+.swal2-popup.swal-orby {
+  color: var(--orby-text);
+  background: var(--orby-surface);
+  border: 1px solid var(--orby-border);
+  border-radius: var(--orby-radius);
+  box-shadow: var(--orby-card-shadow);
+}
+
+.swal2-popup.swal-orby .swal2-title {
+  color: var(--orby-text);
+}
+
+.swal2-popup.swal-orby .swal2-html-container {
+  color: var(--orby-text-muted);
+}
+
+.swal2-popup.swal-orby .swal2-styled.swal2-confirm {
+  color: var(--orby-btn-text);
+  background: var(--orby-btn-bg);
+  border-radius: var(--orby-radius-sm);
+}
+
+.swal2-popup.swal-orby .swal2-styled.swal2-cancel {
+  color: var(--orby-text);
+  background: var(--orby-input-border);
+  border-radius: var(--orby-radius-sm);
+}
+
+.swal2-popup.swal-orby .swal2-timer-progress-bar {
+  background: var(--orby-accent-strong);
+}
+
+/* ---------- Seletor de aparência ---------- */
+.tema-seletor {
+  position: relative;
+  display: inline-flex;
+}
+
+.tema-seletor--flutuante {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1040;
+}
+
+.tema-toggle {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--orby-text-muted);
+  background: transparent;
+  border: 1px solid var(--orby-border-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.tema-seletor--flutuante .tema-toggle {
+  background: var(--orby-surface);
+}
+
+.tema-toggle:hover,
+.tema-toggle[aria-expanded="true"] {
+  color: var(--orby-text);
+  border-color: var(--orby-accent-strong);
+}
+
+.tema-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.tema-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 1050;
+  min-width: 11rem;
+  padding: 0.35rem;
+  background: var(--orby-surface);
+  border: 1px solid var(--orby-border-strong);
+  border-radius: var(--orby-radius-sm);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.tema-menu[hidden] {
+  display: none;
+}
+
+.tema-opcao {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.6rem;
+  color: var(--orby-text);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tema-opcao:hover,
+.tema-opcao:focus-visible {
+  background: color-mix(in srgb, var(--orby-text) 8%, transparent);
+  outline: none;
+}
+
+.tema-opcao[aria-checked="true"] {
+  font-weight: 700;
+}
+
+.tema-opcao[aria-checked="true"]::after {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-left: auto;
+  background: var(--orby-accent-strong);
+  border-radius: 50%;
+}
+
+.tema-amostra {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 1.1rem;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  border-radius: 50%;
+}
+
+.tema-amostra--completo {
+  background: linear-gradient(135deg, #4169E1, #07070C);
+}
+
+.tema-amostra--neutro {
+  background: linear-gradient(135deg, #59677F, #0E1013);
+}
+
+.tema-amostra--claro {
+  background: linear-gradient(135deg, #D4A94A, #FAF7F0);
+}
+
+.navbar .tema-seletor {
+  margin-left: 0.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .navbar .tema-seletor {
+    margin: 0.5rem 0.5rem 0 0;
+  }
+
+  .navbar-collapse > .tema-seletor {
+    align-self: flex-start;
+  }
+
+  .tema-menu {
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tema-toggle {
+    transition: none;
+  }
+}

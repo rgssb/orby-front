@@ -7,10 +7,6 @@ $('#atualizar').on('click', atualizarPublicacao);
 $(document).on('click', '.navbar-logout', sairDaConta);
 
 const swalOrby = Swal.mixin({
-    background: '#171A25',
-    color: '#E5E7EB',
-    confirmButtonColor: '#5B7FFF',
-    cancelButtonColor: '#303648',
     customClass: { popup: 'swal-orby' }
 });
 

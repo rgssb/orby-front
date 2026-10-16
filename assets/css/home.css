@@ -1043,3 +1043,66 @@ footer.text-muted {
     top: auto;
   }
 }
+
+/* Composer maior, ocupando mais a coluna da esquerda */
+.container-fluid {
+  max-width: 1560px;
+}
+
+footer.text-muted .container {
+  max-width: 1560px;
+}
+
+.container-fluid > .row.mt-4 {
+  grid-template-columns: clamp(340px, 34%, 560px) minmax(0, 1fr);
+}
+
+.composer-card {
+  padding: clamp(1.5rem, 2.6vw, 2.25rem);
+}
+
+.composer-header {
+  gap: 1.1rem;
+  margin-bottom: 1.75rem;
+}
+
+.composer-header h1 {
+  font-size: 1.4rem;
+}
+
+.composer-header p {
+  font-size: 0.95rem;
+}
+
+#nova-publicacao .form-group {
+  margin-bottom: 1.25rem;
+}
+
+#nova-publicacao label {
+  font-size: 0.85rem;
+}
+
+#nova-publicacao .form-control {
+  min-height: 52px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+}
+
+#nova-publicacao textarea.form-control {
+  min-height: 240px;
+}
+
+#nova-publicacao .btn-primary {
+  min-height: 52px;
+  font-size: 1rem;
+}
+
+@media (max-width: 991.98px) {
+  .container-fluid > .row.mt-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #nova-publicacao textarea.form-control {
+    min-height: 160px;
+  }
+}
