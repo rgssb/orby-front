@@ -49,9 +49,7 @@
             </section>
             <section class="feed-column" aria-labelledby="feed-title">
                 <header class="feed-header">
-                    <p class="feed-eyebrow">COMUNIDADE ORBY</p>
                     <h2 id="feed-title">Publicações</h2>
-                    <p>O que o pessoal anda compartilhando por aqui.</p>
                 </header>
                 {{range .Publicacoes}}
                     {{if (eq .AutorID $.UsuarioID)}}

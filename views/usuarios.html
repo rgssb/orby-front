@@ -5,34 +5,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orby - Usuários</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
     <link rel="stylesheet" href="/assets/css/bootstrap.css">
     <link rel="stylesheet" href="/assets/css/home.css?v=20">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=3">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=1">
     <script src="/assets/js/tema.js?v=1"></script>
 </head>
 
 <body>
     {{template "cabecalho"}}
 
-    <div class="content">
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Usuarios Encontrados</h5>
-                        {{range .}}
-                        <p class="card-text">{{.Nome}} - <a href="/perfil/{{.ID}}">@{{.Nick}}</a> - Membro Desde: {{.CriadoEm.Format "02/01/2006"}}</p>
-                        {{else}}
-                        <p class="card-text">Nenhum usuário encontrado...</p>
-                        {{end}}
-                    </div>
-                </div>
+    <main class="container-fluid users-page">
+        <section class="users-column" aria-labelledby="users-title">
+            <header class="feed-header">
+                <h1 id="users-title">Usuários encontrados</h1>
+            </header>
+            {{range .}}
+            <article class="jumbotron user-card">
+                <a class="user-card-link" href="/perfil/{{.ID}}">
+                    <span class="user-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                    <span class="user-info">
+                        <span class="user-name">{{.Nome}}</span>
+                        <span class="user-nick">@{{.Nick}}</span>
+                        <span class="user-since"><i class="fa-solid fa-clock" aria-hidden="true"></i> Membro desde {{.CriadoEm.Format "02/01/2006"}}</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-right user-arrow" aria-hidden="true"></i>
+                </a>
+            </article>
+            {{else}}
+            <div class="users-empty">
+                <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <h2>Nenhum usuário encontrado</h2>
+                <p>Tente buscar por outro nome ou nick.</p>
             </div>
-        </div>
-    </div>
+            {{end}}
+        </section>
+    </main>
 
-    {{template "rodape" .}}
+    {{template "rodape"}}
     {{template "scripts" .}}
 </body>
 

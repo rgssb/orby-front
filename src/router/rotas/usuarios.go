@@ -22,4 +22,10 @@ var rotasUsuarios = []Rota{
 	Funcao: controllers.CarregarPaginaDeUsuarios,
 	RequerAutenticacao: false,
 	},
+	{
+		URI: "/usuarios/{usuarioId}",
+		Metodo: http.MethodGet,
+		Funcao: controllers.CarregarPerfilDoUsuarios,
+		RequerAutenticacao: false,
+	},
 }

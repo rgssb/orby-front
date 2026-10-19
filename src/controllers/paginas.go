@@ -27,12 +27,12 @@ func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "login.html", nil)
 }
 
-// CarregarPaginaDeCadastroDeUsuario vai renderizar a página de cadastro de usuário
+// CarregarPaginaDeCadastroDeUsuario vai renderizar a pagina de cadastro de usuário
 func CarregarPaginaDeCadastroDeUsuario(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "cadastro.html", nil)
 }
 
-// CarregarPaginaHome exibe a página inicial.
+// CarregarPaginaHome exibe a pagina inicial.
 func CarregarPaginaHome(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "home.html", nil)
 }
@@ -87,7 +87,7 @@ func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// CarregarPaginaDeAtualizacaoDePublicacao carrega a página de edição de uma publicação existente.
+// CarregarPaginaDeAtualizacaoDePublicacao carrega a pagina de edição de uma publicação existente.
 func CarregarPaginaDeAtualizacaoDePublicacao(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 	publicacaoID, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
@@ -118,7 +118,7 @@ func CarregarPaginaDeAtualizacaoDePublicacao(w http.ResponseWriter, r *http.Requ
 	utils.ExecutarTemplate(w, "atualizar-publicacao.html", publicacao)
 }
 
-// CarregarPaginaDeUsuarios carrega a pagina que atende o filtro de usuários
+// CarregarPaginaDeUsuarios carrega a pagina que atende o filtro de usuarios
 func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
 	url := fmt.Sprintf("%s/usuarios?usuario=%s", config.ApiURL, nomeOuNick)
@@ -142,4 +142,16 @@ func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.ExecutarTemplate(w, "usuarios.html", usuarios)
+}
+
+//CarregarPerfilDoUsuario carrega a página de perfil do usuario
+func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	usuario, erro := modelos.BuscarUsuarioPorCompleto(usuarioID, r)
 }

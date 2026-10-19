@@ -1,0 +1,122 @@
+.users-page {
+  max-width: 760px;
+  margin-block: clamp(1.5rem, 4vw, 2.75rem) 2rem;
+}
+
+.users-column {
+  min-width: 0;
+}
+
+.users-column .feed-header h1 {
+  margin: 0;
+  color: var(--orby-text);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.users-column .feed-header > p:last-child {
+  margin: 0.25rem 0 0;
+  color: var(--orby-text-muted);
+  font-size: 0.85rem;
+}
+
+.user-card {
+  padding: 0;
+}
+
+.user-card-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1rem, 2.5vw, 1.25rem);
+  color: inherit;
+  text-decoration: none;
+  border-radius: inherit;
+}
+
+.user-card-link:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.user-card-link:focus-visible {
+  outline: 2px solid var(--orby-accent);
+  outline-offset: 2px;
+}
+
+.user-avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--orby-accent);
+  background: color-mix(in srgb, var(--orby-accent-strong) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--orby-accent-strong) 30%, transparent);
+  border-radius: 50%;
+}
+
+.user-info {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.user-name {
+  overflow: hidden;
+  color: var(--orby-text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-nick {
+  color: var(--orby-accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.user-since {
+  color: var(--orby-text-muted);
+  font-size: 0.76rem;
+}
+
+.user-arrow {
+  color: var(--orby-text-muted);
+  transition: transform 200ms ease, color 200ms ease;
+}
+
+.user-card:hover .user-arrow {
+  color: var(--orby-accent);
+  transform: translateX(3px);
+}
+
+.users-empty {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: var(--orby-surface);
+  border: 1px solid var(--orby-border);
+  border-radius: var(--orby-radius);
+}
+
+.users-empty h2 {
+  margin: 1rem 0 0.25rem;
+  color: var(--orby-text);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.users-empty p {
+  margin: 0;
+  color: var(--orby-text-muted);
+  font-size: 0.88rem;
+}
+
+.users-empty .composer-icon {
+  margin-inline: auto;
+}
