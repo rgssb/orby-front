@@ -16,6 +16,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// sessaoExpirada limpa o cookie e volta ao login quando a API recusa o token.
+func sessaoExpirada(w http.ResponseWriter, r *http.Request, response *http.Response) bool {
+	if response.StatusCode != http.StatusUnauthorized {
+		return false
+	}
+
+	cookies.Deletar(w)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	return true
+}
+
 // CarregarTelaDeLogin vai renderizar a tela de login
 func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := cookies.Ler(r)
@@ -61,6 +72,10 @@ func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
 
 	defer response.Body.Close()
 
+	if sessaoExpirada(w, r, response) {
+		return
+	}
+
 	if response.StatusCode >= http.StatusBadRequest {
 		respostas.TratarStatusCodeDeErro(w, response)
 		return
@@ -104,6 +119,10 @@ func CarregarPaginaDeAtualizacaoDePublicacao(w http.ResponseWriter, r *http.Requ
 	}
 	defer response.Body.Close()
 
+	if sessaoExpirada(w, r, response) {
+		return
+	}
+
 	if response.StatusCode >= http.StatusBadRequest {
 		respostas.TratarStatusCodeDeErro(w, response)
 		return
@@ -130,6 +149,10 @@ func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 	defer response.Body.Close()
 
+	if sessaoExpirada(w, r, response) {
+		return
+	}
+
 	if response.StatusCode >= 400 {
 		respostas.TratarStatusCodeDeErro(w, response)
 		return
@@ -154,4 +177,11 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	usuario, erro := modelos.BuscarUsuarioPorCompleto(usuarioID, r)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	// Provisório até existir a view perfil.html
+	respostas.JSON(w, http.StatusOK, usuario)
 }

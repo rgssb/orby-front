@@ -1,9 +1,10 @@
 (function () {
     const CHAVE = 'orby-tema';
     const TEMAS = [
-        { id: 'completo', nome: 'Completo' },
+        { id: 'completo', nome: 'Espaço' },
         { id: 'neutro', nome: 'Neutro' },
-        { id: 'claro', nome: 'Claro' }
+        { id: 'claro', nome: 'Claro' },
+        { id: 'acolhedor', nome: 'Antigo' }
     ];
 
     function temaSalvo() {

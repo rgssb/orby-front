@@ -5,6 +5,7 @@
    Carregar DEPOIS de home.css / login.css.
    ========================================================== */
 
+/* Completo: tema padrão original */
 :root {
   --orby-bg: #07070C;
   --orby-surface: #0B0F1A;
@@ -697,6 +698,10 @@ html[data-theme="claro"] .orby-mascot.is-tapped svg {
   background: linear-gradient(135deg, #D4A94A, #FAF7F0);
 }
 
+.tema-amostra--acolhedor {
+  background: linear-gradient(135deg, #F0B47F, #151310);
+}
+
 .navbar .tema-seletor {
   margin-left: 0.5rem;
 }
@@ -721,3 +726,381 @@ html[data-theme="claro"] .orby-mascot.is-tapped svg {
     transition: none;
   }
 }
+
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap');
+
+/* Acolhedor: grafite quente (tom de papel escuro) + azul suave + pêssego de apoio */
+html[data-theme="acolhedor"] {
+  --orby-bg: #151310;
+  --orby-surface: #1E1B17;
+  --orby-surface-hover: #24211C;
+  --orby-border: #2F2B25;
+  --orby-border-strong: #463F36;
+  --orby-text: #F4EEE4;
+  --orby-text-muted: #A89F92;
+  --orby-accent: #9DB3F2;
+  --orby-accent-strong: #5F7EDB;
+  --orby-warm: #F0B47F;
+  --orby-like: #EE7D8E;
+  --orby-danger: #F4A0A0;
+  --orby-input-bg: #191612;
+  --orby-input-border: #38332B;
+  --orby-radius: 22px;
+  --orby-radius-sm: 14px;
+  --orby-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 24px -10px rgba(0, 0, 0, 0.45);
+  --orby-card-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.55);
+  --orby-login-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+  --orby-btn-bg: #5F7EDB;
+  --orby-btn-bg-hover: #6F8CE6;
+  --orby-btn-text: #fff;
+  --orby-btn-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 6px 16px -6px rgba(95, 126, 219, 0.55);
+  --orby-page-bg: radial-gradient(ellipse 70% 320px at 50% 0, rgba(240, 180, 127, 0.07), transparent), #151310;
+  --orby-login-bg:
+    radial-gradient(circle at 50% 0%, rgba(95, 126, 219, 0.16), transparent 55%),
+    radial-gradient(circle at 85% 100%, rgba(240, 180, 127, 0.08), transparent 45%),
+    #151310;
+  --orby-nav-bg: #1A1713;
+  --orby-focus-ring: 0 0 0 4px rgba(157, 179, 242, 0.18);
+  color-scheme: dark;
+}
+
+/* ==========================================================
+   Acabamento: tipografia, respiro, sombras e microinterações
+   Aplicado somente ao tema "Acolhedor"; os demais ficam intactos.
+   ========================================================== */
+
+html[data-theme="acolhedor"] {
+  --orby-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --orby-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  scrollbar-color: var(--orby-border-strong) transparent;
+}
+
+html[data-theme="acolhedor"] body {
+  line-height: 1.65;
+}
+
+html[data-theme="acolhedor"] ::selection {
+  color: var(--orby-text);
+  background: color-mix(in srgb, var(--orby-warm) 35%, transparent);
+}
+
+/* ---------- Títulos com voz própria ---------- */
+html[data-theme="acolhedor"] .navbar.navbar-light .navbar-brand,
+html[data-theme="acolhedor"] .feed-header h2,
+html[data-theme="acolhedor"] .users-column .feed-header h1,
+html[data-theme="acolhedor"] .composer-header h1,
+html[data-theme="acolhedor"] .jumbotron .display-4,
+html[data-theme="acolhedor"] .users-empty h2 {
+  font-family: var(--orby-display);
+  font-optical-sizing: auto;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+html[data-theme="acolhedor"] .navbar.navbar-light .navbar-brand {
+  font-size: 1.45rem;
+}
+
+html[data-theme="acolhedor"] .feed-header h2,
+html[data-theme="acolhedor"] .users-column .feed-header h1 {
+  font-size: 1.75rem;
+}
+
+html[data-theme="acolhedor"] .jumbotron .display-4 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  line-height: 1.3;
+}
+
+/* Logo do login: cor sólida em vez de degradê */
+html[data-theme="acolhedor"] .Orby-form > span {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--orby-text);
+  font-family: var(--orby-display);
+}
+
+/* ---------- Navbar ---------- */
+html[data-theme="acolhedor"] .navbar.bg-light {
+  padding-block: 0.7rem;
+  box-shadow: 0 1px 0 var(--orby-border);
+}
+
+html[data-theme="acolhedor"] .navbar.navbar-light .navbar-nav .nav-link,
+html[data-theme="acolhedor"] .navbar .navbar-search-toggle,
+html[data-theme="acolhedor"] .navbar .navbar-logout {
+  border-radius: 999px;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 200ms var(--orby-spring);
+}
+
+html[data-theme="acolhedor"] .navbar.navbar-light .navbar-nav .nav-link:active,
+html[data-theme="acolhedor"] .navbar .navbar-logout:active {
+  transform: scale(0.96);
+}
+
+/* ---------- Cartões: respiro, sombra em camadas, elevação sutil ---------- */
+html[data-theme="acolhedor"] .jumbotron {
+  margin-bottom: 1.25rem;
+  padding: clamp(1.35rem, 3vw, 1.9rem);
+  animation: orby-rise 480ms var(--orby-ease, ease) backwards;
+}
+
+html[data-theme="acolhedor"] .composer-card {
+  padding: clamp(1.35rem, 3vw, 1.9rem);
+  box-shadow: var(--orby-card-shadow);
+}
+
+html[data-theme="acolhedor"] .composer-header {
+  margin-bottom: 1.5rem;
+}
+
+html[data-theme="acolhedor"] .jumbotron:hover {
+  box-shadow: var(--orby-card-shadow-hover);
+  transform: translateY(-1px);
+}
+
+html[data-theme="acolhedor"] .jumbotron .lead {
+  max-width: 68ch;
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+html[data-theme="acolhedor"] .feed-header {
+  margin-bottom: 1.4rem;
+  padding-bottom: 0.4rem;
+}
+
+html[data-theme="acolhedor"] .jumbotron:nth-of-type(2) { animation-delay: 60ms; }
+html[data-theme="acolhedor"] .jumbotron:nth-of-type(3) { animation-delay: 120ms; }
+html[data-theme="acolhedor"] .jumbotron:nth-of-type(4) { animation-delay: 180ms; }
+html[data-theme="acolhedor"] .jumbotron:nth-of-type(n+5) { animation-delay: 220ms; }
+
+@keyframes orby-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Ícones e etiquetas: tom quente, sem degradê ---------- */
+html[data-theme="acolhedor"] .composer-icon,
+html[data-theme="acolhedor"] .user-avatar {
+  color: var(--orby-warm);
+  background: color-mix(in srgb, var(--orby-warm) 15%, transparent);
+  border-color: color-mix(in srgb, var(--orby-warm) 28%, transparent);
+}
+
+html[data-theme="acolhedor"] .composer-icon {
+  border-radius: var(--orby-radius-sm);
+}
+
+html[data-theme="acolhedor"] .publication-meta-button {
+  padding: 0.4rem 0.95rem 0.4rem 0.8rem;
+  border-radius: 999px;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 200ms var(--orby-spring);
+}
+
+html[data-theme="acolhedor"] .publication-meta-button:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Campos ---------- */
+html[data-theme="acolhedor"] .form-control,
+html[data-theme="acolhedor"] #nova-publicacao .form-control {
+  padding-inline: 1rem;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+html[data-theme="acolhedor"] #nova-publicacao label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+html[data-theme="acolhedor"] #nova-publicacao .form-group {
+  margin-bottom: 1.15rem;
+}
+
+/* ---------- Botões: sólidos, táteis ---------- */
+html[data-theme="acolhedor"] .btn-primary,
+html[data-theme="acolhedor"] .btn-Orby {
+  font-weight: 600;
+  transition: background-color 180ms ease, box-shadow 220ms ease, transform 200ms var(--orby-spring);
+}
+
+html[data-theme="acolhedor"] .btn-primary,
+html[data-theme="acolhedor"] .btn-Orby {
+  box-shadow: var(--orby-btn-shadow);
+}
+
+html[data-theme="acolhedor"] .btn-primary:hover,
+html[data-theme="acolhedor"] .btn-Orby:hover {
+  transform: translateY(-1px);
+}
+
+html[data-theme="acolhedor"] .btn-primary:not(:disabled):not(.disabled):active,
+html[data-theme="acolhedor"] .btn-Orby:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: none;
+}
+
+html[data-theme="acolhedor"] .jumbotron .btn-primary.btn-lg,
+html[data-theme="acolhedor"] .jumbotron .btn-primary.btn-lg:hover {
+  transform: none;
+}
+
+/* ---------- Ações da publicação ---------- */
+html[data-theme="acolhedor"] .like-button,
+html[data-theme="acolhedor"] .publication-action-link {
+  border-radius: 999px;
+  transition: color 180ms ease, background-color 180ms ease, transform 220ms var(--orby-spring);
+}
+
+html[data-theme="acolhedor"] .like-button:active,
+html[data-theme="acolhedor"] .publication-action-link:active {
+  transform: scale(0.88);
+}
+
+html[data-theme="acolhedor"] .like-button.is-liked,
+html[data-theme="acolhedor"] .like-button.is-liked + .like-count {
+  color: var(--orby-like);
+}
+
+html[data-theme="acolhedor"] .like-button.is-liked:hover {
+  background-color: color-mix(in srgb, var(--orby-like) 12%, transparent);
+}
+
+/* ---------- Foco acessível e consistente ---------- */
+html[data-theme="acolhedor"] :focus-visible {
+  outline: 2px solid var(--orby-accent-strong);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+html[data-theme="acolhedor"] footer.text-muted {
+  padding-block: 1.5rem;
+  font-size: 0.82rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="acolhedor"] .jumbotron {
+    animation: none;
+  }
+
+  html[data-theme="acolhedor"] .btn-primary,
+  html[data-theme="acolhedor"] .btn-Orby,
+  html[data-theme="acolhedor"] .like-button,
+  html[data-theme="acolhedor"] .publication-action-link,
+  html[data-theme="acolhedor"] .jumbotron {
+    transition: none;
+  }
+
+  html[data-theme="acolhedor"] .jumbotron:hover,
+  html[data-theme="acolhedor"] .btn-primary:hover,
+  html[data-theme="acolhedor"] .btn-Orby:hover {
+    transform: none;
+  }
+}
+
+/* Mascote no tema Antigo: grafite quente e pêssego; ao clicar volta ao azul original */
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) {
+  --ring-shadow: rgba(224, 138, 85, 0.75);
+  --orbit-shadow: rgba(240, 168, 114, 0.75);
+  --ring-glow: rgba(240, 168, 114, 0.5);
+  --particle-color: #F6C89A;
+}
+
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(1) { stop-color: #C4663F; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(2) { stop-color: #E08A55; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(3) { stop-color: #F6BE8A; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(4) { stop-color: #A04E2C; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(5) { stop-color: #E08A55; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(6) { stop-color: #F0A872; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-ring-gradient stop:nth-child(7) { stop-color: #B85A35; }
+
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(1) { stop-color: #E08A55; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(2) { stop-color: #F6BE8A; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(3) { stop-color: #F0A872; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(4) { stop-color: #C4663F; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(5) { stop-color: #F0A872; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(6) { stop-color: #E08A55; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-orbit-gradient stop:nth-child(7) { stop-color: #F6BE8A; }
+
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(1) { stop-color: #5B4030; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(2) { stop-color: #2E2018; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(3) { stop-color: #140D09; }
+
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-sclera { fill: #0C0806; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-body { stroke: rgba(224, 138, 85, 0.4); }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-body-shine { stroke: rgba(250, 214, 176, 0.4); }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-core-orbit { stroke: rgba(240, 168, 114, 0.5); }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-energy-node { fill: #FFE9D6; filter: drop-shadow(0 0 2px #F0A872); }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-energy-wisp { stroke: #F0A872; filter: drop-shadow(0 0 2px rgba(240, 168, 114, 0.9)); }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-energy-wisp-alt { stroke: #E08A55; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-sparkles span:nth-child(4) { background: #F6C89A; }
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-sparkles span:nth-child(5) { background: #E08A55; }
+
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped)::before {
+  border-color: rgba(224, 138, 85, 0.35);
+  box-shadow: inset 0 0 18px rgba(240, 168, 114, 0.1), 0 0 22px rgba(240, 168, 114, 0.14);
+}
+
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped)::after {
+  background: #FFE9D6;
+  box-shadow: 0 0 8px 3px rgba(240, 168, 114, 0.85);
+}
+
+/* Estados do mascote */
+html[data-theme="acolhedor"] .orby-mascot[data-state="typing-email"]:not(.is-tapped) {
+  --ring-color: #E08A55;
+  --orbit-color: #F0A872;
+  --ring-shadow: rgba(224, 138, 85, 0.7);
+  --orbit-shadow: rgba(240, 168, 114, 0.7);
+  --ring-glow: rgba(240, 168, 114, 0.5);
+}
+
+html[data-theme="acolhedor"] .orby-mascot[data-state="password"]:not(.is-tapped) {
+  --ring-color: #C4663F;
+  --orbit-color: #E08A55;
+  --ring-shadow: rgba(196, 102, 63, 0.7);
+  --orbit-shadow: rgba(224, 138, 85, 0.7);
+  --ring-glow: rgba(224, 138, 85, 0.45);
+}
+
+html[data-theme="acolhedor"] .orby-mascot[data-state="success"]:not(.is-tapped) {
+  --ring-color: #E08A55;
+  --orbit-color: #F6C89A;
+  --ring-shadow: rgba(224, 138, 85, 0.8);
+  --orbit-shadow: rgba(246, 200, 154, 0.8);
+  --ring-glow: rgba(246, 200, 154, 0.6);
+  --particle-color: #F0A872;
+}
+
+html[data-theme="acolhedor"] .orby-mascot[data-state="error"]:not(.is-tapped) {
+  --ring-color: #D1495B;
+  --orbit-color: #E58A9B;
+  --ring-shadow: rgba(209, 73, 91, 0.7);
+  --orbit-shadow: rgba(229, 138, 155, 0.7);
+  --ring-glow: rgba(209, 73, 91, 0.4);
+  --particle-color: #E58A9B;
+}
+
+html[data-theme="acolhedor"] .orby-mascot[data-state="loading"]:not(.is-tapped) {
+  --ring-color: #C4663F;
+  --orbit-color: #F0A872;
+  --ring-shadow: rgba(196, 102, 63, 0.7);
+  --orbit-shadow: rgba(240, 168, 114, 0.7);
+  --ring-glow: rgba(240, 168, 114, 0.45);
+  --particle-color: #F0A872;
+}
+
+/* Clique: no Antigo, em vez do laranja, mantém azul e preto originais */
+html[data-theme="acolhedor"] .orby-mascot.is-tapped {
+  --ring-glow: rgba(65, 105, 225, 0.6);
+  --particle-color: #E0F2FE;
+}
+
+html[data-theme="acolhedor"] .orby-mascot.is-tapped svg {
+  filter: none;
+}
+
+html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-pupil { fill: #F6C89A; }
+

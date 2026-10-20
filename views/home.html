@@ -12,9 +12,11 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
     <link rel="stylesheet" href="/assets/css/bootstrap.css">
     <link rel="stylesheet" href="/assets/css/home.css?v=20">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
-    <link rel="stylesheet" href="/assets/css/themes.css?v=3">
-    <script src="/assets/js/tema.js?v=1"></script>
+    <link rel="stylesheet" href="/assets/css/themes.css?v=7">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=3">
+    <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
 
@@ -27,19 +29,17 @@
                 <div class="composer-card">
                     <header class="composer-header">
                         <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-feather-pointed"></i></span>
-                        <div>
-                            <h1 id="compose-title">Nova publicação</h1>
-                            <p>Uma ideia, novidade ou conversa começa aqui.</p>
-                        </div>
+                        <h1 id="compose-title">Nova publicação</h1>
                     </header>
                     <form id="nova-publicacao">
                         <div class="form-group">
                             <label for="titulo-publicacao">Título</label>
-                            <input type="text" class="form-control" id="titulo-publicacao" name="titulo" required="required" placeholder="Coloque o título da publicação">
+                            <input type="text" class="form-control" id="titulo-publicacao" name="titulo" required="required" placeholder="Escreva seu título...">
                         </div>
                         <div class="form-group">
                             <label for="conteudo-publicacao">Conteúdo</label>
-                            <textarea class="form-control" id="conteudo-publicacao" name="conteudo" required="required" placeholder="Escreva o conteúdo da publicação"></textarea>
+                            <textarea class="form-control" id="conteudo-publicacao" name="conteudo" required="required" placeholder="Escreva sua publicação..."></textarea>
+                            <small class="char-counter" id="contador-conteudo">0 caracteres</small>
                         </div>
                         <div class="composer-actions">
                             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Publicar</button>
@@ -57,6 +57,12 @@
                     {{else}}
                     {{template "publicacao-sem-permissao" .}}
                     {{end}}
+                {{else}}
+                <div class="feed-empty">
+                    {{template "mascote" "orby-mascot--empty"}}
+                    <h3>Ainda não há publicações</h3>
+                    <p>Seja o primeiro a compartilhar algo por aqui.</p>
+                </div>
                 {{end}}
             </section>
         </div>

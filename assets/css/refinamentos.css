@@ -1,0 +1,132 @@
+/* Refinamentos da home e do feed: largura de leitura, ações, rótulos e estado vazio */
+
+/* Feed com largura de leitura confortável */
+.container-fluid > .row.mt-4.home-layout {
+  grid-template-columns: minmax(280px, 340px) minmax(0, 720px);
+  justify-content: center;
+}
+
+/* Topo do formulário alinhado ao topo do primeiro cartão do feed */
+.home-layout .compose-column {
+  margin-top: 4rem;
+}
+
+html[data-theme] .home-layout .feed-header {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+/* Campo de conteúdo começa menor e cresce conforme o texto */
+#nova-publicacao textarea.form-control {
+  min-height: 120px;
+  overflow-y: hidden;
+  resize: none;
+}
+
+#nova-publicacao label {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Ações com alvo maior e mais contraste */
+html .publication-actions .like-button,
+html .publication-actions .publication-action-link {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-basis: 2.75rem;
+  font-size: 1.05rem;
+  color: color-mix(in srgb, var(--orby-text) 72%, var(--orby-bg));
+}
+
+html .publication-actions .like-button:hover,
+html .publication-actions .like-button:focus-visible,
+html .publication-actions .publication-action-link:hover,
+html .publication-actions .publication-action-link:focus-visible {
+  color: var(--orby-text);
+}
+
+html .publication-actions .like-button.is-liked {
+  color: var(--orby-like, #E26D8A);
+}
+
+html .publication-actions .publication-action-link.delete-action {
+  color: var(--orby-danger);
+}
+
+html .publication-actions .like-count {
+  color: color-mix(in srgb, var(--orby-text) 72%, var(--orby-bg));
+  font-size: 0.95rem;
+}
+
+/* Estado vazio */
+.feed-empty {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background: var(--orby-surface);
+  border: 1px dashed var(--orby-border-strong);
+  border-radius: var(--orby-radius);
+}
+
+.feed-empty .orby-mascot--empty {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.feed-empty h3 {
+  margin: 0 0 0.3rem;
+  color: var(--orby-text);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.feed-empty p {
+  margin: 0;
+  color: var(--orby-text-muted);
+  font-size: 0.9rem;
+}
+
+.char-counter {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--orby-text-muted);
+  font-size: 0.76rem;
+  text-align: right;
+}
+
+#nova-publicacao .btn-primary:disabled {
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+html .publication-actions .like-button.is-liked + .like-count {
+  font-weight: 700;
+}
+
+@media (max-width: 991.98px) {
+  .home-layout .compose-column {
+    margin-top: 0;
+  }
+
+  .container-fluid > .row.mt-4.home-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Ações de dono (editar/excluir) à direita e mais discretas que o curtir */
+.publication-actions .like-count + .publication-action-link {
+  margin-left: auto;
+}
+
+.publication-actions .publication-action-link {
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.publication-actions .publication-action-link:hover,
+.publication-actions .publication-action-link:focus-visible {
+  opacity: 1;
+}

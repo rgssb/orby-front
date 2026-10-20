@@ -7,13 +7,12 @@
 
   function initMascot(mascot) {
     var form = mascot.closest('form');
-    if (!form) return;
 
     var pupils = mascot.querySelectorAll('.orby-pupil');
     var rings = mascot.querySelectorAll('.orby-ring');
     var inner = mascot.querySelector('.orby-inner');
-    var textInputs = form.querySelectorAll('input[type="text"], input[type="email"]');
-    var passwordInputs = form.querySelectorAll('input[type="password"]');
+    var textInputs = form ? form.querySelectorAll('input[type="text"], input[type="email"]') : [];
+    var passwordInputs = form ? form.querySelectorAll('input[type="password"]') : [];
     var pointerTimeout;
     var pointerFrame;
     var latestPointer;
@@ -102,8 +101,10 @@
       pupils.forEach(function (pupil) {
         pupil.style.transform = 'translate(' + offsetX.toFixed(1) + 'px, ' + offsetY.toFixed(1) + 'px)';
       });
-      mascot.style.setProperty('--mouse-tilt', (relativeX * 3).toFixed(1) + 'deg');
-      mascot.classList.add('is-hovered');
+      if (!mascot.classList.contains('orby-mascot--nav')) {
+        mascot.style.setProperty('--mouse-tilt', (relativeX * 3).toFixed(1) + 'deg');
+        mascot.classList.add('is-hovered');
+      }
       clearTimeout(pointerTimeout);
       pointerTimeout = setTimeout(resetPointer, 320);
     }
@@ -176,21 +177,23 @@
       if (mascot.contains(event.target)) reactToTap();
     });
     window.addEventListener('blur', resetPointer);
-    form.addEventListener('focusin', function () {
-      markActivity();
-      mascot.classList.add('is-form-focused');
-    });
-    form.addEventListener('focusout', function () {
-      setTimeout(function () {
-        if (!anyFieldFocused(form)) mascot.classList.remove('is-form-focused');
-      }, 0);
-    });
+    if (form) {
+      form.addEventListener('focusin', function () {
+        markActivity();
+        mascot.classList.add('is-form-focused');
+      });
+      form.addEventListener('focusout', function () {
+        setTimeout(function () {
+          if (!anyFieldFocused(form)) mascot.classList.remove('is-form-focused');
+        }, 0);
+      });
+    }
     setInterval(function () {
       if (mascot.getAttribute('data-state') === 'default' && Date.now() - lastActivity > 12000) {
         mascot.classList.add('is-idle');
       }
     }, 1000);
-    form.querySelectorAll('a[href]').forEach(function (link) {
+    (form ? form.querySelectorAll('a[href]') : []).forEach(function (link) {
       link.addEventListener('click', function (event) {
         if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         event.preventDefault();
@@ -224,9 +227,11 @@
       });
     });
 
-    form.addEventListener('submit', function () {
-      setState('loading');
-    });
+    if (form) {
+      form.addEventListener('submit', function () {
+        setState('loading');
+      });
+    }
 
     // API por instância, útil quando há mais de um mascote na página.
     mascot.orby = {
@@ -246,6 +251,7 @@
   mascots.forEach(initMascot);
   mascots.forEach(function (mascot) {
     mascot.classList.add(new Date().getHours() >= 7 && new Date().getHours() < 19 ? 'theme-day' : 'theme-night');
+    if (mascot.classList.contains('orby-mascot--nav')) return;
     mascot.classList.add('is-welcoming');
     setTimeout(function () { mascot.classList.remove('is-welcoming'); }, 900);
   });
