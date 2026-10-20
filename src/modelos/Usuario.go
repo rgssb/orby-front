@@ -2,6 +2,7 @@ package modelos
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -33,52 +34,119 @@ func BuscarUsuarioPorCompleto(usuarioID uint64, r *http.Request) (Usuario, error
 	go BuscarSeguindo(canalSeguindo, usuarioID, r)
 	go BuscarPublicacoes(canalPublicacoes, usuarioID, r)
 
-	usuario := <-canalUsuario
-	usuario.Seguidores = <-canalSeguidores
-	usuario.Seguindo = <-canalSeguindo
-	usuario.Publicacoes = <-canalPublicacoes
+	var (
+		usuario     Usuario
+		seguidores  []Usuario
+		seguindo    []Usuario
+		publicacoes []Publicacao
+	)
+
+	for i := 0; i < 4; i++ {
+
+		select {
+		case usuarioCarregado := <-canalUsuario:
+			if usuarioCarregado.ID == 0 {
+				return Usuario{}, errors.New("Erro ao buscar dados do usuário")
+			}
+			usuario = usuarioCarregado
+
+		case seguidoresCarregados := <-canalSeguidores:
+			if seguidoresCarregados == nil {
+				return Usuario{}, errors.New("Erro ao buscar os seguidores do usuário")
+			}
+			seguidores = seguidoresCarregados
+
+		case seguindoCarregados := <-canalSeguindo:
+			if seguindoCarregados == nil {
+				return Usuario{}, errors.New("Erro ao buscar quer o usuário esta seguindo")
+			}
+			seguindo = seguindoCarregados
+
+		case publicacoesCarregadas := <-canalPublicacoes:
+			if publicacoesCarregadas == nil {
+				return Usuario{}, errors.New("Erro ao buscar publicações do usuário")
+			}
+			publicacoes = publicacoesCarregadas
+
+		}
+	}
+
+	usuario.Seguidores = seguidores
+	usuario.Seguindo = seguindo
+	usuario.Publicacoes = publicacoes
+
 	return usuario, nil
 }
 
 // BuscarDadosDoUsuario chama a api para buscar os dados base do usuario
 func BuscarDadosDoUsuario(canal chan<- Usuario, usuarioID uint64, r *http.Request) {
+	url := fmt.Sprintf("%s/usuarios/%d", config.ApiURL, usuarioID)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
+	if erro != nil {
+		canal <- Usuario{}
+		return
+	}
+	defer response.Body.Close()
+
 	var usuario Usuario
-	buscarNaAPI(r, fmt.Sprintf("%s/usuarios/%d", config.ApiURL, usuarioID), &usuario)
+	if erro := json.NewDecoder(response.Body).Decode(&usuario); erro != nil {
+		canal <- Usuario{}
+		return
+	}
 	canal <- usuario
 }
 
 // BuscarSeguidores chama a api para buscar os seguidores do usuario
 func BuscarSeguidores(canal chan<- []Usuario, usuarioID uint64, r *http.Request) {
+	url := fmt.Sprintf("%s/usuarios/%d/seguidores", config.ApiURL, usuarioID)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
+	if erro != nil {
+		canal <- nil
+		return
+	}
+	defer response.Body.Close()
+
 	var seguidores []Usuario
-	buscarNaAPI(r, fmt.Sprintf("%s/usuarios/%d/seguidores", config.ApiURL, usuarioID), &seguidores)
+	if erro := json.NewDecoder(response.Body).Decode(&seguidores); erro != nil {
+		canal <- nil
+		return
+	}
 	canal <- seguidores
+
 }
 
 // BuscarSeguindo chama a api para buscar quem o usuario segue
 func BuscarSeguindo(canal chan<- []Usuario, usuarioID uint64, r *http.Request) {
+	url := fmt.Sprintf("%s/usuarios/%d/seguindo", config.ApiURL, usuarioID)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
+	if erro != nil {
+		canal <- nil
+		return
+	}
+	defer response.Body.Close()
+
 	var seguindo []Usuario
-	buscarNaAPI(r, fmt.Sprintf("%s/usuarios/%d/seguindo", config.ApiURL, usuarioID), &seguindo)
+	if erro := json.NewDecoder(response.Body).Decode(&seguindo); erro != nil {
+		canal <- nil
+		return
+	}
 	canal <- seguindo
 }
 
 // BuscarPublicacoes chama a api para buscar as publicacoes do usuario
 func BuscarPublicacoes(canal chan<- []Publicacao, usuarioID uint64, r *http.Request) {
-	var publicacoes []Publicacao
-	buscarNaAPI(r, fmt.Sprintf("%s/usuarios/%d/publicacoes", config.ApiURL, usuarioID), &publicacoes)
-	canal <- publicacoes
-}
-
-// buscarNaAPI faz o GET autenticado e decodifica a resposta; em caso de falha mantem o destino zerado
-func buscarNaAPI(r *http.Request, url string, destino interface{}) {
+	url := fmt.Sprintf("%s/usuarios/%d/publicacoes", config.ApiURL, usuarioID)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
+		canal <- nil
 		return
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode >= 400 {
+	var publicacoes []Publicacao
+	if erro := json.NewDecoder(response.Body).Decode(&publicacoes); erro != nil {
+		canal <- nil
 		return
 	}
-
-	json.NewDecoder(response.Body).Decode(destino)
+	canal <- publicacoes
 }

@@ -178,9 +178,12 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 
 	usuario, erro := modelos.BuscarUsuarioPorCompleto(usuarioID, r)
 	if erro != nil {
+		fmt.Println("Erro ao buscar perfil:", erro)
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
+
+	fmt.Println(usuario, erro)
 
 	// Provisório até existir a view perfil.html
 	respostas.JSON(w, http.StatusOK, usuario)
