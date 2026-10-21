@@ -1,0 +1,88 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORBY - {{.Usuario.Nome}}</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+</head>
+    <body>
+        {{template "cabecalho"}}
+
+        {{$SegudiodPeloUsuarioLogado := false}}
+        {{range .Usuario.Seguidores}}
+            {{if (eq .ID $.UsuarioLogadoID)}}
+                {{$SegudiodPeloUsuarioLogado = true}}
+            {{end}}
+        {{end}}
+
+        <div class="containerfluid">
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{.Usuario.Nome}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted"> {{.Usuario.Nome}} - {{.Usuario.Nick}} - Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</h6>
+                            <p class="card-text">
+                                <a href="#">Seguidores: {{len .Usuario.Seguidores}}</a>
+                                <a href="#">Seguindo: {{len .Usuario.Seguindo}}</a>
+                            </p>
+                            
+                            <a href="#" class="card-link">
+                                {{if not $SegudiodPeloUsuarioLogado}}
+                            <button id="seguir" class="btn btn-info" data-usuario="{{.Usuario.ID}}">Seguir</button>
+                                {{else}}                            
+                            <button id="parar-de-seguir" class="btn btn-danger" data-usuario="{{.Usuario.ID}}">Parar de Seguir</button>
+                                {{end}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Publicações do Usuário {{.Usuario.Nick}}</h5>
+                            <p class="card-text">
+                                {{range .Usuario.Publicacoes}}
+                                {{template "publicacao-sem-permissao" .}}
+                                {{else}}
+                                <p>O usuário não possui publicações.</p>
+                                {{end}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{template "rodape"}}
+        {{template "scripts"}}
+        {{template "tracking"}}
+        {{template "modals"}}
+        {{template "alerts"}}
+        {{template "footer"}}
+        {{template "end"}}
+        <script src="/static/js/usuario.js"></script>
+        <script src="/static/js/publicacao.js"></script>
+        <script src="/static/js/alerts.js"></script>
+        <script src="/static/js/follow.js"></script>
+        <script src="/static/js/usuario-publicacoes.js"></script>
+        <script src="/static/js/publicacao-sem-permissao.js"></script>
+        <script src="/static/js/usuario-seguidores.js"></script>
+        <script src="/static/js/usuario-seguindo.js"></script>
+        <script src="/static/js/usuario-publicacoes-filtro.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar.js"></script>
+        <script src="/static/js/usuario-publicacoes-paginacao.js"></script>
+        <script src="/static/js/usuario-publicacoes-buscar.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar-filtro.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar-filtro-paginacao.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar-filtro-buscar.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar-filtro-buscar-paginacao.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar-paginacao.js"></script>
+        <script src="/static/js/usuario-publicacoes-filtro-paginacao.js"></script>
+        <script src="/static/js/usuario-publicacoes-buscar-paginacao.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar-buscar.js"></script>
+        <script src="/static/js/usuario-publicacoes-ordenar-buscar-paginacao.js"></script> 
+    </body>
+</html>

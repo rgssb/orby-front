@@ -167,7 +167,7 @@ func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "usuarios.html", usuarios)
 }
 
-//CarregarPerfilDoUsuario carrega a página de perfil do usuario
+// CarregarPerfilDoUsuario carrega o perfil do usuario
 func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
@@ -178,13 +178,18 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 
 	usuario, erro := modelos.BuscarUsuarioPorCompleto(usuarioID, r)
 	if erro != nil {
-		fmt.Println("Erro ao buscar perfil:", erro)
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
 
-	fmt.Println(usuario, erro)
+	cookie, _ := cookies.Ler(r)
+	usuarioLogadoID, _ := strconv.ParseUint(cookie["id"], 10, 64)
 
-	// Provisório até existir a view perfil.html
-	respostas.JSON(w, http.StatusOK, usuario)
+	utils.ExecutarTemplate(w, "usuario.html", struct {
+		Usuario         modelos.Usuario
+		UsuarioLogadoID uint64
+	}{
+		Usuario:         usuario,
+		UsuarioLogadoID: usuarioLogadoID,
+	})
 }

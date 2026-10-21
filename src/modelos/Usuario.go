@@ -5,9 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
 	"time"
 	"webapp/src/config"
+
 	"webapp/src/requisicoes"
+
 )
 
 // Usuario representa uma pessoa utilizando a rede social
@@ -150,3 +153,4 @@ func BuscarPublicacoes(canal chan<- []Publicacao, usuarioID uint64, r *http.Requ
 	}
 	canal <- publicacoes
 }
+
