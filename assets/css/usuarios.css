@@ -120,3 +120,375 @@
 .users-empty .composer-icon {
   margin-inline: auto;
 }
+
+
+.users-page.profile-page {
+  max-width: 1040px;
+}
+
+.profile-card {
+  overflow: hidden;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.profile-banner {
+  height: clamp(6rem, 14vw, 9rem);
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--orby-accent) 55%, transparent), transparent 60%),
+    linear-gradient(135deg, var(--orby-accent-strong), color-mix(in srgb, var(--orby-accent-strong) 35%, var(--orby-surface)));
+}
+
+.profile-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 0 clamp(1.25rem, 3vw, 2rem);
+  margin-top: -3rem;
+}
+
+.profile-avatar {
+  width: 6.5rem;
+  height: 6.5rem;
+  font-size: 2.6rem;
+  background: var(--orby-surface);
+  border: 4px solid var(--orby-surface);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orby-accent-strong) 40%, transparent);
+}
+
+.profile-heading {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 3.5rem;
+  padding-bottom: 1rem;
+}
+
+.users-column .profile-name {
+  margin: 0;
+  color: var(--orby-text);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.profile-body .user-nick {
+  font-size: 1rem;
+}
+
+.profile-body .user-since {
+  font-size: 0.85rem;
+}
+
+.profile-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--orby-border);
+}
+
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  color: var(--orby-text-muted);
+  font-size: 0.85rem;
+}
+
+.profile-stat + .profile-stat {
+  border-left: 1px solid var(--orby-border);
+}
+
+.profile-stat strong {
+  color: var(--orby-text);
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@media (max-width: 575px) {
+  .profile-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+a.profile-stat {
+  color: var(--orby-text-muted);
+  text-decoration: none;
+  transition: background 200ms ease;
+}
+
+a.profile-stat:hover,
+a.profile-stat:focus-visible {
+  color: var(--orby-accent);
+  text-decoration: none;
+  background: var(--orby-surface-hover);
+}
+
+.user-modal .modal-content {
+  color: var(--orby-text);
+  background: var(--orby-surface);
+  border: 1px solid var(--orby-border-strong);
+  border-radius: var(--orby-radius);
+}
+
+.user-modal .modal-header {
+  border-bottom: 1px solid var(--orby-border);
+}
+
+.user-modal .modal-title {
+  font-weight: 700;
+}
+
+.user-modal .close {
+  color: var(--orby-text);
+  text-shadow: none;
+}
+
+.user-modal-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.65rem 0.5rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--orby-radius-sm);
+}
+
+.user-modal-item:hover {
+  color: inherit;
+  text-decoration: none;
+  background: var(--orby-surface-hover);
+}
+
+.user-modal-empty {
+  margin: 0;
+  padding: 1rem 0;
+  color: var(--orby-text-muted);
+  text-align: center;
+}
+
+.jumbotron.profile-card:hover {
+  background-color: var(--orby-surface);
+  border-color: var(--orby-border);
+  box-shadow: none;
+  transform: none;
+}
+
+.profile-actions .btn,
+a.profile-stat strong,
+a.profile-stat span {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.profile-actions .btn:hover,
+.profile-actions .btn:focus-visible {
+  transform: translateY(-2px);
+}
+
+a.profile-stat:hover strong,
+a.profile-stat:hover span,
+a.profile-stat:focus-visible strong,
+a.profile-stat:focus-visible span {
+  transform: translateY(-2px);
+}
+
+/* Acabamento do cartão de perfil */
+.profile-card {
+  background: linear-gradient(180deg, #1A1E2C 0%, var(--orby-surface) 100%);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.profile-banner {
+  position: relative;
+  background:
+    radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--orby-accent) 60%, transparent), transparent 55%),
+    radial-gradient(circle at 85% 90%, color-mix(in srgb, var(--orby-accent-strong) 55%, transparent), transparent 55%),
+    linear-gradient(135deg, var(--orby-accent-strong), color-mix(in srgb, var(--orby-accent-strong) 30%, var(--orby-bg)));
+}
+
+.profile-banner::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 14px);
+}
+
+.profile-avatar {
+  position: relative;
+  color: var(--orby-accent);
+  background: var(--orby-surface-hover);
+  border: 4px solid var(--orby-surface);
+}
+
+.profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.profile-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  color: var(--orby-text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--orby-accent-strong) 18%, var(--orby-surface));
+  border: 1px solid color-mix(in srgb, var(--orby-accent-strong) 45%, transparent);
+  border-radius: 999px;
+}
+
+.profile-chip i {
+  color: var(--orby-accent);
+}
+
+.profile-chip-muted {
+  color: var(--orby-text-muted);
+  font-weight: 500;
+  background: transparent;
+  border-color: var(--orby-border-strong);
+}
+
+.profile-heading {
+  padding-bottom: 1.5rem;
+}
+
+.profile-actions .btn-primary {
+  background: var(--orby-btn-bg);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: var(--orby-btn-shadow);
+}
+
+.profile-actions .btn-danger {
+  color: var(--orby-danger);
+  background: color-mix(in srgb, var(--orby-danger) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--orby-danger) 45%, transparent);
+  border-radius: 999px;
+}
+
+.profile-actions .btn-danger:hover,
+.profile-actions .btn-danger:focus-visible {
+  color: #fff;
+  background: #DC3C55;
+  border-color: #DC3C55;
+}
+
+.profile-stat {
+  position: relative;
+}
+
+.profile-stat > i {
+  margin-bottom: 0.35rem;
+  color: var(--orby-accent);
+  font-size: 1rem;
+}
+
+.profile-stat span {
+  letter-spacing: 0.02em;
+}
+
+/* Garante prioridade sobre as regras "html .jumbotron" dos temas */
+html .jumbotron.profile-card {
+  padding: 0;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  background: var(--orby-surface);
+  border: 1px solid var(--orby-border);
+  box-shadow: none;
+  transform: none;
+  animation: none;
+}
+
+html .jumbotron.profile-card:hover {
+  background: var(--orby-surface);
+  border-color: var(--orby-border);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Banner e chips por tema */
+html[data-theme="claro"] .profile-banner {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.7), transparent 50%),
+    linear-gradient(135deg, #F2E4BC 0%, #E2C57F 55%, #D4A94A 100%);
+}
+
+html[data-theme="claro"] .profile-banner::after {
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 14px);
+}
+
+html[data-theme="claro"] .profile-avatar {
+  background: #FFFDF8;
+  border-color: #FFFFFF;
+}
+
+html[data-theme="claro"] .profile-chip {
+  color: var(--orby-accent);
+  background: #F8EFD6;
+  border-color: #E6D3A1;
+}
+
+html[data-theme="claro"] .profile-chip-muted {
+  color: var(--orby-text-muted);
+  background: transparent;
+  border-color: var(--orby-border-strong);
+}
+
+html[data-theme="acolhedor"] .profile-banner {
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--orby-warm) 38%, transparent), transparent 55%),
+    linear-gradient(135deg, #3A2F26 0%, #2A241D 60%, var(--orby-surface) 100%);
+}
+
+html[data-theme="acolhedor"] .profile-banner::after {
+  background: repeating-linear-gradient(135deg, rgba(240, 180, 127, 0.07) 0 1px, transparent 1px 14px);
+}
+
+html[data-theme="acolhedor"] .profile-avatar {
+  background: color-mix(in srgb, var(--orby-warm) 15%, var(--orby-surface));
+  border-color: var(--orby-surface);
+}
+
+html[data-theme="acolhedor"] .profile-chip {
+  color: var(--orby-text);
+  background: color-mix(in srgb, var(--orby-warm) 14%, var(--orby-surface));
+  border-color: color-mix(in srgb, var(--orby-warm) 32%, transparent);
+}
+
+html[data-theme="acolhedor"] .profile-chip i {
+  color: var(--orby-warm);
+}
+
+html[data-theme="acolhedor"] .profile-chip-muted {
+  color: var(--orby-text-muted);
+  background: transparent;
+  border-color: var(--orby-border-strong);
+}
+
+html[data-theme="acolhedor"] .profile-stat > i {
+  color: var(--orby-warm);
+}
+
+html[data-theme="acolhedor"] .profile-actions .btn-primary {
+  box-shadow: none;
+}

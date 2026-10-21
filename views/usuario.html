@@ -1,63 +1,135 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORBY - {{.Usuario.Nome}}</title>
+    <title>Orby - {{.Usuario.Nome}}</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
     <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=20">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=7">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=3">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=11">
+    <script src="/assets/js/tema.js?v=3"></script>
 </head>
-    <body>
-        {{template "cabecalho"}}
 
-        {{$SegudiodPeloUsuarioLogado := false}}
-        {{range .Usuario.Seguidores}}
-            {{if (eq .ID $.UsuarioLogadoID)}}
-                {{$SegudiodPeloUsuarioLogado = true}}
-            {{end}}
+<body>
+    {{template "cabecalho"}}
+
+    {{$SeguidoPeloUsuarioLogado := false}}
+    {{range .Usuario.Seguidores}}
+        {{if (eq .ID $.UsuarioLogadoID)}}
+            {{$SeguidoPeloUsuarioLogado = true}}
         {{end}}
+    {{end}}
 
-        <div class="containerfluid">
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{.Usuario.Nome}}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted"> {{.Usuario.Nome}} - {{.Usuario.Nick}} - Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</h6>
-                            <p class="card-text">
-                                <a href="#">Seguidores: {{len .Usuario.Seguidores}}</a>
-                                <a href="#">Seguindo: {{len .Usuario.Seguindo}}</a>
-                            </p>
-                            
-                            <a href="#" class="card-link">
-                                {{if not $SegudiodPeloUsuarioLogado}}
-                            <button id="seguir" class="btn btn-info" data-usuario="{{.Usuario.ID}}">Seguir</button>
-                                {{else}}                            
-                            <button id="parar-de-seguir" class="btn btn-danger" data-usuario="{{.Usuario.ID}}">Parar de Seguir</button>
-                                {{end}}
-                            </a>
+    <main class="container-fluid users-page profile-page">
+        <section class="users-column" aria-labelledby="profile-title">
+            <article class="jumbotron profile-card">
+                <div class="profile-banner" aria-hidden="true"></div>
+                <div class="profile-body">
+                    <span class="user-avatar profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                    <div class="profile-heading">
+                        <div class="user-info">
+                            <h1 id="profile-title" class="profile-name">{{.Usuario.Nome}}</h1>
+                            <div class="profile-chips">
+                                <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
+                                <span class="profile-chip profile-chip-muted"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</span>
+                            </div>
                         </div>
+                        {{if ne .Usuario.ID $.UsuarioLogadoID}}
+                        <div class="profile-actions">
+                            {{if not $SeguidoPeloUsuarioLogado}}
+                            <button type="button" id="seguir" class="btn btn-primary" data-usuario="{{.Usuario.ID}}"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Seguir</button>
+                            {{else}}
+                            <button type="button" id="parar-de-seguir" class="btn btn-danger" data-usuario="{{.Usuario.ID}}"><i class="fa-solid fa-user-minus" aria-hidden="true"></i> Parar de seguir</button>
+                            {{end}}
+                        </div>
+                        {{end}}
                     </div>
                 </div>
-            </div>
+                <div class="profile-stats">
+                    <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguidores"><i class="fa-solid fa-users" aria-hidden="true"></i><strong>{{len .Usuario.Seguidores}}</strong><span>Seguidores</span></a>
+                    <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguindo"><i class="fa-solid fa-user-check" aria-hidden="true"></i><strong>{{len .Usuario.Seguindo}}</strong><span>Seguindo</span></a>
+                    <a href="#feed-title" class="profile-stat"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i><strong>{{len .Usuario.Publicacoes}}</strong><span>Publicações</span></a>
+                </div>
+            </article>
 
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Publicações do Usuário {{.Usuario.Nick}}</h5>
-                            <p class="card-text">
-                                {{range .Usuario.Publicacoes}}
-                                {{template "publicacao-sem-permissao" .}}
-                                {{else}}
-                                <p>O usuário não possui publicações.</p>
-                                {{end}}
-                            </p>
-                        </div>
-                    </div>
+            <header class="feed-header">
+                <h2 id="feed-title">Publicações de @{{.Usuario.Nick}}</h2>
+            </header>
+            {{range .Usuario.Publicacoes}}
+                {{template "publicacao-sem-permissao" .}}
+            {{else}}
+            <div class="users-empty">
+                {{template "mascote" "orby-mascot--empty"}}
+                <h2>Nenhuma publicação</h2>
+                <p>Este usuário ainda não publicou nada.</p>
+            </div>
+            {{end}}
+        </section>
+    </main>
+
+
+    <div class="modal fade user-modal" id="modal-seguidores" tabindex="-1" role="dialog" aria-labelledby="modal-seguidores-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-seguidores-titulo">Seguidores</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    {{range .Usuario.Seguidores}}
+                    <a class="user-modal-item" href="/usuarios/{{.ID}}">
+                        <span class="user-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                        <span class="user-info">
+                            <span class="user-name">{{.Nome}}</span>
+                            <span class="user-nick">@{{.Nick}}</span>
+                        </span>
+                    </a>
+                    {{else}}
+                    <p class="user-modal-empty">Ainda não há seguidores.</p>
+                    {{end}}
                 </div>
             </div>
         </div>
-        {{template "rodape"}}
-        {{template "scripts"}}
-        <script src="/assets/js/usuario.js"></script>
-    </body>
+    </div>
+
+    <div class="modal fade user-modal" id="modal-seguindo" tabindex="-1" role="dialog" aria-labelledby="modal-seguindo-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-seguindo-titulo">Seguindo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    {{range .Usuario.Seguindo}}
+                    <a class="user-modal-item" href="/usuarios/{{.ID}}">
+                        <span class="user-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                        <span class="user-info">
+                            <span class="user-name">{{.Nome}}</span>
+                            <span class="user-nick">@{{.Nick}}</span>
+                        </span>
+                    </a>
+                    {{else}}
+                    <p class="user-modal-empty">Não está seguindo ninguém.</p>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{template "rodape"}}
+    {{template "scripts" .}}
+    <script src="/assets/js/usuario.js"></script>
+</body>
+
 </html>
