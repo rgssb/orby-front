@@ -166,12 +166,31 @@ html[data-theme="completo"] .publication-meta span:first-child i {
 
 html[data-theme="completo"] .btn-primary,
 html[data-theme="completo"] .home-card button,
-html[data-theme="completo"] .jumbotron .btn-primary.btn-lg,
-html[data-theme="completo"] .publication-meta-button {
+html[data-theme="completo"] .jumbotron .btn-primary.btn-lg {
   color: #fff;
   background: var(--orby-btn-bg);
   border-color: transparent;
   box-shadow: none;
+}
+
+/* Autor da publicação: link para o perfil, com o contorno padrão dos temas */
+a.publication-meta-button,
+a.publication-meta-button:hover,
+a.publication-meta-button:focus {
+  text-decoration: none;
+}
+
+/* Card estático em todos os temas: a interação fica só nos links e botões */
+html[data-theme] .jumbotron:hover {
+  background-color: var(--orby-surface);
+  box-shadow: var(--orby-card-shadow, none);
+  transform: none;
+}
+
+/* Item ativo do menu acompanha a cor de destaque do tema */
+html[data-theme="acolhedor"] .navbar.navbar-light .navbar-nav .active > .nav-link {
+  color: var(--orby-accent);
+  background-color: color-mix(in srgb, var(--orby-accent) 14%, transparent);
 }
 
 html[data-theme="completo"] .btn-primary:hover,

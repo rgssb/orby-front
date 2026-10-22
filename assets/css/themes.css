@@ -735,8 +735,8 @@ html[data-theme="acolhedor"] {
   --orby-border-strong: #463F36;
   --orby-text: #F4EEE4;
   --orby-text-muted: #A89F92;
-  --orby-accent: #9DB3F2;
-  --orby-accent-strong: #5F7EDB;
+  --orby-accent: #F0B47F;
+  --orby-accent-strong: #B9783A;
   --orby-warm: #F0B47F;
   --orby-like: #EE7D8E;
   --orby-danger: #F4A0A0;
@@ -747,17 +747,17 @@ html[data-theme="acolhedor"] {
   --orby-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 24px -10px rgba(0, 0, 0, 0.45);
   --orby-card-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.55);
   --orby-login-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 60px -20px rgba(0, 0, 0, 0.6);
-  --orby-btn-bg: #5F7EDB;
-  --orby-btn-bg-hover: #6F8CE6;
+  --orby-btn-bg: #B9783A;
+  --orby-btn-bg-hover: #C98746;
   --orby-btn-text: #fff;
-  --orby-btn-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 6px 16px -6px rgba(95, 126, 219, 0.55);
+  --orby-btn-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 6px 16px -6px rgba(185, 120, 58, 0.55);
   --orby-page-bg: radial-gradient(ellipse 70% 320px at 50% 0, rgba(240, 180, 127, 0.07), transparent), #151310;
   --orby-login-bg:
-    radial-gradient(circle at 50% 0%, rgba(95, 126, 219, 0.16), transparent 55%),
+    radial-gradient(circle at 50% 0%, rgba(185, 120, 58, 0.16), transparent 55%),
     radial-gradient(circle at 85% 100%, rgba(240, 180, 127, 0.08), transparent 45%),
     #151310;
   --orby-nav-bg: #1A1713;
-  --orby-focus-ring: 0 0 0 4px rgba(157, 179, 242, 0.18);
+  --orby-focus-ring: 0 0 0 4px rgba(240, 180, 127, 0.2);
   color-scheme: dark;
 }
 

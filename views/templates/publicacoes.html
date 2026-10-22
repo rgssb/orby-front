@@ -17,10 +17,10 @@
 
 
 {{define "cabecalho-publicacao"}}
-<button type="button" class="publication-meta publication-meta-button">
+<a href="/usuarios/{{.AutorID}}" class="publication-meta publication-meta-button" title="Ver perfil de {{.AutorNick}}">
     <span><i class="fa-solid fa-user" aria-hidden="true"></i> {{.AutorNick}}</span>
     <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <time datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time></span>
-</button>
+</a>
 <h2 class="display-4">{{.Titulo}}</h2>
 <p class="lead">{{.Conteudo}}</p>
 <hr class="my-4">

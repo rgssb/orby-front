@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - Meu perfil</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=22">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=10">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=9">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=16">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+
+<body>
+    {{template "cabecalho"}}
+
+    <main class="container-fluid users-page profile-page">
+        <section class="users-column" aria-labelledby="profile-title">
+            <article class="jumbotron profile-card">
+                <div class="profile-banner" aria-hidden="true"></div>
+                <div class="profile-body">
+                    <span class="user-avatar profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                    <div class="profile-heading">
+                        <div class="user-info">
+                            <h1 id="profile-title" class="profile-name">{{.Usuario.Nome}}</h1>
+                            <div class="profile-chips">
+                                <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
+                                <span class="profile-chip profile-chip-muted"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</span>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <a href="/editar-perfil" class="btn btn-primary"><i class="fa-solid fa-pen" aria-hidden="true"></i> Editar perfil</a>
+                            <a href="/alterar-senha" class="btn btn-outline-secondary"><i class="fa-solid fa-key" aria-hidden="true"></i> Alterar senha</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguidores"><i class="fa-solid fa-users" aria-hidden="true"></i><strong>{{len .Usuario.Seguidores}}</strong><span>Seguidores</span></a>
+                    <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguindo"><i class="fa-solid fa-user-check" aria-hidden="true"></i><strong>{{len .Usuario.Seguindo}}</strong><span>Seguindo</span></a>
+                    <a href="#feed-title" class="profile-stat"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i><strong>{{len .Usuario.Publicacoes}}</strong><span>Publicações</span></a>
+                </div>
+            </article>
+
+            <header class="feed-header">
+                <h2 id="feed-title">Minhas publicações</h2>
+            </header>
+            {{range .Usuario.Publicacoes}}
+                {{template "publicacao-com-permissao" .}}
+            {{else}}
+            <div class="users-empty">
+                {{template "mascote" "orby-mascot--empty"}}
+                <h2>Nenhuma publicação</h2>
+                <p>Você ainda não publicou nada.</p>
+            </div>
+            {{end}}
+        </section>
+    </main>
+
+    {{template "rodape"}}
+    {{template "scripts" .}}
+    <script src="/assets/js/usuario.js?v=2"></script>
+    {{template "modal-seguidores" .Usuario}}
+    {{template "modal-seguindo" .Usuario}}
+</body>
+
+</html>
