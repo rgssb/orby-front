@@ -6,6 +6,15 @@
   justify-content: center;
 }
 
+/* Página com um único cartão (ex.: atualizar publicação) */
+.container-fluid > .row.mt-4.home-layout.home-layout--unico {
+  grid-template-columns: minmax(0, 640px);
+}
+
+.home-layout--unico .compose-column {
+  margin-top: 0;
+}
+
 /* Topo do formulário alinhado ao topo do primeiro cartão do feed */
 .home-layout .compose-column {
   margin-top: 4rem;
@@ -129,4 +138,59 @@ html .publication-actions .like-button.is-liked + .like-count {
 .publication-actions .publication-action-link:hover,
 .publication-actions .publication-action-link:focus-visible {
   opacity: 1;
+}
+
+/* Identidade do tema padrão: superfícies planas, sem degradês nem brilhos */
+html[data-theme="completo"] .navbar.navbar-light .navbar-brand {
+  background: none;
+  color: var(--orby-text);
+  -webkit-text-fill-color: currentColor;
+}
+
+html[data-theme="completo"] .composer-card {
+  background: var(--orby-surface);
+  box-shadow: none;
+}
+
+html[data-theme="completo"] .composer-card::before {
+  display: none;
+}
+
+html[data-theme="completo"] .composer-icon,
+html[data-theme="completo"] .publication-meta span:first-child i {
+  color: var(--orby-accent);
+  background: color-mix(in srgb, var(--orby-accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--orby-accent) 25%, transparent);
+  box-shadow: none;
+}
+
+html[data-theme="completo"] .btn-primary,
+html[data-theme="completo"] .home-card button,
+html[data-theme="completo"] .jumbotron .btn-primary.btn-lg,
+html[data-theme="completo"] .publication-meta-button {
+  color: #fff;
+  background: var(--orby-btn-bg);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+html[data-theme="completo"] .btn-primary:hover,
+html[data-theme="completo"] .btn-primary:focus,
+html[data-theme="completo"] .btn-primary:not(:disabled):not(.disabled):active {
+  background: var(--orby-btn-bg-hover);
+  box-shadow: none;
+}
+
+html[data-theme="completo"] .navbar.navbar-light .navbar-nav .active > .nav-link,
+html[data-theme="completo"] .feed-eyebrow,
+html[data-theme="completo"] .navbar .navbar-search-toggle:focus {
+  color: var(--orby-accent);
+}
+
+html[data-theme="completo"] .navbar.navbar-light .navbar-nav .active > .nav-link {
+  background-color: color-mix(in srgb, var(--orby-accent) 14%, transparent);
+}
+
+html[data-theme="completo"] .form-control:focus {
+  box-shadow: var(--orby-focus-ring);
 }

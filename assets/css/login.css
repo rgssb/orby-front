@@ -21,21 +21,17 @@ body {
   justify-content: center;
   align-items: center;
   padding: 16px;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(65, 105, 225, 0.18), transparent 55%),
-    radial-gradient(circle at 85% 100%, rgba(129, 140, 248, 0.08), transparent 45%),
-    #07070C;
+  background: #0E1117;
 }
 
 /* Card */
 .login-container > div {
   width: 100%;
   max-width: 400px;
-  background-color: #0B0F1A;
-  border: 1px solid #151B2C;
-  border-radius: 20px;
+  background-color: #161B24;
+  border: 1px solid #252C38;
+  border-radius: 12px;
   padding: 44px 32px 36px;
-  box-shadow: 0 0 60px rgba(65, 105, 225, 0.10);
 }
 
 /* Título */
@@ -227,7 +223,7 @@ a:hover {
 .btn-Orby {
   width: 100%;
   height: 50px;
-  background: linear-gradient(135deg, #4169E1, #5B7FFF);
+  background: #3D6BE0;
   color: white;
   border: none;
   border-radius: 12px;
@@ -239,7 +235,7 @@ a:hover {
 
 .btn-Orby:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(65, 105, 225, 0.35);
+  background: #4F7CF0;
 }
 
 .btn-Orby:active {

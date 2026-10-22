@@ -1,32 +1,33 @@
-$(`#parar-de-seguir`).on('click', pararDeSeguir);
-$(`#seguir`).on('click', seguir);
+$(document).on('click', '#seguir', function () {
+    alternarSeguir(this, 'seguir', 'Erro ao seguir o usuario');
+});
 
-function pararDeSeguir() {
-    const usuarioId = $(this).data('usuario');
-    $(this).prop('disabled', true);
+$(document).on('click', '#parar-de-seguir', function () {
+    alternarSeguir(this, 'parar-de-seguir', 'Erro ao parar de seguir o usuario');
+});
+
+function alternarSeguir(botao, acao, mensagemErro) {
+    const usuarioId = $(botao).data('usuario');
+    $(botao).prop('disabled', true);
 
     $.ajax({
-        url: `/usuarios/${usuarioId}/parar-de-seguir`,
+        url: `/usuarios/${usuarioId}/${acao}`,
         method: "POST",
     }).done(function() {
-        window.location = `/usuarios/${usuarioId}`;
+        atualizarPerfil();
     }).fail(function() {
-        Swal.fire("Ops...", "Erro ao parar de seguir o usuario", "error")
-        $(`#parar-de-seguir`).prop('disabled', false);
+        Swal.fire("Ops...", mensagemErro, "error");
+        $(botao).prop('disabled', false);
     });
 }
 
-function seguir() {
-    const usuarioId = $(this).data('usuario');
-    $(this).prop('disabled', true);
-
-    $.ajax({
-        url: `/usuarios/${usuarioId}/seguir`,
-        method: "POST",
-    }).done(function() {
-        window.location = `/usuarios/${usuarioId}`;
+// Atualiza só o cartão do perfil e a lista de seguidores, sem recarregar a página
+function atualizarPerfil() {
+    $.get(window.location.href).done(function(html) {
+        const novo = $('<div>').append($.parseHTML(html));
+        $('.profile-card').replaceWith(novo.find('.profile-card'));
+        $('#modal-seguidores .modal-body').html(novo.find('#modal-seguidores .modal-body').html());
     }).fail(function() {
-        Swal.fire("Ops...", "Erro ao seguir o usuario", "error")
-        $(`#seguir`).prop('disabled', false);
+        window.location.reload();
     });
 }

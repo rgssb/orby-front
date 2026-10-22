@@ -12,12 +12,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
     <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
     <link rel="stylesheet" href="/assets/css/bootstrap.css">
-    <link rel="stylesheet" href="/assets/css/home.css?v=20">
+    <link rel="stylesheet" href="/assets/css/home.css?v=22">
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
-    <link rel="stylesheet" href="/assets/css/themes.css?v=7">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=3">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=11">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=9">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=6">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=16">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -78,58 +78,11 @@
         </section>
     </main>
 
-
-    <div class="modal fade user-modal" id="modal-seguidores" tabindex="-1" role="dialog" aria-labelledby="modal-seguidores-titulo" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal-seguidores-titulo">Seguidores</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    {{range .Usuario.Seguidores}}
-                    <a class="user-modal-item" href="/usuarios/{{.ID}}">
-                        <span class="user-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
-                        <span class="user-info">
-                            <span class="user-name">{{.Nome}}</span>
-                            <span class="user-nick">@{{.Nick}}</span>
-                        </span>
-                    </a>
-                    {{else}}
-                    <p class="user-modal-empty">Ainda não há seguidores.</p>
-                    {{end}}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade user-modal" id="modal-seguindo" tabindex="-1" role="dialog" aria-labelledby="modal-seguindo-titulo" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal-seguindo-titulo">Seguindo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    {{range .Usuario.Seguindo}}
-                    <a class="user-modal-item" href="/usuarios/{{.ID}}">
-                        <span class="user-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
-                        <span class="user-info">
-                            <span class="user-name">{{.Nome}}</span>
-                            <span class="user-nick">@{{.Nick}}</span>
-                        </span>
-                    </a>
-                    {{else}}
-                    <p class="user-modal-empty">Não está seguindo ninguém.</p>
-                    {{end}}
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{template "rodape"}}
     {{template "scripts" .}}
-    <script src="/assets/js/usuario.js"></script>
+    <script src="/assets/js/usuario.js?v=2"></script>
+    {{template "modal-seguidores" .Usuario}}
+    {{template "modal-seguindo" .Usuario}}
 </body>
 
 </html>

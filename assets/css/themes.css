@@ -7,33 +7,30 @@
 
 /* Completo: tema padrão original */
 :root {
-  --orby-bg: #07070C;
-  --orby-surface: #0B0F1A;
-  --orby-surface-hover: #0E1424;
-  --orby-border: #151B2C;
-  --orby-border-strong: #26304D;
-  --orby-text: #F1F5F9;
-  --orby-text-muted: #94A3B8;
-  --orby-accent: #818CF8;
-  --orby-accent-strong: #4169E1;
-  --orby-danger: #FDA4AF;
-  --orby-input-bg: #111827;
-  --orby-input-border: #1E293B;
-  --orby-radius: 20px;
-  --orby-radius-sm: 12px;
-  --orby-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-  --orby-login-shadow: 0 0 60px rgba(65, 105, 225, 0.1);
-  --orby-btn-bg: linear-gradient(135deg, #4169E1, #5B7FFF);
-  --orby-btn-bg-hover: linear-gradient(135deg, #4F78F0, #6B8CFF);
+  --orby-bg: #0E1117;
+  --orby-surface: #161B24;
+  --orby-surface-hover: #1B212C;
+  --orby-border: #252C38;
+  --orby-border-strong: #343D4D;
+  --orby-text: #F0F3F8;
+  --orby-text-muted: #A0A9B8;
+  --orby-accent: #6F9BFF;
+  --orby-accent-strong: #3D6BE0;
+  --orby-danger: #F2A0A0;
+  --orby-input-bg: #121620;
+  --orby-input-border: #2B3342;
+  --orby-radius: 12px;
+  --orby-radius-sm: 8px;
+  --orby-card-shadow: none;
+  --orby-login-shadow: none;
+  --orby-btn-bg: #3D6BE0;
+  --orby-btn-bg-hover: #4F7CF0;
   --orby-btn-text: #fff;
-  --orby-btn-shadow: 0 8px 24px rgba(65, 105, 225, 0.35);
-  --orby-page-bg: linear-gradient(180deg, rgba(65, 105, 225, 0.1) 0, rgba(65, 105, 225, 0) 360px), #07070C;
-  --orby-login-bg:
-    radial-gradient(circle at 50% 0%, rgba(65, 105, 225, 0.18), transparent 55%),
-    radial-gradient(circle at 85% 100%, rgba(129, 140, 248, 0.08), transparent 45%),
-    #07070C;
-  --orby-nav-bg: rgba(7, 7, 12, 0.8);
-  --orby-focus-ring: 0 0 0 4px rgba(65, 105, 225, 0.15);
+  --orby-btn-shadow: none;
+  --orby-page-bg: #0E1117;
+  --orby-login-bg: #0E1117;
+  --orby-nav-bg: #12151C;
+  --orby-focus-ring: 0 0 0 3px rgba(111, 155, 255, 0.25);
   color-scheme: dark;
 }
 
@@ -404,10 +401,9 @@ html[data-theme="claro"] .Orby-form > span {
 
 html:not([data-theme]) .Orby-form > span,
 html[data-theme="completo"] .Orby-form > span {
-  background: linear-gradient(135deg, #FFFFFF 0%, #C7D2FE 45%, #818CF8 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: none;
+  color: var(--orby-text);
+  -webkit-text-fill-color: currentColor;
 }
 
 html .login-container a {

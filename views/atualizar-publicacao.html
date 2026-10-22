@@ -11,21 +11,24 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
     <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
     <link rel="stylesheet" href="/assets/css/bootstrap.css">
-    <link rel="stylesheet" href="/assets/css/home.css?v=20">
+    <link rel="stylesheet" href="/assets/css/home.css?v=22">
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
-    <link rel="stylesheet" href="/assets/css/themes.css?v=7">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=3">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=9">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=6">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
-</html>
 <body>
         {{template "cabecalho"}}
-    <div class="container-fluid">   
-        <div class="container mt-4"> 
-            <div class="col-12">
-                <h3>Atualizar publicação</h3>
+    <main class="container-fluid home-page">
+        <div class="row mt-4 home-layout home-layout--unico">
+            <section class="compose-column" aria-labelledby="atualizar-title">
+                <div class="composer-card">
+                    <header class="composer-header">
+                        <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-pen"></i></span>
+                        <h1 id="atualizar-title">Atualizar publicação</h1>
+                    </header>
                 <div class="form-group">
                     <label for="titulo">Título</label>
                     <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite o título da publicação" value="{{.Titulo}}">
@@ -34,13 +37,19 @@
                     <label for="conteudo">Conteúdo</label>
                     <textarea class="form-control" id="conteudo" name="conteudo" placeholder="Digite o conteúdo da publicação">{{.Conteudo}}</textarea>
                 </div>
-                <button id="atualizar" data-publicacao-id="{{.ID}}" type="submit" class="btn btn-primary mt-3">Atualizar</button>
-            </div>
+                <div class="composer-actions">
+                    <button id="atualizar" data-publicacao-id="{{.ID}}" type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Atualizar</button>
+                </div>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
+
         
     {{template "rodape"}}
     {{template "scripts"}}
     <script src="/assets/js/publicacoes.js?v=9"></script>
 
 </body>
+
+</html>
