@@ -252,6 +252,14 @@ html .publication-meta-button span + span i {
   background: transparent;
 }
 
+html .composer-icon {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--orby-accent-strong) 22%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="acolhedor"] .composer-icon {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--orby-warm) 18%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
 html[data-theme="neutro"] .composer-icon {
   box-shadow: none;
 }

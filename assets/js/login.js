@@ -1,4 +1,5 @@
 const formularioLogin = document.getElementById("login");
+const mensagemServidorIndisponivel = "Nossos servidores estão temporariamente indisponíveis. Pedimos desculpas pelo transtorno.";
 formularioLogin.addEventListener("submit", realizarLogin);
 
 function mostrarMensagem(mensagem, sucesso) {
@@ -33,6 +34,10 @@ async function realizarLogin(evento) {
         });
 
         if (!resposta.ok) {
+            if (resposta.status >= 500) {
+                throw new Error(mensagemServidorIndisponivel);
+            }
+
             const erro = await resposta.json().catch(() => ({}));
             throw new Error(erro.erro || "E-mail ou senha incorretos.");
         }
@@ -41,6 +46,9 @@ async function realizarLogin(evento) {
         window.location.assign("/home");
     } catch (erro) {
         window.OrbyMascot.error();
-        mostrarMensagem(erro.message, false);
+        const mensagem = erro instanceof TypeError
+            ? mensagemServidorIndisponivel
+            : erro.message;
+        mostrarMensagem(mensagem, false);
     }
 }

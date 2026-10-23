@@ -6,6 +6,8 @@ $(document).on('click', '#parar-de-seguir', function () {
     alternarSeguir(this, 'parar-de-seguir', 'Erro ao parar de seguir o usuario');
 });
 
+$('#editar-usuario').on('submit', editar);
+
 function alternarSeguir(botao, acao, mensagemErro) {
     const usuarioId = $(botao).data('usuario');
     $(botao).prop('disabled', true);
@@ -29,5 +31,28 @@ function atualizarPerfil() {
         $('#modal-seguidores .modal-body').html(novo.find('#modal-seguidores .modal-body').html());
     }).fail(function() {
         window.location.reload();
+    });
+}
+
+// edita o perfil do usuário
+function editar(evento) {
+    evento.preventDefault();
+
+    $.ajax({
+        url: "/editar-usuario",
+        method: "PUT",
+        data: {
+            nome: $('#nome').val(),
+            email: $('#email').val(),
+            nick: $('#nick').val(),
+        }
+    }).done(function() {
+        Swal.fire("Sucesso", "Perfil atualizado com sucesso", "success")
+            .then(function() {
+                window.location.assign("/perfil");
+            });
+    }).fail(function(resposta) {
+        const erro = resposta.responseJSON && resposta.responseJSON.erro;
+        Swal.fire("Ops...", erro || "Erro ao atualizar o perfil", "error");
     });
 }

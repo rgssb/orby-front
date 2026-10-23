@@ -233,6 +233,5 @@ func CarregarPerfilDeEdicaoDeUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.ExecutarTemplate(w, "editar-usuario.html", usuario {
-
+	utils.ExecutarTemplate(w, "editar-usuario.html", usuario)
 }
