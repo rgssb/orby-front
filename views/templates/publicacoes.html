@@ -40,6 +40,7 @@
 </a>
 <h2 class="display-4">{{.Titulo}}</h2>
 <p class="lead">{{.Conteudo}}</p>
+{{if .TemImagem}}<a class="post-image-link" href="/publicacoes/{{.ID}}/imagem" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem da publicação {{.Titulo}}" loading="lazy"></a>{{end}}
 <hr class="my-4">
 {{end}}
 
@@ -78,7 +79,26 @@
 {{end}}
 {{if .ProximaPagina}}
 <div class="feed-more">
-    <button type="button" class="btn btn-outline-secondary" id="carregar-mais" data-pagina="{{.ProximaPagina}}"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carregar mais publicações</button>
+    <button type="button" class="btn btn-outline-secondary" id="carregar-mais" data-pagina="{{.ProximaPagina}}" data-url="{{.ProximaURL}}"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carregar mais publicações</button>
 </div>
 {{end}}
+{{end}}
+
+{{define "campo-imagem"}}
+<div class="form-group image-field">
+    <span class="image-field-title"><i class="fa-solid fa-image" aria-hidden="true"></i> Imagem <small class="text-muted">(opcional, até 4 MB)</small></span>
+    <input type="file" class="image-input" id="imagem-publicacao" accept="image/jpeg,image/png,image/webp,image/gif">
+    <label class="image-add-button" for="imagem-publicacao"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> <span id="imagem-nome">Adicionar um arquivo</span></label>
+    <div class="image-preview" id="imagem-previa" hidden>
+        <img class="post-image" src="" alt="Pré-visualização da imagem">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="limpar-imagem">Remover</button>
+    </div>
+</div>
+{{end}}
+
+{{define "abas-busca"}}
+<nav class="search-tabs" aria-label="Tipo de busca">
+    <a href="/buscar-usuarios" class="search-tab{{if eq . "usuarios"}} is-active{{end}}"{{if eq . "usuarios"}} aria-current="page"{{end}}><i class="fa-solid fa-user" aria-hidden="true"></i> Usuários</a>
+    <a href="/buscar-publicacoes" class="search-tab{{if eq . "publicacoes"}} is-active{{end}}"{{if eq . "publicacoes"}} aria-current="page"{{end}}><i class="fa-solid fa-newspaper" aria-hidden="true"></i> Publicações</a>
+</nav>
 {{end}}

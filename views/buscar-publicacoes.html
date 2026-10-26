@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - Buscar publicações</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=22">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=24">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+
+<body>
+    {{template "cabecalho"}}
+
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page">
+        <section class="users-column" aria-labelledby="users-title">
+            <header class="feed-header">
+                <h1 id="users-title">Publicações encontradas</h1>
+                {{template "abas-busca" "publicacoes"}}
+            </header>
+            <form class="search-posts-form" action="/buscar-publicacoes" method="get" role="search">
+                <label class="sr-only" for="busca-publicacoes">Buscar publicações</label>
+                <input type="search" class="form-control" id="busca-publicacoes" name="q" value="{{.Busca}}" maxlength="100" placeholder="Busque por texto ou #hashtag" required>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Buscar</button>
+            </form>
+            {{if .Aviso}}
+            <div class="users-empty">
+                <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-circle-info"></i></span>
+                <h2>Busca inválida</h2>
+                <p>{{.Aviso}}</p>
+            </div>
+            {{else if .Publicacoes}}
+            <div id="feed-lista">{{template "feed-itens" .}}</div>
+            {{else if .Busca}}
+            <div class="users-empty">
+                <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <h2>Nenhuma publicação encontrada</h2>
+                <p>Tente outro termo ou outra hashtag.</p>
+            </div>
+            {{else}}
+            <div class="users-empty">
+                <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-hashtag"></i></span>
+                <h2>Busque publicações</h2>
+                <p>Digite um texto ou uma #hashtag para começar.</p>
+            </div>
+            {{end}}
+        </section>
+    </main>
+
+    {{template "rodape"}}
+    {{template "scripts" .}}
+</body>
+
+</html>

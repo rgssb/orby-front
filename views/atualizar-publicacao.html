@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -37,6 +37,14 @@
                     <label for="conteudo">Conteúdo</label>
                     <textarea class="form-control" id="conteudo" name="conteudo" placeholder="Digite o conteúdo da publicação">{{.Conteudo}}</textarea>
                 </div>
+                {{if .TemImagem}}
+                <div class="form-group image-current">
+                    <span class="d-block mb-1">Imagem atual</span>
+                    <img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem atual da publicação">
+                    <label class="image-remove"><input type="checkbox" id="remover-imagem-atual"> Remover imagem atual</label>
+                </div>
+                {{end}}
+                {{template "campo-imagem"}}
                 <div class="composer-actions">
                     <button id="atualizar" data-publicacao-id="{{.ID}}" type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Atualizar</button>
                 </div>
@@ -48,7 +56,6 @@
         
     {{template "rodape"}}
     {{template "scripts"}}
-    <script src="/assets/js/publicacoes.js?v=11"></script>
 
 </body>
 

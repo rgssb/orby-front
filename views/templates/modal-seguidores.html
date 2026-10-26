@@ -3,14 +3,14 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Seguidores</h2>
+                <h2>Seguidores <span class="modal-count">{{len .Seguidores}}</span></h2>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 {{range .Seguidores}}
-                    <a class="modal-user" href="/usuarios/{{.ID}}"><span class="mini-avatar">{{if .FotoVersao}}<img src="/usuarios/{{.ID}}/foto?v={{.FotoVersao}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-user" aria-hidden="true"></i>{{end}}</span> {{.Nick}}</a>
+                    <a class="modal-user" href="/usuarios/{{.ID}}"><span class="mini-avatar">{{if .FotoVersao}}<img src="/usuarios/{{.ID}}/foto?v={{.FotoVersao}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-user" aria-hidden="true"></i>{{end}}</span><span class="modal-user-info"><strong>{{.Nome}}</strong><small>@{{.Nick}}</small></span><i class="fa-solid fa-chevron-right modal-user-go" aria-hidden="true"></i></a>
                 {{else}}
-                    <p>Ainda não há seguidores...</p>
+                    <p class="modal-empty"><i class="fa-solid fa-user-group" aria-hidden="true"></i>Ainda não há seguidores...</p>
                 {{end}}
             </div>
         </div>

@@ -6,6 +6,35 @@ $(document).on('click', '#parar-de-seguir', function () {
     alternarSeguir(this, 'parar-de-seguir', 'Erro ao parar de seguir o usuario');
 });
 
+$(document).on('click', '#bloquear', function () {
+    const botao = this;
+    const usuarioId = $(botao).data('usuario');
+    Swal.fire({
+        title: 'Bloquear ' + $(botao).data('nome') + '?',
+        text: 'Vocês deixam de se seguir e nenhum dos dois poderá seguir ou conversar com o outro. A pessoa só poderá enviar um pedido de desculpas.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Bloquear',
+        cancelButtonText: 'Cancelar'
+    }).then(function (r) {
+        if (r.isConfirmed) mudarBloqueio(botao, usuarioId, 'bloquear', 'Erro ao bloquear o usuário');
+    });
+});
+
+$(document).on('click', '#desbloquear', function () {
+    mudarBloqueio(this, $(this).data('usuario'), 'desbloquear', 'Erro ao desbloquear o usuário');
+});
+
+function mudarBloqueio(botao, usuarioId, acao, mensagemErro) {
+    $(botao).prop('disabled', true);
+    $.ajax({ url: `/usuarios/${usuarioId}/${acao}`, method: 'POST' }).done(function () {
+        atualizarPerfil();
+    }).fail(function () {
+        Swal.fire('Ops...', mensagemErro, 'error');
+        $(botao).prop('disabled', false);
+    });
+}
+
 $('#editar-usuario').on('submit', editar);
 
 $('#atualizar-senha').on('submit', atualizarSenha);
@@ -35,6 +64,7 @@ function atualizarPerfil() {
     $.get(window.location.href).done(function(html) {
         const novo = $('<div>').append($.parseHTML(html));
         $('.profile-card').replaceWith(novo.find('.profile-card'));
+        $('#modal-seguidores .modal-count').text(novo.find('#modal-seguidores .modal-count').text());
         $('#modal-seguidores .modal-body').html(novo.find('#modal-seguidores .modal-body').html());
     }).fail(function() {
         window.location.reload();
@@ -103,7 +133,7 @@ function atualizarSenha(evento) {
     atualizar();
 })();
 
-// Foto de perfil reduz a imagem (máx. 512px, JPEG) antes de enviar
+// Foto de perfil: a pessoa ajusta o recorte (arrasta e dá zoom), vê o resultado e só então envia (512px, JPEG)
 (function () {
     const escolher = document.getElementById('foto-escolher');
     if (!escolher) return;
@@ -126,24 +156,6 @@ function atualizarSenha(evento) {
         avatar.appendChild(img);
     }
 
-    function reduzir(file) {
-        return new Promise(function (resolve, reject) {
-            const url = URL.createObjectURL(file);
-            const img = new Image();
-            img.onload = function () {
-                URL.revokeObjectURL(url);
-                const lado = Math.min(img.width, img.height);
-                const tamanho = Math.min(512, lado);
-                const canvas = document.createElement('canvas');
-                canvas.width = canvas.height = tamanho;
-                canvas.getContext('2d').drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, tamanho, tamanho);
-                canvas.toBlob(function (blob) { blob ? resolve(blob) : reject(); }, 'image/jpeg', 0.85);
-            };
-            img.onerror = function () { URL.revokeObjectURL(url); reject(); };
-            img.src = url;
-        });
-    }
-
     escolher.addEventListener('click', function () { arquivo.click(); });
 
     arquivo.addEventListener('change', function () {
@@ -152,7 +164,7 @@ function atualizarSenha(evento) {
         if (!file) return;
 
         escolher.disabled = true;
-        reduzir(file).then(function (blob) {
+        window.OrbyRecorte.abrir(file, { proporcao: 1, saidaLargura: 512, titulo: 'Ajustar foto de perfil', redondo: true }).then(function (blob) {
             return fetch('/perfil/foto', { method: 'POST', headers: { 'Content-Type': 'image/jpeg', 'X-Requested-With': 'XMLHttpRequest' }, body: blob, credentials: 'same-origin' })
                 .then(function (resposta) {
                     if (!resposta.ok) throw resposta;
@@ -161,7 +173,7 @@ function atualizarSenha(evento) {
                     Swal.fire({ icon: 'success', title: 'Foto atualizada!', timer: 1600, showConfirmButton: false });
                 });
         }).catch(function (erro) {
-            if (erro && erro.status === 401) return;
+            if (erro === null || (erro && erro.status === 401)) return;
             Swal.fire('Ops...', 'Não foi possível enviar a foto. Tente outra imagem.', 'error');
         }).finally(function () { escolher.disabled = false; });
     });
@@ -175,6 +187,108 @@ function atualizarSenha(evento) {
             Swal.fire('Ops...', 'Não foi possível remover a foto.', 'error');
         });
     });
+})();
+
+// Banner: tema pronto ou imagem própria recortada; nada é salvo até clicar em "Salvar banner"
+(function () {
+    const previa = document.getElementById('banner-previa');
+    if (!previa) return;
+
+    const arquivo = document.getElementById('banner-arquivo');
+    const botaoSalvar = document.getElementById('banner-salvar');
+    const botaoCancelar = document.getElementById('banner-cancelar');
+    const botaoEnviar = document.getElementById('banner-enviar');
+    const temas = Array.prototype.slice.call(document.querySelectorAll('.banner-tema'));
+    const TEMAS = temas.map(function (t) { return t.dataset.tema; });
+
+    const inicial = { tipo: previa.dataset.imagem ? 'imagem' : (previa.dataset.tema ? 'tema' : 'padrao'), tema: previa.dataset.tema || '', imagem: previa.dataset.imagem || '' };
+    let atual = { tipo: inicial.tipo, tema: inicial.tema, imagem: inicial.imagem, blob: null };
+    let urlTemporaria = null;
+
+    function mostrar() {
+        TEMAS.forEach(function (t) { previa.classList.remove('banner-' + t); });
+        previa.classList.toggle('has-image', atual.tipo === 'imagem');
+        previa.textContent = '';
+        if (atual.tipo === 'tema') previa.classList.add('banner-' + atual.tema);
+        if (atual.tipo === 'imagem') {
+            const img = document.createElement('img');
+            img.className = 'profile-banner-img';
+            img.alt = '';
+            img.src = atual.imagem;
+            previa.appendChild(img);
+        }
+        temas.forEach(function (botao) {
+            const ativo = atual.tipo === 'tema' && atual.tema === botao.dataset.tema;
+            botao.classList.toggle('is-active', ativo);
+            botao.setAttribute('aria-pressed', String(ativo));
+        });
+        document.getElementById('banner-padrao').classList.toggle('is-active', atual.tipo === 'padrao');
+        const mudou = atual.tipo !== inicial.tipo || atual.tema !== inicial.tema || !!atual.blob;
+        botaoSalvar.hidden = botaoCancelar.hidden = !mudou;
+    }
+
+    temas.forEach(function (botao) {
+        botao.addEventListener('click', function () {
+            atual = { tipo: 'tema', tema: botao.dataset.tema, imagem: '', blob: null };
+            mostrar();
+        });
+    });
+
+    document.getElementById('banner-padrao').addEventListener('click', function () {
+        atual = { tipo: 'padrao', tema: '', imagem: '', blob: null };
+        mostrar();
+    });
+
+    botaoEnviar.addEventListener('click', function () { arquivo.click(); });
+
+    arquivo.addEventListener('change', function () {
+        const file = arquivo.files[0];
+        arquivo.value = '';
+        if (!file) return;
+        window.OrbyRecorte.abrir(file, { proporcao: 3, saidaLargura: 1200, titulo: 'Ajustar banner' }).then(function (blob) {
+            if (urlTemporaria) URL.revokeObjectURL(urlTemporaria);
+            urlTemporaria = URL.createObjectURL(blob);
+            atual = { tipo: 'imagem', tema: '', imagem: urlTemporaria, blob: blob };
+            mostrar();
+        }).catch(function (erro) {
+            if (erro !== null) Swal.fire('Ops...', 'Não foi possível abrir essa imagem. Tente outra.', 'error');
+        });
+    });
+
+    botaoCancelar.addEventListener('click', function () {
+        atual = { tipo: inicial.tipo, tema: inicial.tema, imagem: inicial.imagem, blob: null };
+        mostrar();
+    });
+
+    function requisicao(url, metodo, corpo, tipo) {
+        const cabecalhos = { 'X-Requested-With': 'XMLHttpRequest' };
+        if (tipo) cabecalhos['Content-Type'] = tipo;
+        return fetch(url, { method: metodo, headers: cabecalhos, body: corpo, credentials: 'same-origin' }).then(function (resposta) {
+            if (!resposta.ok) throw resposta;
+        });
+    }
+
+    botaoSalvar.addEventListener('click', function () {
+        botaoSalvar.disabled = true;
+        let envio;
+        if (atual.tipo === 'imagem' && atual.blob) envio = requisicao('/perfil/banner', 'POST', atual.blob, 'image/jpeg');
+        else if (atual.tipo === 'tema') envio = requisicao('/perfil/banner/tema', 'POST', JSON.stringify({ preset: atual.tema }), 'application/json');
+        else envio = requisicao('/perfil/banner', 'DELETE');
+
+        envio.then(function () {
+            inicial.tipo = atual.tipo;
+            inicial.tema = atual.tema;
+            inicial.imagem = atual.imagem;
+            atual.blob = null;
+            mostrar();
+            Swal.fire({ icon: 'success', title: 'Banner atualizado!', timer: 1600, showConfirmButton: false });
+        }).catch(function (erro) {
+            if (erro && erro.status === 401) return;
+            Swal.fire('Ops...', 'Não foi possível salvar o banner.', 'error');
+        }).finally(function () { botaoSalvar.disabled = false; });
+    });
+
+    mostrar();
 })();
 
 function deletarUsuario() {

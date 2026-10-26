@@ -68,3 +68,20 @@
     datasRelativas();
     window.OrbyUI = { datasRelativas: datasRelativas };
 })();
+
+// Destaca no menu a página em que a pessoa está
+(function () {
+    var caminho = window.location.pathname.replace(/\/+$/, '') || '/';
+    var itens = document.querySelectorAll('.navbar-nav [data-nav]');
+    var alvo = '';
+    if (caminho === '/home') alvo = '/home';
+    else if (caminho === '/perfil' || caminho.indexOf('/perfil/') === 0) alvo = '/perfil';
+    else if (caminho === '/mensagens') alvo = '/mensagens';
+    Array.prototype.forEach.call(itens, function (item) {
+        var ativo = item.getAttribute('data-nav') === alvo;
+        item.classList.toggle('active', ativo);
+        var link = item.querySelector('.nav-link');
+        if (!link) return;
+        if (ativo) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
+    });
+})();

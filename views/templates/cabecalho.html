@@ -8,10 +8,10 @@
 
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/home"><i class="fa-solid fa-house" aria-hidden="true"></i> Página Principal <span class="sr-only">(página atual)</span></a>
+                <li class="nav-item" data-nav="/home">
+                    <a class="nav-link" href="/home"><i class="fa-solid fa-house" aria-hidden="true"></i> Página Principal</a>
                 </li>
-                <li class="nav-item navbar-profile-item">
+                <li class="nav-item navbar-profile-item" data-nav="/perfil">
                     <a class="nav-link" href="/perfil"><i class="fa-solid fa-user" aria-hidden="true"></i> Meu Perfil</a>
                     <form class="form-inline navbar-search" action="/buscar-usuarios" method="get" role="search">
                         <button class="navbar-search-toggle" type="button" aria-label="Abrir pesquisa" aria-expanded="false" aria-controls="navbar-search-input">
@@ -22,6 +22,9 @@
                         </button>
                         <input class="form-control" id="navbar-search-input" type="search" name="usuario" placeholder="O que busca?" aria-label="Buscar usuários" aria-hidden="true" tabindex="-1" disabled required>
                     </form>
+                </li>
+                <li class="nav-item" data-nav="/mensagens">
+                    <a class="nav-link" id="msg-link" href="/mensagens"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Mensagens <span class="nav-badge" id="msg-badge" hidden></span></a>
                 </li>
             </ul>
             <div class="notif-wrap">

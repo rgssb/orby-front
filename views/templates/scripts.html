@@ -3,9 +3,10 @@
     <script src="/assets/js/bootstrap.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/assets/js/orby-mascot.js?v=3"></script>
-    <script src="/assets/js/ui.js?v=4"></script>
-    <script src="/assets/js/publicacoes.js?v=11"></script>
-    <script src="/assets/js/notificacoes.js?v=3"></script>
+    <script src="/assets/js/ui.js?v=5"></script>
+    <script src="/assets/js/publicacoes.js?v=14"></script>
+    <script src="/assets/js/notificacoes.js?v=4"></script>
+    <script src="/assets/js/mensagens.js?v=3"></script>
     <script src="/assets/js/mencoes.js?v=1"></script>
     <script src="https://kit.fontawesome.com/db88157b12.js" crossorigin="anonymous"></script>
     <script>
@@ -33,6 +34,25 @@
                 requestAnimationFrame(() => searchInput.focus());
             }
         }
+
+        // As abas de busca levam o termo já digitado de uma página para a outra
+        const termoAtual = new URLSearchParams(window.location.search);
+        const termoBusca = termoAtual.get("usuario") || termoAtual.get("q") || "";
+        if (termoBusca) {
+            document.querySelectorAll(".search-tab").forEach((aba) => {
+                const publicacoes = aba.getAttribute("href").indexOf("publicacoes") !== -1;
+                aba.href = (publicacoes ? "/buscar-publicacoes?q=" : "/buscar-usuarios?usuario=") + encodeURIComponent(termoBusca);
+            });
+        }
+
+        // Começando com #, a busca é de publicações por hashtag
+        searchForm.addEventListener("submit", (event) => {
+            const termo = searchInput.value.trim();
+            if (termo.startsWith("#")) {
+                event.preventDefault();
+                window.location.assign("/buscar-publicacoes?q=" + encodeURIComponent(termo));
+            }
+        });
 
         searchToggle.addEventListener("click", () => {
             setSearchOpen(!searchForm.classList.contains("is-open"));

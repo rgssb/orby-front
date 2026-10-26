@@ -24,8 +24,28 @@ var rotasExtras = []Rota{
 	{URI: "/mencoes/{nick}", Metodo: http.MethodGet, Funcao: controllers.IrParaMencao, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDePublicacao, RequerAutenticacao: true},
 
+	{URI: "/mensagens", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeMensagens, RequerAutenticacao: true},
+	{URI: "/conversas", Metodo: http.MethodGet, Funcao: controllers.ListarConversas, RequerAutenticacao: true},
+	{URI: "/conversas/nao-lidas", Metodo: http.MethodGet, Funcao: controllers.ContarMensagensNaoLidas, RequerAutenticacao: true},
+	{URI: "/conversas/{usuarioId}/mensagens", Metodo: http.MethodGet, Funcao: controllers.BuscarMensagens, RequerAutenticacao: true},
+	{URI: "/conversas/{usuarioId}/mensagens", Metodo: http.MethodPost, Funcao: controllers.EnviarMensagem, RequerAutenticacao: true},
+	{URI: "/conversas/{usuarioId}/aceitar", Metodo: http.MethodPost, Funcao: controllers.AceitarConversa, RequerAutenticacao: true},
+	{URI: "/conversas/{usuarioId}", Metodo: http.MethodDelete, Funcao: controllers.ExcluirConversa, RequerAutenticacao: true},
+	{URI: "/usuarios/{usuarioId}/bloquear", Metodo: http.MethodPost, Funcao: controllers.BloquearUsuario, RequerAutenticacao: true},
+	{URI: "/usuarios/{usuarioId}/desbloquear", Metodo: http.MethodPost, Funcao: controllers.DesbloquearUsuario, RequerAutenticacao: true},
+	{URI: "/mensagens/{mensagemId}", Metodo: http.MethodDelete, Funcao: controllers.ExcluirMensagem, RequerAutenticacao: true},
+
+	{URI: "/buscar-publicacoes", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeBuscaDePublicacoes, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodGet, Funcao: controllers.BuscarImagemDaPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodPost, Funcao: controllers.SalvarImagemDaPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodDelete, Funcao: controllers.RemoverImagemDaPublicacao, RequerAutenticacao: true},
+
 	{URI: "/usuarios/{usuarioId}/foto", Metodo: http.MethodGet, Funcao: controllers.BuscarFotoDoUsuario, RequerAutenticacao: true},
 	{URI: "/perfil/foto", Metodo: http.MethodPost, Funcao: controllers.SalvarFotoDoUsuario, RequerAutenticacao: true},
+	{URI: "/usuarios/{usuarioId}/banner", Metodo: http.MethodGet, Funcao: controllers.BuscarBannerDoUsuario, RequerAutenticacao: true},
+	{URI: "/perfil/banner", Metodo: http.MethodPost, Funcao: controllers.SalvarBannerDoUsuario, RequerAutenticacao: true},
+	{URI: "/perfil/banner/tema", Metodo: http.MethodPost, Funcao: controllers.DefinirTemaDoBanner, RequerAutenticacao: true},
+	{URI: "/perfil/banner", Metodo: http.MethodDelete, Funcao: controllers.RemoverBannerDoUsuario, RequerAutenticacao: true},
 	{URI: "/perfil/foto", Metodo: http.MethodDelete, Funcao: controllers.RemoverFotoDoUsuario, RequerAutenticacao: true},
 
 	{URI: "/esqueci-senha", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaEsqueciSenha, RequerAutenticacao: false},

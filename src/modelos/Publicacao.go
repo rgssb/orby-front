@@ -15,4 +15,5 @@ type Publicacao struct {
 	CurtidoPorUsuario bool      `json:"curtidoPorUsuario"`
 	CriadaEm          time.Time `json:"criadaEm,omitempty"`
 	Editado           bool      `json:"editado"`
+	TemImagem         bool      `json:"temImagem"`
 }

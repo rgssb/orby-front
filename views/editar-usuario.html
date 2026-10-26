@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=22">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=24">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
@@ -32,13 +32,30 @@
                         <p>Atualize suas informações de perfil.</p>
                     </div>
                 </header>
+                <section class="banner-editor" aria-labelledby="banner-titulo">
+                    <h2 id="banner-titulo" class="banner-editor-title">Banner do perfil</h2>
+                    <div class="profile-banner banner-editor-preview{{if .BannerVersao}} has-image{{else if .BannerPreset}} banner-{{.BannerPreset}}{{end}}" id="banner-previa" data-tema="{{.BannerPreset}}"{{if .BannerVersao}} data-imagem="/usuarios/{{.ID}}/banner?v={{.BannerVersao}}"{{end}} aria-hidden="true">{{if .BannerVersao}}<img class="profile-banner-img" src="/usuarios/{{.ID}}/banner?v={{.BannerVersao}}" alt="">{{end}}</div>
+                    <div class="banner-options">
+                        <button type="button" class="banner-tema banner-aurora" data-tema="aurora" aria-label="Tema Aurora" title="Aurora" aria-pressed="false"></button>
+                        <button type="button" class="banner-tema banner-por-do-sol" data-tema="por-do-sol" aria-label="Tema Pôr do sol" title="Pôr do sol" aria-pressed="false"></button>
+                        <button type="button" class="banner-tema banner-oceano" data-tema="oceano" aria-label="Tema Oceano" title="Oceano" aria-pressed="false"></button>
+                        <button type="button" class="banner-tema banner-floresta" data-tema="floresta" aria-label="Tema Floresta" title="Floresta" aria-pressed="false"></button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="banner-padrao">Padrão</button>
+                        <input type="file" id="banner-arquivo" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="banner-enviar"><i class="fa-solid fa-image" aria-hidden="true"></i> Usar minha imagem</button>
+                    </div>
+                    <div class="banner-save">
+                        <button type="button" class="btn btn-primary btn-sm" id="banner-salvar" hidden><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Salvar banner</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="banner-cancelar" hidden>Cancelar</button>
+                    </div>
+                </section>
                 <div class="photo-editor">
                     <span class="user-avatar photo-editor-avatar" id="foto-atual" aria-hidden="true">{{if .FotoVersao}}<img src="/usuarios/{{.ID}}/foto?v={{.FotoVersao}}" alt="">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
                     <div class="photo-editor-actions">
                         <input type="file" id="foto-arquivo" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
                         <button type="button" class="btn btn-outline-secondary" id="foto-escolher"><i class="fa-solid fa-camera" aria-hidden="true"></i> Trocar foto</button>
                         <button type="button" class="btn btn-outline-secondary" id="foto-remover"{{if not .FotoVersao}} hidden{{end}}><i class="fa-solid fa-trash" aria-hidden="true"></i> Remover</button>
-                        <small>JPG, PNG, WEBP ou GIF. A foto é ajustada automaticamente.</small>
+                        <small>JPG, PNG, WEBP ou GIF. Você ajusta o recorte antes de salvar.</small>
                     </div>
                 </div>
                 <form class="edit-profile-form" id="editar-usuario">
@@ -69,6 +86,7 @@
 
     {{template "rodape"}}
     {{template "scripts"}}
-    <script src="/assets/js/usuario.js?v=5"></script>
+    <script src="/assets/js/recorte.js?v=1"></script>
+    <script src="/assets/js/usuario.js?v=10"></script>
 </body>
 </html>

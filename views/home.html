@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
@@ -46,6 +46,7 @@
                             <h3 id="previa-titulo"></h3>
                             <p id="previa-conteudo"></p>
                         </div>
+                        {{template "campo-imagem"}}
                         <div class="composer-actions">
                             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Publicar</button>
                         </div>
@@ -68,6 +69,8 @@
             </section>
         </div>
     </main>
+
+    <aside class="msg-dock" id="msg-dock" aria-label="Mensagens diretas"></aside>
 
 {{template "rodape"}}
 

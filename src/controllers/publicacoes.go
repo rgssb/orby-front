@@ -55,7 +55,16 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respostas.JSON(w, response.StatusCode, nil)
+	// Devolve o id da publicação criada para o navegador poder anexar a imagem
+	var criada struct {
+		ID uint64 `json:"id"`
+	}
+	if erro = json.NewDecoder(response.Body).Decode(&criada); erro != nil {
+		respostas.JSON(w, response.StatusCode, nil)
+		return
+	}
+
+	respostas.JSON(w, response.StatusCode, criada)
 }
 
 // CurtirPublicacao chama a API para curtir uma publicação.

@@ -15,7 +15,18 @@ import (
 
 // BuscarNotificacoes repassa a lista de notificações do usuário logado
 func BuscarNotificacoes(w http.ResponseWriter, r *http.Request) {
-	repassarNotificacoes(w, r, http.MethodGet, "/notificacoes")
+	parametros := neturl.Values{}
+	for _, nome := range []string{"limite", "deslocamento"} {
+		if valor, erro := strconv.ParseUint(r.URL.Query().Get(nome), 10, 64); erro == nil {
+			parametros.Set(nome, strconv.FormatUint(valor, 10))
+		}
+	}
+
+	caminho := "/notificacoes"
+	if len(parametros) > 0 {
+		caminho += "?" + parametros.Encode()
+	}
+	repassarNotificacoes(w, r, http.MethodGet, caminho)
 }
 
 // ContarNotificacoesNaoLidas repassa o total de notificações ainda não vistas

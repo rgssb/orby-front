@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=22">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=24">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -27,7 +27,7 @@
     <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page profile-page">
         <section class="users-column" aria-labelledby="profile-title">
             <article class="jumbotron profile-card">
-                <div class="profile-banner" aria-hidden="true"></div>
+                <div class="profile-banner{{if .Usuario.BannerVersao}} has-image{{else if .Usuario.BannerPreset}} banner-{{.Usuario.BannerPreset}}{{end}}" aria-hidden="true">{{if .Usuario.BannerVersao}}<img class="profile-banner-img" src="/usuarios/{{.Usuario.ID}}/banner?v={{.Usuario.BannerVersao}}" alt="">{{end}}</div>
                 <div class="profile-body">
                     <span class="user-avatar profile-avatar" aria-hidden="true">{{if .Usuario.FotoVersao}}<img src="/usuarios/{{.Usuario.ID}}/foto?v={{.Usuario.FotoVersao}}" alt="">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
                     <div class="profile-heading">

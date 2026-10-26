@@ -54,7 +54,14 @@ $(document).on('click', '.deletar-publicacao', deletarPublicacao);
 
 function criarpublicacao(evento) {
     evento.preventDefault();
-    
+
+    const arquivo = ($('#imagem-publicacao')[0] || {}).files && $('#imagem-publicacao')[0].files[0];
+    if (arquivo && !validarImagem(arquivo)) {
+        return;
+    }
+
+    const botao = $('#nova-publicacao button[type="submit"]').prop('disabled', true);
+
     $.ajax({
         url: "/publicacoes",
         method: "POST",
@@ -62,15 +69,81 @@ function criarpublicacao(evento) {
             titulo: $('#titulo-publicacao').val(),
             conteudo: $('#conteudo-publicacao').val()
         }
-    }).done(function() {
-        avisoRapido('Publicação criada com sucesso!').then(function() {
-            window.location = "/home";
+    }).done(function(criada) {
+        const concluir = function() {
+            avisoRapido('Publicação criada com sucesso!').then(function() {
+                window.location = "/home";
+            });
+        };
+
+        if (!arquivo || !criada || !criada.id) {
+            concluir();
+            return;
+        }
+
+        enviarImagem(criada.id, arquivo).done(concluir).fail(function() {
+            // A publicação já existe; só a imagem falhou
+            alertaErro('A publicação foi criada, mas a imagem não pôde ser enviada. Você pode adicioná-la ao editar.').then(function() {
+                window.location = "/home";
+            });
         });
     }).fail(function() {
+        botao.prop('disabled', false);
         alertaErro('Não foi possível criar a publicação.');
     });
 
 }
+
+const TIPOS_DE_IMAGEM = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const LIMITE_DA_IMAGEM = 4 * 1024 * 1024;
+
+function validarImagem(arquivo) {
+    if (TIPOS_DE_IMAGEM.indexOf(arquivo.type) === -1) {
+        alertaErro('Use uma imagem JPG, PNG, WEBP ou GIF.');
+        return false;
+    }
+    if (arquivo.size > LIMITE_DA_IMAGEM) {
+        alertaErro('A imagem deve ter no máximo 4 MB.');
+        return false;
+    }
+    return true;
+}
+
+function enviarImagem(publicacaoId, arquivo) {
+    return $.ajax({
+        url: '/publicacoes/' + publicacaoId + '/imagem',
+        method: 'POST',
+        data: arquivo,
+        processData: false,
+        contentType: arquivo.type
+    });
+}
+
+// Pré-visualização da imagem escolhida (composer e edição)
+$(document).on('change', '#imagem-publicacao', function() {
+    const arquivo = this.files && this.files[0];
+    const previa = $('#imagem-previa');
+    $('#imagem-nome').text(arquivo ? arquivo.name : 'Adicionar um arquivo');
+    if (!arquivo) {
+        previa.prop('hidden', true);
+        return;
+    }
+    if (!validarImagem(arquivo)) {
+        this.value = '';
+        $('#imagem-nome').text('Adicionar um arquivo');
+        previa.prop('hidden', true);
+        return;
+    }
+    previa.find('img').attr('src', URL.createObjectURL(arquivo));
+    previa.prop('hidden', false);
+    $('#remover-imagem-atual').prop('checked', false);
+});
+
+$(document).on('click', '#limpar-imagem', function() {
+    $('#imagem-publicacao').val('');
+    $('#imagem-nome').text('Adicionar um arquivo');
+    $('#imagem-previa').prop('hidden', true);
+});
 
 function curtirPublicacao(evento) {
     evento.preventDefault();
@@ -137,6 +210,12 @@ function atualizarPublicacao() {
     botaoAtualizar.prop('disabled', true);
 
     const publicacaoId = botaoAtualizar.data('publicacao-id');
+    const arquivo = $('#imagem-publicacao')[0].files[0];
+    if (arquivo && !validarImagem(arquivo)) {
+        botaoAtualizar.prop('disabled', false);
+        return;
+    }
+    const removerImagem = $('#remover-imagem-atual').prop('checked');
 
     $.ajax({
         url: `/publicacoes/${publicacaoId}`,
@@ -144,6 +223,13 @@ function atualizarPublicacao() {
         data: {
             titulo: $('#titulo').val(),
             conteudo: $('#conteudo').val()
+        }
+    }).then(function() {
+        if (arquivo) {
+            return enviarImagem(publicacaoId, arquivo);
+        }
+        if (removerImagem) {
+            return $.ajax({ url: `/publicacoes/${publicacaoId}/imagem`, method: 'DELETE' });
         }
     }).done(function(){
         swalOrby.fire({
@@ -248,7 +334,7 @@ $(document).on('click', '#carregar-mais', function() {
     const botao = $(this);
     botao.prop('disabled', true).attr('aria-busy', 'true');
 
-    $.get('/feed', { pagina: botao.data('pagina') }).done(function(html) {
+    $.get(botao.data('url') || '/feed?pagina=' + botao.data('pagina')).done(function(html) {
         const novo = $('<div>').append($.parseHTML(html));
         const container = botao.closest('.feed-more');
         container.replaceWith(novo.children());
@@ -260,21 +346,28 @@ $(document).on('click', '#carregar-mais', function() {
     });
 });
 
-// Menções: @nick vira link para a busca do usuário (o texto continua sendo inserido como texto, nunca como HTML)
+// Menções e hashtags: @nick vira link para o perfil e #tag para a busca (o texto é sempre inserido como texto, nunca como HTML)
 function comMencoes(texto) {
     const fragmento = document.createDocumentFragment();
-    const regex = /(^|[^\w@])@([A-Za-z0-9_]{1,50})/g;
+    const regex = /(^|[^\p{L}\p{N}_@#])(?:@([A-Za-z0-9_]{1,50})|#([\p{L}\p{N}_]{1,50}))/gu;
     let ultimo = 0;
     let achado;
     while ((achado = regex.exec(texto)) !== null) {
         const inicio = achado.index + achado[1].length;
+        const nome = achado[2] || achado[3];
         fragmento.appendChild(document.createTextNode(texto.slice(ultimo, inicio)));
         const link = document.createElement('a');
-        link.className = 'mention';
-        link.href = '/mencoes/' + encodeURIComponent(achado[2]);
-        link.textContent = '@' + achado[2];
+        if (achado[2]) {
+            link.className = 'mention';
+            link.href = '/mencoes/' + encodeURIComponent(nome);
+            link.textContent = '@' + nome;
+        } else {
+            link.className = 'hashtag';
+            link.href = '/buscar-publicacoes?q=' + encodeURIComponent('#' + nome);
+            link.textContent = '#' + nome;
+        }
         fragmento.appendChild(link);
-        ultimo = inicio + achado[2].length + 1;
+        ultimo = inicio + nome.length + 1;
     }
     fragmento.appendChild(document.createTextNode(texto.slice(ultimo)));
     return fragmento;
@@ -340,21 +433,39 @@ function destacarComentarioAlvo(lista) {
     return true;
 }
 
-function carregarComentarios(artigo) {
+const COMENTARIOS_POR_VEZ = 10;
+
+function botaoVerMaisComentarios() {
+    return $('<li class="comment-more">').append(
+        $('<button type="button" class="btn btn-sm btn-outline-secondary comments-more-button">').text('Ver mais comentários')
+    );
+}
+
+// Carrega os comentários de uma publicação. "quantidade" é quantos devem ficar visíveis (os já abertos são recarregados)
+function carregarComentarios(artigo, quantidade) {
     const lista = artigo.find('.comments-list');
     lista.attr('aria-busy', 'true').html('<li class="comment-skeleton"></li><li class="comment-skeleton"></li>');
     const publicacaoId = artigo.data('publicacao-id');
+    const alvo = new URLSearchParams(window.location.search).get('comentario');
+    const limite = quantidade || (alvo ? 100 : COMENTARIOS_POR_VEZ);
 
-    return $.get(`/publicacoes/${publicacaoId}/comentarios`).done(function(dados) {
+    return $.get(`/publicacoes/${publicacaoId}/comentarios`, { limite: limite }).done(function(dados) {
         const donoDaPublicacao = Number(artigo.data('autor-id')) === dados.usuarioId;
+        const comentarios = dados.comentarios || [];
         lista.empty();
-        (dados.comentarios || []).forEach(function(c) {
+        comentarios.forEach(function(c) {
             lista.append(montarComentario(c, dados.usuarioId, donoDaPublicacao));
         });
-        if (!lista.children().length) {
-            lista.append('<li class="comment-empty"><i class="fa-regular fa-comments" aria-hidden="true"></i> Ainda não há comentários. Comece a conversa!</li>');
+        if (!comentarios.length) {
+            lista.append('<li class="comment-empty"><i class="fa-regular fa-comments" aria-hidden="true"></i> Ainda não há comentários.</li>');
         }
-        artigo.find('.comments-count').text((dados.comentarios || []).length);
+        artigo.data('comentarios-exibidos', comentarios.length);
+        artigo.data('comentarios-usuario', dados.usuarioId);
+        if (dados.temMais) {
+            lista.append(botaoVerMaisComentarios());
+        } else {
+            artigo.find('.comments-count').text(comentarios.length);
+        }
         artigo.data('destacou', destacarComentarioAlvo(lista));
     }).fail(function() {
         lista.html('<li class="comment-empty">Não foi possível carregar os comentários.</li>');
@@ -362,6 +473,44 @@ function carregarComentarios(artigo) {
         lista.removeAttr('aria-busy');
     });
 }
+
+// Recarrega mantendo a mesma quantidade de comentários visíveis (+ delta)
+function recarregarComentarios(artigo, delta) {
+    const exibidos = Number(artigo.data('comentarios-exibidos')) || 0;
+    return carregarComentarios(artigo, Math.max(COMENTARIOS_POR_VEZ, exibidos + (delta || 0)));
+}
+
+function ajustarContagemDeComentarios(artigo, delta) {
+    const contador = artigo.find('.comments-count');
+    contador.text(Math.max(0, (parseInt(contador.text(), 10) || 0) + delta));
+}
+
+$(document).on('click', '.comments-more-button', function() {
+    const botao = $(this).prop('disabled', true);
+    const artigo = botao.closest('[data-publicacao-id]');
+    const lista = artigo.find('.comments-list');
+    const exibidos = Number(artigo.data('comentarios-exibidos')) || 0;
+    const usuarioId = artigo.data('comentarios-usuario');
+    const donoDaPublicacao = Number(artigo.data('autor-id')) === usuarioId;
+
+    $.get(`/publicacoes/${artigo.data('publicacao-id')}/comentarios`, { limite: COMENTARIOS_POR_VEZ, deslocamento: exibidos }).done(function(dados) {
+        const comentarios = dados.comentarios || [];
+        const linhaDoBotao = botao.closest('.comment-more');
+        comentarios.forEach(function(c) {
+            linhaDoBotao.before(montarComentario(c, dados.usuarioId, donoDaPublicacao));
+        });
+        artigo.data('comentarios-exibidos', exibidos + comentarios.length);
+        if (dados.temMais) {
+            botao.prop('disabled', false);
+        } else {
+            linhaDoBotao.remove();
+            artigo.find('.comments-count').text(exibidos + comentarios.length);
+        }
+    }).fail(function(resposta) {
+        botao.prop('disabled', false);
+        if (resposta.status !== 401) alertaErro('Não foi possível carregar mais comentários.');
+    });
+});
 
 $(document).on('click', '.comments-toggle', function() {
     const botao = $(this);
@@ -395,7 +544,8 @@ $(document).on('submit', '.comment-form', function(evento) {
         data: { conteudo: conteudo }
     }).done(function() {
         campo.val('');
-        carregarComentarios(artigo);
+        ajustarContagemDeComentarios(artigo, 1);
+        recarregarComentarios(artigo, 1);
     }).fail(function(resposta) {
         const erro = resposta.responseJSON && resposta.responseJSON.erro;
         if (resposta.status !== 401) alertaErro(erro || 'Não foi possível comentar.');
@@ -419,7 +569,8 @@ $(document).on('click', '.comment-delete', function() {
         if (!confirmacao.isConfirmed) return;
 
         $.ajax({ url: `/comentarios/${item.data('comentario-id')}`, method: 'DELETE' }).done(function() {
-            carregarComentarios(artigo);
+            ajustarContagemDeComentarios(artigo, -1);
+            recarregarComentarios(artigo);
         }).fail(function(resposta) {
             if (resposta.status !== 401) alertaErro('Não foi possível excluir o comentário.');
         });
@@ -476,7 +627,7 @@ $(document).on('submit', '.comment-edit-form', function(evento) {
 
     formulario.find('button').prop('disabled', true);
     $.ajax({ url: `/comentarios/${item.data('comentario-id')}`, method: 'PUT', data: { conteudo: conteudo } }).done(function() {
-        carregarComentarios(artigo);
+        recarregarComentarios(artigo);
     }).fail(function(resposta) {
         formulario.find('button').prop('disabled', false);
         const erro = resposta.responseJSON && resposta.responseJSON.erro;

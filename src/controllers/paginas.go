@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	neturl "net/url"
+	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 	"webapp/src/config"
 	"webapp/src/cookies"
 	"webapp/src/modelos"
@@ -71,11 +73,21 @@ type DadosDoFeed struct {
 	Publicacoes   []modelos.Publicacao
 	UsuarioID     uint64
 	ProximaPagina int
+	ProximaURL    string
+	Busca         string
+	Aviso         string
 }
 
 // buscarFeed pede à API uma página do feed. A API é consultada com uma publicação a mais
 // para descobrir se existe uma próxima página.
 func buscarFeed(w http.ResponseWriter, r *http.Request, pagina int) (DadosDoFeed, bool) {
+	return buscarPublicacoes(w, r, pagina, "/publicacoes?", func(proxima int) string {
+		return fmt.Sprintf("/feed?pagina=%d", proxima)
+	})
+}
+
+// buscarPublicacoes consulta a API (rota e filtros em caminho, que já termina com "?" ou "&") e monta a página pedida
+func buscarPublicacoes(w http.ResponseWriter, r *http.Request, pagina int, caminho string, urlDaProxima func(int) string) (DadosDoFeed, bool) {
 	dados, erro := cookies.Ler(r)
 	if erro != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -88,7 +100,7 @@ func buscarFeed(w http.ResponseWriter, r *http.Request, pagina int) (DadosDoFeed
 		return DadosDoFeed{}, false
 	}
 
-	url := fmt.Sprintf("%s/publicacoes?limite=%d&deslocamento=%d", config.ApiURL, tamanhoDaPaginaDoFeed+1, (pagina-1)*tamanhoDaPaginaDoFeed)
+	url := fmt.Sprintf("%s%slimite=%d&deslocamento=%d", config.ApiURL, caminho, tamanhoDaPaginaDoFeed+1, (pagina-1)*tamanhoDaPaginaDoFeed)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
 		utils.ServidorIndisponivel(w)
@@ -115,10 +127,63 @@ func buscarFeed(w http.ResponseWriter, r *http.Request, pagina int) (DadosDoFeed
 	if len(publicacoes) > tamanhoDaPaginaDoFeed {
 		publicacoes = publicacoes[:tamanhoDaPaginaDoFeed]
 		feed.ProximaPagina = pagina + 1
+		feed.ProximaURL = urlDaProxima(pagina + 1)
 	}
 	feed.Publicacoes = publicacoes
 
 	return feed, true
+}
+
+var expressaoDeHashtag = regexp.MustCompile(`^#[\p{L}\p{N}_]{1,50}$`)
+
+// validarBuscaDePublicacoes devolve o aviso a mostrar quando a busca não pode ser feita
+func validarBuscaDePublicacoes(termo string) string {
+	if strings.HasPrefix(termo, "#") {
+		if !expressaoDeHashtag.MatchString(termo) {
+			return "Use apenas letras, números e _ na hashtag."
+		}
+		return ""
+	}
+
+	if tamanho := utf8.RuneCountInString(termo); tamanho < 2 || tamanho > 100 {
+		return "Digite de 2 a 100 caracteres para buscar."
+	}
+	return ""
+}
+
+// CarregarPaginaDeBuscaDePublicacoes mostra os resultados da busca de publicações (texto ou #hashtag).
+// Com pagina >= 2 devolve só os itens, para o botão "carregar mais".
+func CarregarPaginaDeBuscaDePublicacoes(w http.ResponseWriter, r *http.Request) {
+	termo := strings.TrimSpace(r.URL.Query().Get("q"))
+	pagina, _ := strconv.Atoi(r.URL.Query().Get("pagina"))
+	if pagina < 1 {
+		pagina = 1
+	}
+
+	if termo == "" {
+		utils.ExecutarTemplate(w, "buscar-publicacoes.html", DadosDoFeed{})
+		return
+	}
+
+	if aviso := validarBuscaDePublicacoes(termo); aviso != "" {
+		utils.ExecutarTemplate(w, "buscar-publicacoes.html", DadosDoFeed{Busca: termo, Aviso: aviso})
+		return
+	}
+
+	consulta := "/publicacoes/busca?q=" + neturl.QueryEscape(termo) + "&"
+	feed, ok := buscarPublicacoes(w, r, pagina, consulta, func(proxima int) string {
+		return fmt.Sprintf("/buscar-publicacoes?q=%s&pagina=%d", neturl.QueryEscape(termo), proxima)
+	})
+	if !ok {
+		return
+	}
+	feed.Busca = termo
+
+	if pagina > 1 {
+		utils.ExecutarTemplate(w, "feed-itens", feed)
+		return
+	}
+	utils.ExecutarTemplate(w, "buscar-publicacoes.html", feed)
 }
 
 // CarregarPaginaPrincipal carrega a pagina principal com as publicacoes
@@ -291,12 +356,27 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var bloqueio struct {
+		Bloqueei  bool `json:"bloqueei"`
+		Bloqueado bool `json:"bloqueado"`
+	}
+	if resposta, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, fmt.Sprintf("%s/usuarios/%d/bloqueio", config.ApiURL, usuarioID), nil); erro == nil {
+		defer resposta.Body.Close()
+		if resposta.StatusCode < http.StatusBadRequest {
+			json.NewDecoder(resposta.Body).Decode(&bloqueio)
+		}
+	}
+
 	utils.ExecutarTemplate(w, "usuario.html", struct {
 		Usuario         modelos.Usuario
 		UsuarioLogadoID uint64
+		Bloqueei        bool
+		Bloqueado       bool
 	}{
 		Usuario:         usuario,
 		UsuarioLogadoID: usuarioLogadoID,
+		Bloqueei:        bloqueio.Bloqueei,
+		Bloqueado:       bloqueio.Bloqueado,
 	})
 }
 

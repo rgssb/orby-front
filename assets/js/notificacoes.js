@@ -13,14 +13,18 @@
         curtida_publicacao: 'curtiu sua publicação',
         comentario: 'comentou na sua publicação',
         curtida_comentario: 'curtiu seu comentário',
-        mencao: 'mencionou você'
+        mencao: 'mencionou você',
+        seguidor: 'começou a seguir você'
     };
     const ICONES = {
         curtida_publicacao: 'fa-heart',
         comentario: 'fa-comment',
         curtida_comentario: 'fa-heart',
-        mencao: 'fa-at'
+        mencao: 'fa-at',
+        seguidor: 'fa-user-plus'
     };
+    const POR_VEZ = 15;
+    let exibidas = 0;
 
     function mostrarTotal(total) {
         selo.hidden = total < 1;
@@ -53,8 +57,9 @@
     }
 
     function montarItem(n) {
-        let destino = '/publicacoes/' + n.publicacaoId;
-        if (n.comentarioId) destino += '?comentario=' + n.comentarioId;
+        const semPublicacao = !n.publicacaoId;
+        let destino = semPublicacao ? '/usuarios/' + n.atorId : '/publicacoes/' + n.publicacaoId;
+        if (!semPublicacao && n.comentarioId) destino += '?comentario=' + n.comentarioId;
 
         const texto = $('<span class="notif-texto">')
             .append($('<strong>').text('@' + n.atorNick))
@@ -72,7 +77,7 @@
 
         return $('<li class="notif-linha">').append(
             $('<a class="notif-item">').attr('href', destino).toggleClass('is-nova', !n.lida)
-                .append(icone, $('<span class="notif-corpo">').append(texto, titulo, quando)),
+                .append(icone, $('<span class="notif-corpo">').append(texto, semPublicacao ? null : titulo, quando)),
             excluir
         );
     }
@@ -85,23 +90,49 @@
         linha.find('.notif-excluir').prop('disabled', true);
         $.ajax({ url: '/notificacoes/' + id, method: 'DELETE' }).done(function () {
             linha.remove();
-            if (!lista.children.length) mostrarVazio();
+            exibidas = Math.max(0, exibidas - 1);
+            if (!$(lista).children('.notif-linha').length) mostrarVazio();
             botao.focus();
         }).fail(function () {
             linha.find('.notif-excluir').prop('disabled', false);
         });
     }
 
+    function adicionarItens(itens, temMais) {
+        $(lista).children('.notif-mais').remove();
+        itens.forEach(function (n) { $(lista).append(montarItem(n)); });
+        exibidas += itens.length;
+        if (temMais) {
+            $(lista).append($('<li class="notif-mais">').append(
+                $('<button type="button" class="notif-mais-botao">').text('Ver mais').on('click', function () {
+                    const mais = $(this).prop('disabled', true);
+                    buscarPagina(exibidas).done(function (resposta) {
+                        adicionarItens(resposta.itens, resposta.temMais);
+                    }).fail(function () { mais.prop('disabled', false); });
+                })
+            ));
+        }
+    }
+
+    // Pede uma notificação a mais que o exibido para saber se ainda existem outras
+    function buscarPagina(deslocamento) {
+        return $.get('/notificacoes', { limite: POR_VEZ + 1, deslocamento: deslocamento }).then(function (itens) {
+            itens = itens || [];
+            return { itens: itens.slice(0, POR_VEZ), temMais: itens.length > POR_VEZ, todas: itens };
+        });
+    }
+
     function carregarLista() {
         lista.setAttribute('aria-busy', 'true');
-        return $.get('/notificacoes').done(function (itens) {
+        return buscarPagina(0).done(function (resposta) {
             $(lista).empty();
-            if (!itens.length) {
+            exibidas = 0;
+            if (!resposta.itens.length) {
                 mostrarVazio();
                 return;
             }
-            itens.forEach(function (n) { $(lista).append(montarItem(n)); });
-            if (itens.some(function (n) { return !n.lida; })) {
+            adicionarItens(resposta.itens, resposta.temMais);
+            if (resposta.itens.some(function (n) { return !n.lida; })) {
                 $.post('/notificacoes/lidas').done(function () { mostrarTotal(0); });
             }
         }).fail(function () {

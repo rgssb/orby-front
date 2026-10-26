@@ -10,21 +10,22 @@ import (
 	"webapp/src/config"
 
 	"webapp/src/requisicoes"
-
 )
 
 // Usuario representa uma pessoa utilizando a rede social
 type Usuario struct {
-	ID          uint64       `json:"id"`
-	Nome        string       `json:"nome"`
-	Nick        string       `json:"nick"`
-	Email       string       `json:"email"`
-	Bio         string       `json:"bio"`
-	FotoVersao  uint64       `json:"fotoVersao"`
-	CriadoEm    time.Time    `json:"criadoEm"`
-	Seguidores  []Usuario    `json:"seguidores"`
-	Seguindo    []Usuario    `json:"seguindo"`
-	Publicacoes []Publicacao `json:"publicacoes"`
+	ID           uint64       `json:"id"`
+	Nome         string       `json:"nome"`
+	Nick         string       `json:"nick"`
+	Email        string       `json:"email"`
+	Bio          string       `json:"bio"`
+	FotoVersao   uint64       `json:"fotoVersao"`
+	BannerPreset string       `json:"bannerPreset"`
+	BannerVersao uint64       `json:"bannerVersao"`
+	CriadoEm     time.Time    `json:"criadoEm"`
+	Seguidores   []Usuario    `json:"seguidores"`
+	Seguindo     []Usuario    `json:"seguindo"`
+	Publicacoes  []Publicacao `json:"publicacoes"`
 }
 
 // ErroUsuarioNaoEncontrado indica que a API não conhece o usuário pedido
@@ -126,7 +127,6 @@ func BuscarSeguidores(canal chan<- []Usuario, usuarioID uint64, r *http.Request)
 		return
 	}
 
-
 	canal <- seguidores
 
 }
@@ -178,4 +178,3 @@ func BuscarPublicacoes(canal chan<- []Publicacao, usuarioID uint64, r *http.Requ
 
 	canal <- publicacoes
 }
-
