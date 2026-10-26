@@ -2,15 +2,16 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	neturl "net/url"
 	"strconv"
 	"strings"
 	"webapp/src/config"
 	"webapp/src/cookies"
 	"webapp/src/modelos"
 	"webapp/src/requisicoes"
-	"webapp/src/respostas"
 	"webapp/src/utils"
 
 	"github.com/gorilla/mux"
@@ -23,8 +24,22 @@ func sessaoExpirada(w http.ResponseWriter, r *http.Request, response *http.Respo
 	}
 
 	cookies.Deletar(w)
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	http.Redirect(w, r, "/login?sessao=expirada", http.StatusSeeOther)
 	return true
+}
+
+// paginaDeErroDaAPI traduz um status de erro da API em uma página de erro amigável
+func paginaDeErroDaAPI(w http.ResponseWriter, response *http.Response) {
+	switch response.StatusCode {
+	case http.StatusNotFound:
+		utils.PaginaDeErro(w, http.StatusNotFound, "Não encontramos isso", "O conteúdo que você procura não existe mais ou foi removido.")
+	case http.StatusForbidden:
+		utils.PaginaDeErro(w, http.StatusForbidden, "Acesso negado", "Você não tem permissão para acessar este conteúdo.")
+	case http.StatusBadRequest:
+		utils.PaginaDeErro(w, http.StatusBadRequest, "Pedido inválido", "Não foi possível entender o que você tentou abrir.")
+	default:
+		utils.ServidorIndisponivel(w)
+	}
 }
 
 // CarregarTelaDeLogin vai renderizar a tela de login
@@ -48,58 +63,88 @@ func CarregarPaginaHome(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "home.html", nil)
 }
 
-// CarregarPaginaPrincipal carrega a pagina principal com as publicacoes
-func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
+// tamanhoDaPaginaDoFeed é a quantidade de publicações carregadas por vez no feed
+const tamanhoDaPaginaDoFeed = 10
+
+// DadosDoFeed são os dados usados para desenhar o feed (página inicial e "carregar mais")
+type DadosDoFeed struct {
+	Publicacoes   []modelos.Publicacao
+	UsuarioID     uint64
+	ProximaPagina int
+}
+
+// buscarFeed pede à API uma página do feed. A API é consultada com uma publicação a mais
+// para descobrir se existe uma próxima página.
+func buscarFeed(w http.ResponseWriter, r *http.Request, pagina int) (DadosDoFeed, bool) {
 	dados, erro := cookies.Ler(r)
 	if erro != nil {
-		respostas.JSON(w, http.StatusUnauthorized, respostas.ErroAPI{Erro: erro.Error()})
-		return
-	}
-
-	url := fmt.Sprintf("%s/publicacoes", config.ApiURL)
-	requisicao, erro := http.NewRequestWithContext(r.Context(), http.MethodGet, url, nil)
-	if erro != nil {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
-		return
-	}
-	requisicao.Header.Set("Authorization", "Bearer "+dados["token"])
-
-	response, erro := http.DefaultClient.Do(requisicao)
-	if erro != nil {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
-		return
-	}
-
-	defer response.Body.Close()
-
-	if sessaoExpirada(w, r, response) {
-		return
-	}
-
-	if response.StatusCode >= http.StatusBadRequest {
-		respostas.TratarStatusCodeDeErro(w, response)
-		return
-	}
-
-	var publicacoes []modelos.Publicacao
-	if erro = json.NewDecoder(response.Body).Decode(&publicacoes); erro != nil {
-		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
-		return
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return DadosDoFeed{}, false
 	}
 
 	usuarioID, erro := strconv.ParseUint(dados["id"], 10, 64)
 	if erro != nil {
-		respostas.JSON(w, http.StatusUnauthorized, respostas.ErroAPI{Erro: erro.Error()})
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return DadosDoFeed{}, false
+	}
+
+	url := fmt.Sprintf("%s/publicacoes?limite=%d&deslocamento=%d", config.ApiURL, tamanhoDaPaginaDoFeed+1, (pagina-1)*tamanhoDaPaginaDoFeed)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
+	if erro != nil {
+		utils.ServidorIndisponivel(w)
+		return DadosDoFeed{}, false
+	}
+	defer response.Body.Close()
+
+	if sessaoExpirada(w, r, response) {
+		return DadosDoFeed{}, false
+	}
+
+	if response.StatusCode >= http.StatusBadRequest {
+		paginaDeErroDaAPI(w, response)
+		return DadosDoFeed{}, false
+	}
+
+	var publicacoes []modelos.Publicacao
+	if erro = json.NewDecoder(response.Body).Decode(&publicacoes); erro != nil {
+		utils.ServidorIndisponivel(w)
+		return DadosDoFeed{}, false
+	}
+
+	feed := DadosDoFeed{UsuarioID: usuarioID}
+	if len(publicacoes) > tamanhoDaPaginaDoFeed {
+		publicacoes = publicacoes[:tamanhoDaPaginaDoFeed]
+		feed.ProximaPagina = pagina + 1
+	}
+	feed.Publicacoes = publicacoes
+
+	return feed, true
+}
+
+// CarregarPaginaPrincipal carrega a pagina principal com as publicacoes
+func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
+	feed, ok := buscarFeed(w, r, 1)
+	if !ok {
 		return
 	}
 
-	utils.ExecutarTemplate(w, "home.html", struct {
-		Publicacoes []modelos.Publicacao
-		UsuarioID   uint64
-	}{
-		Publicacoes: publicacoes,
-		UsuarioID:   usuarioID,
-	})
+	utils.ExecutarTemplate(w, "home.html", feed)
+}
+
+// CarregarMaisPublicacoes devolve apenas os itens de uma página do feed (botão "carregar mais")
+func CarregarMaisPublicacoes(w http.ResponseWriter, r *http.Request) {
+	pagina, erro := strconv.Atoi(r.URL.Query().Get("pagina"))
+	if erro != nil || pagina < 2 {
+		utils.PaginaDeErro(w, http.StatusBadRequest, "Endereço inválido", "O endereço que você tentou abrir não está correto.")
+		return
+	}
+
+	feed, ok := buscarFeed(w, r, pagina)
+	if !ok {
+		return
+	}
+
+	utils.ExecutarTemplate(w, "feed-itens", feed)
 }
 
 // CarregarPaginaDeAtualizacaoDePublicacao carrega a pagina de edição de uma publicação existente.
@@ -107,14 +152,14 @@ func CarregarPaginaDeAtualizacaoDePublicacao(w http.ResponseWriter, r *http.Requ
 	parametros := mux.Vars(r)
 	publicacaoID, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
 	if erro != nil {
-		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		utils.PaginaDeErro(w, http.StatusBadRequest, "Endereço inválido", "O endereço que você tentou abrir não está correto.")
 		return
 	}
 
 	url := fmt.Sprintf("%s/publicacoes/%d", config.ApiURL, publicacaoID)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		utils.ServidorIndisponivel(w)
 		return
 	}
 	defer response.Body.Close()
@@ -124,27 +169,79 @@ func CarregarPaginaDeAtualizacaoDePublicacao(w http.ResponseWriter, r *http.Requ
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
-		respostas.TratarStatusCodeDeErro(w, response)
+		paginaDeErroDaAPI(w, response)
 		return
 	}
 
 	var publicacao modelos.Publicacao
 	if erro = json.NewDecoder(response.Body).Decode(&publicacao); erro != nil {
-		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
+		utils.ServidorIndisponivel(w)
 		return
 	}
 
 	utils.ExecutarTemplate(w, "atualizar-publicacao.html", publicacao)
 }
 
+// DadosDaPublicacao são os dados da página de uma única publicação (destino das notificações)
+type DadosDaPublicacao struct {
+	Publicacao modelos.Publicacao
+	UsuarioID  uint64
+}
+
+// CarregarPaginaDePublicacao mostra uma publicação com os comentários já abertos
+func CarregarPaginaDePublicacao(w http.ResponseWriter, r *http.Request) {
+	publicacaoID, erro := strconv.ParseUint(mux.Vars(r)["publicacaoId"], 10, 64)
+	if erro != nil {
+		utils.PaginaDeErro(w, http.StatusBadRequest, "Endereço inválido", "O endereço que você tentou abrir não está correto.")
+		return
+	}
+
+	dadosCookie, erro := cookies.Ler(r)
+	if erro != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	usuarioID, _ := strconv.ParseUint(dadosCookie["id"], 10, 64)
+
+	url := fmt.Sprintf("%s/publicacoes/%d", config.ApiURL, publicacaoID)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
+	if erro != nil {
+		utils.ServidorIndisponivel(w)
+		return
+	}
+	defer response.Body.Close()
+
+	if sessaoExpirada(w, r, response) {
+		return
+	}
+
+	if response.StatusCode == http.StatusNotFound {
+		utils.PaginaDeErro(w, http.StatusNotFound, "Publicação não encontrada", "Ela pode ter sido excluída pelo autor.")
+		return
+	}
+
+	if response.StatusCode >= http.StatusBadRequest {
+		paginaDeErroDaAPI(w, response)
+		return
+	}
+
+	var publicacao modelos.Publicacao
+	if erro = json.NewDecoder(response.Body).Decode(&publicacao); erro != nil {
+		utils.ServidorIndisponivel(w)
+		return
+	}
+
+	utils.ExecutarTemplate(w, "publicacao.html", DadosDaPublicacao{Publicacao: publicacao, UsuarioID: usuarioID})
+}
+
 // CarregarPaginaDeUsuarios carrega a pagina que atende o filtro de usuarios
 func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
-	url := fmt.Sprintf("%s/usuarios?usuario=%s", config.ApiURL, nomeOuNick)
+	url := fmt.Sprintf("%s/usuarios?usuario=%s", config.ApiURL, neturl.QueryEscape(nomeOuNick))
 	
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		utils.ServidorIndisponivel(w)
 		return
 	}
 	defer response.Body.Close()
@@ -154,13 +251,13 @@ func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if response.StatusCode >= 400 {
-		respostas.TratarStatusCodeDeErro(w, response)
+		paginaDeErroDaAPI(w, response)
 		return
 	}
 
 	var usuarios []modelos.Usuario
 	if erro = json.NewDecoder(response.Body).Decode(&usuarios); erro != nil {
-		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
+		utils.ServidorIndisponivel(w)
 		return
 	}
 
@@ -172,7 +269,7 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
 	if erro != nil {
-		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		utils.PaginaDeErro(w, http.StatusBadRequest, "Endereço inválido", "O endereço que você tentou abrir não está correto.")
 		return
 	}
 
@@ -185,8 +282,12 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	usuario, erro := modelos.BuscarUsuarioPorCompleto(usuarioID, r)
+	if errors.Is(erro, modelos.ErroUsuarioNaoEncontrado) {
+		utils.PaginaDeErro(w, http.StatusNotFound, "Usuário não encontrado", "Não existe nenhum perfil com esse endereço.")
+		return
+	}
 	if erro != nil {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		utils.ServidorIndisponivel(w)
 		return
 	}
 
@@ -206,7 +307,7 @@ func CarregarPerfilDoUsuarioLogado(w http.ResponseWriter, r *http.Request) {
 
 	usuario, erro := modelos.BuscarUsuarioPorCompleto(usuarioID, r)
 	if erro != nil {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		utils.ServidorIndisponivel(w)
 		return
 	}
 
@@ -229,7 +330,7 @@ func CarregarPerfilDeEdicaoDeUsuario(w http.ResponseWriter, r *http.Request) {
 	usuario := <-canal
 
 	if usuario.ID == 0 {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: "Erro ao buscar dados do usuário"})
+		utils.ServidorIndisponivel(w)
 		return
 	}
 

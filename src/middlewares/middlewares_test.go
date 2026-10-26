@@ -1,28 +1,29 @@
 package middlewares
 
 import (
-	"net/http"
-	"net/http/httptest"
+	"encoding/base64"
+	"fmt"
 	"testing"
+	"time"
 )
 
-func TestAutenticarRedirecionaQuandoCookieEstaAusente(t *testing.T) {
-	proximaFuncaoExecutada := false
-	handler := Autenticar(func(http.ResponseWriter, *http.Request) {
-		proximaFuncaoExecutada = true
-	})
+func tokenComExp(exp int64) string {
+	corpo := base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf(`{"exp":%d}`, exp)))
+	return "x." + corpo + ".y"
+}
 
-	requisicao := httptest.NewRequest(http.MethodGet, "/home", nil)
-	resposta := httptest.NewRecorder()
-	handler.ServeHTTP(resposta, requisicao)
-
-	if resposta.Code != http.StatusFound {
-		t.Fatalf("status = %d, esperado %d", resposta.Code, http.StatusFound)
+func TestTokenExpirado(t *testing.T) {
+	agora := time.Unix(1000, 0)
+	casos := map[string]bool{
+		tokenComExp(999):  true,
+		tokenComExp(1000): true,
+		tokenComExp(1001): false,
+		"lixo":            false,
+		"a.%%%.c":         false,
 	}
-	if local := resposta.Header().Get("Location"); local != "/login" {
-		t.Fatalf("Location = %q, esperado %q", local, "/login")
-	}
-	if proximaFuncaoExecutada {
-		t.Fatal("a próxima função não deveria executar sem cookie")
+	for token, esperado := range casos {
+		if TokenExpirado(token, agora) != esperado {
+			t.Errorf("TokenExpirado(%q) != %v", token, esperado)
+		}
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"webapp/src/cookies"
 )
 
 // ErroAPI representa uma resposta de erro da API.
@@ -13,6 +14,12 @@ type ErroAPI struct {
 
 // JSON retorna uma resposta em formato JSON para a requisição.
 func JSON(w http.ResponseWriter, statusCode int, dados interface{}) {
+	// Sem corpo não há Content-Type: o jQuery tentaria interpretar um JSON vazio e acusaria erro
+	if dados == nil {
+		w.WriteHeader(statusCode)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
@@ -30,6 +37,11 @@ func Erro(w http.ResponseWriter, statusCode int, mensagem string) {
 func TratarStatusCodeDeErro(w http.ResponseWriter, resposta *http.Response) {
 	if resposta.StatusCode < http.StatusBadRequest {
 		return
+	}
+
+	// Token recusado pela API: a sessão acabou, então o cookie não serve mais
+	if resposta.StatusCode == http.StatusUnauthorized {
+		cookies.Deletar(w)
 	}
 
 	var erro ErroAPI

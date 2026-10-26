@@ -21,6 +21,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		"senha": r.FormValue("senha"),
 		"email": r.FormValue("email"),
 		"nick":  r.FormValue("nick"),
+		"bio":   r.FormValue("bio"),
 	})
 
 	if erro != nil {
@@ -107,6 +108,7 @@ func EditarUsuario(w http.ResponseWriter, r *http.Request) {
 		"nome":  r.FormValue("nome"),
 		"email": r.FormValue("email"),
 		"nick":  r.FormValue("nick"),
+		"bio":   r.FormValue("bio"),
 	})
 	if erro != nil {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})

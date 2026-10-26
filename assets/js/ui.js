@@ -19,7 +19,15 @@
         var atualizar = function () {
             var n = campo.value.length;
             botao.disabled = !titulo.value.trim() || !campo.value.trim();
-            contador.textContent = n + (n === 1 ? ' caractere' : ' caracteres');
+            contador.textContent = n + ' / ' + campo.maxLength;
+            contador.classList.toggle('is-near-limit', n >= campo.maxLength * 0.9);
+
+            var previa = document.getElementById('previa');
+            if (previa) {
+                previa.hidden = !titulo.value.trim() && !campo.value.trim();
+                document.getElementById('previa-titulo').textContent = titulo.value;
+                document.getElementById('previa-conteudo').textContent = campo.value;
+            }
         };
         formulario.addEventListener('input', atualizar);
         formulario.addEventListener('reset', function () { setTimeout(atualizar, 0); });
@@ -47,7 +55,8 @@
         return 'há ' + anos + (anos === 1 ? ' ano' : ' anos');
     }
 
-    document.querySelectorAll('time[data-relativo]').forEach(function (el) {
+    function datasRelativas(raiz) {
+    (raiz || document).querySelectorAll('time[data-relativo]').forEach(function (el) {
         var data = new Date(el.getAttribute('datetime'));
         if (isNaN(data.getTime())) return;
         var texto = relativa(data);
@@ -55,4 +64,7 @@
         el.setAttribute('title', el.textContent.trim());
         el.textContent = texto;
     });
+    }
+    datasRelativas();
+    window.OrbyUI = { datasRelativas: datasRelativas };
 })();

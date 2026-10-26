@@ -5,6 +5,23 @@
 <span class="like-count">{{.Curtidas}}</span>
 {{end}}
 
+{{define "comentarios-botao"}}
+<button type="button" class="comments-toggle" aria-expanded="false" aria-label="Ver comentários" title="Comentários">
+    <i class="fa-solid fa-comment" aria-hidden="true"></i> <span class="comments-count">{{.Comentarios}}</span>
+</button>
+{{end}}
+
+{{define "comentarios-area"}}
+<section class="comments-area" hidden aria-label="Comentários">
+    <ul class="comments-list" aria-live="polite"></ul>
+    <form class="comment-form">
+        <label class="sr-only" for="comentario-{{.ID}}">Escreva um comentário</label>
+        <input type="text" class="form-control" id="comentario-{{.ID}}" name="conteudo" maxlength="500" placeholder="Escreva um comentário..." autocomplete="off" required>
+        <button type="submit" class="btn btn-primary" aria-label="Enviar comentário"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+    </form>
+</section>
+{{end}}
+
 {{define "editar"}}
 <a class="publication-action-link" href="/publicacoes/{{.ID}}/atualizar" aria-label="Editar publicação" title="Editar publicação"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></a>
 {{end}}
@@ -18,8 +35,8 @@
 
 {{define "cabecalho-publicacao"}}
 <a href="/usuarios/{{.AutorID}}" class="publication-meta publication-meta-button" title="Ver perfil de {{.AutorNick}}">
-    <span><i class="fa-solid fa-user" aria-hidden="true"></i> {{.AutorNick}}</span>
-    <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <time datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time></span>
+    <span class="publication-author">{{if .AutorFotoVersao}}<img class="mini-avatar" src="/usuarios/{{.AutorID}}/foto?v={{.AutorFotoVersao}}" alt="" loading="lazy" width="24" height="24">{{else}}<i class="fa-solid fa-user" aria-hidden="true"></i>{{end}} {{.AutorNick}}</span>
+    <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <time datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time>{{if .Editado}} <span class="comment-edited">(editado)</span>{{end}}</span>
 </a>
 <h2 class="display-4">{{.Titulo}}</h2>
 <p class="lead">{{.Conteudo}}</p>
@@ -28,21 +45,40 @@
 
 
 {{define "publicacao-com-permissao"}}
-<article class="jumbotron" data-publicacao-id="{{.ID}}">
+<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}">
     {{template "cabecalho-publicacao" .}}
     <div class="publication-actions">
         {{template "curtidas" .}}
+        {{template "comentarios-botao" .}}
         {{template "editar" .}}
         {{template "deletar" .}}
     </div>
+    {{template "comentarios-area" .}}
 </article>
 {{end}}
 
 {{define "publicacao-sem-permissao"}}
-<article class="jumbotron" data-publicacao-id="{{.ID}}">
+<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}">
     {{template "cabecalho-publicacao" .}}
     <div class="publication-actions">
         {{template "curtidas" .}}
+        {{template "comentarios-botao" .}}
     </div>
+    {{template "comentarios-area" .}}
 </article>
+{{end}}
+
+{{define "feed-itens"}}
+{{range .Publicacoes}}
+    {{if (eq .AutorID $.UsuarioID)}}
+    {{template "publicacao-com-permissao" .}}
+    {{else}}
+    {{template "publicacao-sem-permissao" .}}
+    {{end}}
+{{end}}
+{{if .ProximaPagina}}
+<div class="feed-more">
+    <button type="button" class="btn btn-outline-secondary" id="carregar-mais" data-pagina="{{.ProximaPagina}}"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carregar mais publicações</button>
+</div>
+{{end}}
 {{end}}

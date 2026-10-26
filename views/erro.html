@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - {{.Titulo}}</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/login.css?v=6">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+<body>
+    <main class="login-container">
+        <div>
+            <section class="Orby-form error-card" role="alert">
+                {{template "mascote" "orby-mascot--empty"}}
+                <p class="error-code">{{.Status}}</p>
+                <h1 class="error-title">{{.Titulo}}</h1>
+                <p class="error-text">{{.Mensagem}}</p>
+                <div class="error-actions">
+                    <a class="btn btn-primary" href="/home"><i class="fa-solid fa-house" aria-hidden="true"></i> Voltar ao início</a>
+                    <a class="btn btn-outline-secondary" href="javascript:history.back()">Voltar</a>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script src="/assets/js/orby-mascot.js?v=3"></script>
+    <script src="https://kit.fontawesome.com/db88157b12.js" crossorigin="anonymous"></script>
+    <script>window.addEventListener("load", function () { if (window.OrbyMascot) window.OrbyMascot.error(); });</script>
+</body>
+</html>

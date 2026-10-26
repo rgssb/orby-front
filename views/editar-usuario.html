@@ -14,15 +14,15 @@
     <link rel="stylesheet" href="/assets/css/home.css?v=22">
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
-    <link rel="stylesheet" href="/assets/css/themes.css?v=11">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=9">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
     <link rel="stylesheet" href="/assets/css/usuarios.css?v=18">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
     {{template "cabecalho"}}
 
-    <main class="container-fluid users-page edit-profile-page">
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page edit-profile-page">
         <section class="users-column" aria-labelledby="edit-profile-title">
             <article class="composer-card edit-profile-card">
                 <header class="composer-header">
@@ -32,6 +32,15 @@
                         <p>Atualize suas informações de perfil.</p>
                     </div>
                 </header>
+                <div class="photo-editor">
+                    <span class="user-avatar photo-editor-avatar" id="foto-atual" aria-hidden="true">{{if .FotoVersao}}<img src="/usuarios/{{.ID}}/foto?v={{.FotoVersao}}" alt="">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
+                    <div class="photo-editor-actions">
+                        <input type="file" id="foto-arquivo" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+                        <button type="button" class="btn btn-outline-secondary" id="foto-escolher"><i class="fa-solid fa-camera" aria-hidden="true"></i> Trocar foto</button>
+                        <button type="button" class="btn btn-outline-secondary" id="foto-remover"{{if not .FotoVersao}} hidden{{end}}><i class="fa-solid fa-trash" aria-hidden="true"></i> Remover</button>
+                        <small>JPG, PNG, WEBP ou GIF. A foto é ajustada automaticamente.</small>
+                    </div>
+                </div>
                 <form class="edit-profile-form" id="editar-usuario">
                     <div class="form-group">
                         <label for="nome">Nome</label>
@@ -45,6 +54,11 @@
                         <label for="nick">Nick</label>
                         <input type="text" class="form-control" id="nick" name="nick" placeholder="Digite seu nick" value="{{.Nick}}" required>
                     </div>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="3" maxlength="160" placeholder="Conte um pouco sobre você">{{.Bio}}</textarea>
+                        <small class="char-counter" id="contador-bio" aria-live="polite">0 / 160</small>
+                    </div>
                     <div class="edit-profile-actions">
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Salvar alterações</button>
                     </div>
@@ -55,6 +69,6 @@
 
     {{template "rodape"}}
     {{template "scripts"}}
-    <script src="/assets/js/usuario.js?v=4"></script>
+    <script src="/assets/js/usuario.js?v=5"></script>
 </body>
 </html>

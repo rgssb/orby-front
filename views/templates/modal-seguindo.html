@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 {{range .Seguindo}}
-                    <a href="/usuarios/{{.ID}}">{{.Nick}}</a>
+                    <a class="modal-user" href="/usuarios/{{.ID}}"><span class="mini-avatar">{{if .FotoVersao}}<img src="/usuarios/{{.ID}}/foto?v={{.FotoVersao}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-user" aria-hidden="true"></i>{{end}}</span> {{.Nick}}</a>
                 {{else}}
                     <p>Ainda não segue ninguém...</p>
                 {{end}}

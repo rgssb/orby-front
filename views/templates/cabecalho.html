@@ -1,4 +1,5 @@
     {{define "cabecalho"}}
+    <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/home">{{template "mascote" "orby-mascot--nav"}}Orby</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +24,16 @@
                     </form>
                 </li>
             </ul>
+            <div class="notif-wrap">
+                <button class="notif-toggle" id="notif-toggle" type="button" aria-label="Notificações" aria-haspopup="true" aria-expanded="false" aria-controls="notif-painel">
+                    <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                    <span class="notif-badge" id="notif-badge" hidden></span>
+                </button>
+                <div class="notif-panel" id="notif-painel" hidden>
+                    <div class="notif-head">Notificações</div>
+                    <ul class="notif-list" id="notif-lista" aria-live="polite"></ul>
+                </div>
+            </div>
             <a class="btn btn-outline-light navbar-logout" href="/logout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sair</a>
         </div>
     </nav>

@@ -17,6 +17,8 @@ var (
 	HashKey []byte
 	//BlockKey é utilizada para criptografar os dados do cookie
 	BlockKey []byte
+	//CookieSeguro marca o cookie como Secure (só enviado por HTTPS). Ative com COOKIE_SECURE=true em produção.
+	CookieSeguro bool
 )
 
 // Carregar inicializa as variaveis de ambiente
@@ -36,5 +38,6 @@ func Carregar() {
 	ApiURL = os.Getenv("API_URL")
 	HashKey = []byte(os.Getenv("HASH_KEY"))
 	BlockKey = []byte(os.Getenv("BLOCK_KEY"))
+	CookieSeguro = os.Getenv("COOKIE_SECURE") == "true"
 
 }

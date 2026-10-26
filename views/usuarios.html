@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="/assets/css/home.css?v=22">
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
-    <link rel="stylesheet" href="/assets/css/themes.css?v=11">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=9">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
     <link rel="stylesheet" href="/assets/css/usuarios.css?v=18">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
@@ -24,7 +24,7 @@
 <body>
     {{template "cabecalho"}}
 
-    <main class="container-fluid users-page">
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page">
         <section class="users-column" aria-labelledby="users-title">
             <header class="feed-header">
                 <h1 id="users-title">Usuários encontrados</h1>
@@ -32,7 +32,7 @@
             {{range .}}
             <article class="jumbotron user-card">
                 <a class="user-card-link" href="/usuarios/{{.ID}}">
-                    <span class="user-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                    <span class="user-avatar" aria-hidden="true">{{if .FotoVersao}}<img src="/usuarios/{{.ID}}/foto?v={{.FotoVersao}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
                     <span class="user-info">
                         <span class="user-name">{{.Nome}}</span>
                         <span class="user-nick">@{{.Nick}}</span>

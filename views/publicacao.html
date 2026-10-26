@@ -1,0 +1,44 @@
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - Publicação</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=22">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+
+<body>
+    {{template "cabecalho"}}
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid home-page pagina-publicacao">
+        <div class="row mt-4 home-layout home-layout--unico">
+            <section class="feed-column" aria-labelledby="feed-title">
+                <header class="feed-header">
+                    <h2 id="feed-title">Publicação</h2>
+                    <a class="btn btn-outline-secondary btn-sm" href="/home"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar</a>
+                </header>
+                {{if eq .Publicacao.AutorID .UsuarioID}}
+                    {{template "publicacao-com-permissao" .Publicacao}}
+                {{else}}
+                    {{template "publicacao-sem-permissao" .Publicacao}}
+                {{end}}
+            </section>
+        </div>
+    </main>
+
+    {{template "rodape"}}
+    {{template "scripts"}}
+</body>
+
+</html>

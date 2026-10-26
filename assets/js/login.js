@@ -2,6 +2,10 @@ const formularioLogin = document.getElementById("login");
 const mensagemServidorIndisponivel = "Nossos servidores estão temporariamente indisponíveis. Pedimos desculpas pelo transtorno.";
 formularioLogin.addEventListener("submit", realizarLogin);
 
+if (new URLSearchParams(window.location.search).get("sessao") === "expirada") {
+    mostrarMensagem("Sua sessão expirou. Entre novamente para continuar.", false);
+}
+
 function mostrarMensagem(mensagem, sucesso) {
     const feedback = document.getElementById("form-message");
     feedback.textContent = mensagem;

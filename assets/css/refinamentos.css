@@ -213,3 +213,703 @@ html[data-theme="completo"] .navbar.navbar-light .navbar-nav .active > .nav-link
 html[data-theme="completo"] .form-control:focus {
   box-shadow: var(--orby-focus-ring);
 }
+
+/* ==========================================================
+   Foto de perfil, bio e avatares
+   ========================================================== */
+.user-avatar {
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mini-avatar {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--orby-accent-strong) 22%, transparent);
+}
+
+.mini-avatar img,
+img.mini-avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.publication-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.modal-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.profile-bio {
+  margin: 0.25rem 0 0.6rem;
+  color: var(--orby-text-muted);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.photo-editor {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--orby-border);
+}
+
+.photo-editor-avatar {
+  width: 5rem;
+  height: 5rem;
+  font-size: 1.8rem;
+}
+
+.photo-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.photo-editor-actions small {
+  flex-basis: 100%;
+  color: var(--orby-text-muted);
+}
+
+/* ==========================================================
+   Publicar: contador e pré-visualização
+   ========================================================== */
+.char-counter.is-near-limit {
+  color: var(--orby-danger);
+}
+
+.composer-preview {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px dashed var(--orby-border-strong);
+  border-radius: var(--orby-radius-sm);
+  background: var(--orby-input-bg);
+}
+
+.composer-preview-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--orby-text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.composer-preview h3 {
+  margin: 0 0 0.25rem;
+  color: var(--orby-text);
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.composer-preview p {
+  margin: 0;
+  color: var(--orby-text-muted);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+/* ==========================================================
+   Comentários e "carregar mais"
+   ========================================================== */
+.comments-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.25rem;
+  padding: 0 0.6rem;
+  color: var(--orby-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--orby-radius-sm);
+  cursor: pointer;
+}
+
+.comments-toggle:hover,
+.comments-toggle[aria-expanded="true"] {
+  color: var(--orby-accent);
+}
+
+.comments-area {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--orby-border);
+}
+
+.comments-area[hidden] {
+  display: none;
+}
+
+.comments-list {
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.comment-item {
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--orby-input-bg);
+  border: 1px solid var(--orby-border);
+  border-radius: var(--orby-radius-sm);
+}
+
+.comment-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.comment-head a {
+  color: var(--orby-accent);
+  font-weight: 600;
+}
+
+.comment-head time {
+  color: var(--orby-text-muted);
+  font-size: 0.75rem;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin-left: auto;
+}
+
+.comment-edited {
+  color: var(--orby-text-muted);
+  font-size: 0.72rem;
+  font-style: italic;
+}
+
+.comment-like,
+.comment-edit,
+.comment-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.4rem;
+  color: var(--orby-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.comment-like.is-liked {
+  color: var(--orby-like, #ee7d8e);
+}
+
+.comment-like:hover,
+.comment-edit:hover {
+  color: var(--orby-accent);
+}
+
+.comment-like.is-liked:hover {
+  color: var(--orby-like, #ee7d8e);
+}
+
+.comment-edit-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.comment-edit-form .form-control {
+  flex: 1 1 12rem;
+}
+
+.mention {
+  color: var(--orby-accent);
+  font-weight: 600;
+}
+
+.comment-delete {
+  width: 2rem;
+  height: 2rem;
+  color: var(--orby-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.comment-delete:hover {
+  color: var(--orby-danger);
+}
+
+.comment-text {
+  margin: 0.25rem 0 0;
+  color: var(--orby-text);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.comment-empty {
+  padding: 0.75rem;
+  color: var(--orby-text-muted);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comment-form .btn {
+  flex: 0 0 auto;
+  min-width: 2.75rem;
+}
+
+.feed-more {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0 1.5rem;
+}
+
+/* ==========================================================
+   Skeleton / carregamento
+   ========================================================== */
+.comment-skeleton {
+  height: 3.2rem;
+  margin-bottom: 0.5rem;
+  border-radius: var(--orby-radius-sm);
+  background: linear-gradient(90deg, var(--orby-input-bg) 25%, var(--orby-surface-hover) 50%, var(--orby-input-bg) 75%);
+  background-size: 200% 100%;
+  animation: orby-skeleton 1.2s linear infinite;
+}
+
+@keyframes orby-skeleton {
+  to { background-position: -200% 0; }
+}
+
+/* ==========================================================
+   Páginas de erro e recuperação de senha
+   ========================================================== */
+.error-card,
+.Orby-form.error-card {
+  text-align: center;
+}
+
+.error-card .orby-mascot,
+.Orby-form .orby-mascot--empty {
+  display: block;
+  margin: 0 auto 0.75rem;
+}
+
+.error-code {
+  margin: 0;
+  color: var(--orby-accent);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.error-title,
+.auth-title {
+  margin: 0.4rem 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.error-text,
+.auth-text {
+  margin-bottom: 1.25rem;
+  color: var(--orby-text-muted);
+}
+
+.error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.forgot-link {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* ==========================================================
+   Acessibilidade
+   ========================================================== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--orby-accent);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -3rem;
+  left: 0.5rem;
+  z-index: 2000;
+  padding: 0.5rem 0.9rem;
+  color: var(--orby-btn-text);
+  background: var(--orby-btn-bg);
+  border-radius: var(--orby-radius-sm);
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================
+   Celular: botões e campos com área de toque confortável
+   ========================================================== */
+@media (max-width: 575.98px) {
+  .btn,
+  .form-control,
+  .like-button,
+  .publication-action-link,
+  .comments-toggle {
+    min-height: 2.75rem;
+  }
+
+  .form-control,
+  textarea.form-control {
+    font-size: 16px;
+  }
+
+  .publication-actions {
+    flex-wrap: wrap;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .photo-editor {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .photo-editor-actions {
+    justify-content: center;
+  }
+
+  .jumbotron h2.display-4 {
+    font-size: 1.5rem;
+    overflow-wrap: anywhere;
+  }
+
+  .jumbotron .lead {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ==========================================================
+   Tema Antigo: conjunto de ícones próprio (aconchegante)
+   ========================================================== */
+html[data-theme="acolhedor"] .fa-solid.fa-house::before { content: "\e3af"; }
+html[data-theme="acolhedor"] .fa-solid.fa-user::before { content: "\f2bd"; }
+html[data-theme="acolhedor"] .fa-solid.fa-feather-pointed::before { content: "\f5ad"; }
+html[data-theme="acolhedor"] .fa-solid.fa-right-from-bracket::before { content: "\f52b"; }
+html[data-theme="acolhedor"] .fa-solid.fa-clock::before { content: "\f252"; }
+html[data-theme="acolhedor"] .fa-solid.fa-users::before { content: "\e533"; }
+html[data-theme="acolhedor"] .fa-solid.fa-user-check::before { content: "\f4fc"; }
+html[data-theme="acolhedor"] .fa-solid.fa-paper-plane::before { content: "\f1d8"; }
+html[data-theme="acolhedor"] .fa-solid.fa-comment::before { content: "\f4ad"; }
+html[data-theme="acolhedor"] .fa-solid.fa-key::before { content: "\f43c"; }
+html[data-theme="acolhedor"] .fa-solid.fa-pen::before,
+html[data-theme="acolhedor"] .fa-solid.fa-user-pen::before { content: "\f304"; }
+html[data-theme="acolhedor"] .fa-solid.fa-magnifying-glass::before { content: "\f002"; }
+
+/* Notificações */
+.notif-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  margin-right: 0.25rem;
+}
+
+.notif-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--orby-text);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.notif-toggle:hover,
+.notif-toggle[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--orby-text) 10%, transparent);
+}
+
+.notif-toggle:focus-visible {
+  outline: 2px solid var(--orby-accent);
+  outline-offset: 2px;
+}
+
+.notif-badge {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--orby-danger, #e5484d);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.notif-badge[hidden],
+.notif-panel[hidden] {
+  display: none;
+}
+
+.notif-panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 1050;
+  width: min(380px, calc(100vw - 2rem));
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--orby-surface);
+  color: var(--orby-text);
+  border: 1px solid var(--orby-border-strong);
+  border-radius: var(--orby-radius);
+  box-shadow: var(--orby-card-shadow, 0 12px 32px rgba(0, 0, 0, 0.25));
+}
+
+.notif-head {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--orby-border);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.notif-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.notif-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--orby-border);
+  color: var(--orby-text);
+  text-decoration: none;
+}
+
+.notif-list li:last-child .notif-item {
+  border-bottom: 0;
+}
+
+.notif-item:hover,
+.notif-item:focus-visible {
+  background: var(--orby-surface-hover, rgba(148, 163, 184, 0.12));
+  color: var(--orby-text);
+  text-decoration: none;
+}
+
+.notif-item.is-nova {
+  box-shadow: inset 3px 0 0 var(--orby-accent);
+  background: color-mix(in srgb, var(--orby-accent) 9%, transparent);
+}
+
+.notif-icone {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--orby-accent) 16%, transparent);
+  color: var(--orby-accent-strong, var(--orby-accent));
+  font-size: 0.85rem;
+}
+
+.notif-icone--curtida_publicacao,
+.notif-icone--curtida_comentario {
+  color: var(--orby-like, #E26D8A);
+  background: color-mix(in srgb, var(--orby-like, #E26D8A) 16%, transparent);
+}
+
+.notif-corpo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 0.1rem;
+}
+
+.notif-texto {
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.notif-titulo {
+  overflow: hidden;
+  color: var(--orby-text-muted);
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notif-tempo {
+  color: var(--orby-text-muted);
+  font-size: 0.72rem;
+}
+
+.notif-vazia {
+  padding: 1.5rem 1rem;
+  color: var(--orby-text-muted);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+@media (max-width: 991.98px) {
+  .notif-wrap {
+    margin: 0.5rem 0;
+  }
+
+  .notif-panel {
+    right: auto;
+    left: 0;
+  }
+}
+
+/* Comentário aberto a partir de uma notificação */
+.comment-item.is-destacado {
+  border-radius: var(--orby-radius-sm, 8px);
+  animation: orby-destaque 2.4s ease-out 1;
+}
+
+@keyframes orby-destaque {
+  0%, 60% { background: color-mix(in srgb, var(--orby-accent) 24%, transparent); }
+  100% { background: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comment-item.is-destacado { animation: none; background: color-mix(in srgb, var(--orby-accent) 18%, transparent); }
+}
+
+.pagina-publicacao .feed-header {
+  justify-content: space-between;
+}
+
+.notif-linha {
+  position: relative;
+  border-bottom: 1px solid var(--orby-border);
+}
+
+.notif-linha:last-child {
+  border-bottom: 0;
+}
+
+.notif-linha .notif-item {
+  padding-right: 2.6rem;
+  border-bottom: 0;
+}
+
+.notif-excluir {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--orby-text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.notif-excluir:hover,
+.notif-excluir:focus-visible {
+  background: color-mix(in srgb, var(--orby-danger, #e5484d) 18%, transparent);
+  color: var(--orby-danger, #e5484d);
+}
+
+.notif-icone--mencao {
+  font-weight: 700;
+}
+
+/* Autocomplete de menções */
+.mention-suggest {
+  position: absolute;
+  z-index: 1060;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: var(--orby-surface);
+  color: var(--orby-text);
+  border: 1px solid var(--orby-border-strong);
+  border-radius: var(--orby-radius-sm, 8px);
+  box-shadow: var(--orby-card-shadow, 0 12px 32px rgba(0, 0, 0, 0.25));
+}
+
+.mention-suggest li {
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.mention-suggest li.is-ativo {
+  background: color-mix(in srgb, var(--orby-accent) 18%, transparent);
+}

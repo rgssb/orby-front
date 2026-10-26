@@ -10,6 +10,9 @@ import (
 
 var s *securecookie.SecureCookie
 
+// duracaoDaSessao acompanha a validade do token da API (6 horas)
+const duracaoDaSessao = 6 * time.Hour
+
 // Configurar utiliza as variaveis de ambiente paraa criacao de SecureCookie
 func Configurar() {
 	s = securecookie.New(config.HashKey, config.BlockKey)
@@ -32,6 +35,9 @@ func Salvar(w http.ResponseWriter, ID, token string) error {
 		Value:    dadosCodificados,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   config.CookieSeguro,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   int(duracaoDaSessao / time.Second),
 	})
 
 	return nil
@@ -60,6 +66,9 @@ func Deletar(w http.ResponseWriter) {
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
-		Expires:   time.Unix(0, 0),
+		Secure:   config.CookieSeguro,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
 	})
 }

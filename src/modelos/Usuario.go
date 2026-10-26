@@ -19,18 +19,24 @@ type Usuario struct {
 	Nome        string       `json:"nome"`
 	Nick        string       `json:"nick"`
 	Email       string       `json:"email"`
+	Bio         string       `json:"bio"`
+	FotoVersao  uint64       `json:"fotoVersao"`
 	CriadoEm    time.Time    `json:"criadoEm"`
 	Seguidores  []Usuario    `json:"seguidores"`
 	Seguindo    []Usuario    `json:"seguindo"`
 	Publicacoes []Publicacao `json:"publicacoes"`
 }
 
+// ErroUsuarioNaoEncontrado indica que a API não conhece o usuário pedido
+var ErroUsuarioNaoEncontrado = errors.New("Erro ao buscar dados do usuário")
+
 // BuscarUsuarioPorCompleto faz 4 requisicoes na api para montar o usuario
 func BuscarUsuarioPorCompleto(usuarioID uint64, r *http.Request) (Usuario, error) {
-	canalUsuario := make(chan Usuario)
-	canalSeguidores := make(chan []Usuario)
-	canalSeguindo := make(chan []Usuario)
-	canalPublicacoes := make(chan []Publicacao)
+	// Canais com buffer: se uma busca falhar e a função retornar cedo, as demais goroutines não ficam presas
+	canalUsuario := make(chan Usuario, 1)
+	canalSeguidores := make(chan []Usuario, 1)
+	canalSeguindo := make(chan []Usuario, 1)
+	canalPublicacoes := make(chan []Publicacao, 1)
 
 	go BuscarDadosDoUsuario(canalUsuario, usuarioID, r)
 	go BuscarSeguidores(canalSeguidores, usuarioID, r)
@@ -49,7 +55,7 @@ func BuscarUsuarioPorCompleto(usuarioID uint64, r *http.Request) (Usuario, error
 		select {
 		case usuarioCarregado := <-canalUsuario:
 			if usuarioCarregado.ID == 0 {
-				return Usuario{}, errors.New("Erro ao buscar dados do usuário")
+				return Usuario{}, ErroUsuarioNaoEncontrado
 			}
 			usuario = usuarioCarregado
 

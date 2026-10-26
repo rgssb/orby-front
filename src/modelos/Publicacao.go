@@ -9,7 +9,10 @@ type Publicacao struct {
 	Conteudo          string    `json:"conteudo,omitempty"`
 	AutorID           uint64    `json:"autorId,omitempty"`
 	AutorNick         string    `json:"autorNick,omitempty"`
+	AutorFotoVersao   uint64    `json:"autorFotoVersao"`
 	Curtidas          uint64    `json:"curtidas"`
+	Comentarios       uint64    `json:"comentarios"`
 	CurtidoPorUsuario bool      `json:"curtidoPorUsuario"`
 	CriadaEm          time.Time `json:"criadaEm,omitempty"`
+	Editado           bool      `json:"editado"`
 }

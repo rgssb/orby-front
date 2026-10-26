@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="/assets/css/home.css?v=22">
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
-    <link rel="stylesheet" href="/assets/css/themes.css?v=11">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=9">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
     <link rel="stylesheet" href="/assets/css/usuarios.css?v=18">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
@@ -24,15 +24,16 @@
 <body>
     {{template "cabecalho"}}
 
-    <main class="container-fluid users-page profile-page">
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page profile-page">
         <section class="users-column" aria-labelledby="profile-title">
             <article class="jumbotron profile-card">
                 <div class="profile-banner" aria-hidden="true"></div>
                 <div class="profile-body">
-                    <span class="user-avatar profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                    <span class="user-avatar profile-avatar" aria-hidden="true">{{if .Usuario.FotoVersao}}<img src="/usuarios/{{.Usuario.ID}}/foto?v={{.Usuario.FotoVersao}}" alt="">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
                     <div class="profile-heading">
                         <div class="user-info">
                             <h1 id="profile-title" class="profile-name">{{.Usuario.Nome}}</h1>
+                            {{if .Usuario.Bio}}<p class="profile-bio">{{.Usuario.Bio}}</p>{{end}}
                             <div class="profile-chips">
                                 <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
                                 <span class="profile-chip profile-chip-muted"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</span>
@@ -68,7 +69,7 @@
 
     {{template "rodape"}}
     {{template "scripts" .}}
-    <script src="/assets/js/usuario.js?v=2"></script>
+    <script src="/assets/js/usuario.js?v=5"></script>
     {{template "modal-seguidores" .Usuario}}
     {{template "modal-seguindo" .Usuario}}
 </body>
