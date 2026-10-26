@@ -76,14 +76,44 @@ type DadosDoFeed struct {
 	ProximaURL    string
 	Busca         string
 	Aviso         string
+	Aba           string
+	Ordem         string
 }
 
 // buscarFeed pede à API uma página do feed. A API é consultada com uma publicação a mais
 // para descobrir se existe uma próxima página.
 func buscarFeed(w http.ResponseWriter, r *http.Request, pagina int) (DadosDoFeed, bool) {
-	return buscarPublicacoes(w, r, pagina, "/publicacoes?", func(proxima int) string {
-		return fmt.Sprintf("/feed?pagina=%d", proxima)
+	aba, ordem := "seguindo", "recentes"
+	if r.URL.Query().Get("aba") == "todos" {
+		aba = "todos"
+	}
+	if r.URL.Query().Get("ordem") == "populares" {
+		ordem = "populares"
+	}
+	feed, ok := buscarPublicacoes(w, r, pagina, fmt.Sprintf("/publicacoes?aba=%s&ordem=%s&", aba, ordem), func(proxima int) string {
+		return fmt.Sprintf("/feed?pagina=%d&aba=%s&ordem=%s", proxima, aba, ordem)
 	})
+	feed.Aba, feed.Ordem = aba, ordem
+	return feed, ok
+}
+
+// CarregarPaginaDeSalvos mostra as publicações salvas; com pagina >= 2 devolve só os itens
+func CarregarPaginaDeSalvos(w http.ResponseWriter, r *http.Request) {
+	pagina, _ := strconv.Atoi(r.URL.Query().Get("pagina"))
+	if pagina < 1 {
+		pagina = 1
+	}
+	feed, ok := buscarPublicacoes(w, r, pagina, "/publicacoes/salvas?", func(proxima int) string {
+		return fmt.Sprintf("/salvos?pagina=%d", proxima)
+	})
+	if !ok {
+		return
+	}
+	if pagina > 1 {
+		utils.ExecutarTemplate(w, "feed-itens", feed)
+		return
+	}
+	utils.ExecutarTemplate(w, "salvos.html", feed)
 }
 
 // buscarPublicacoes consulta a API (rota e filtros em caminho, que já termina com "?" ou "&") e monta a página pedida

@@ -35,6 +35,22 @@ var rotasExtras = []Rota{
 	{URI: "/usuarios/{usuarioId}/desbloquear", Metodo: http.MethodPost, Funcao: controllers.DesbloquearUsuario, RequerAutenticacao: true},
 	{URI: "/mensagens/{mensagemId}", Metodo: http.MethodDelete, Funcao: controllers.ExcluirMensagem, RequerAutenticacao: true},
 
+	{URI: "/conversas/{usuarioId}/silenciar", Metodo: http.MethodPost, Funcao: controllers.SilenciarConversa, RequerAutenticacao: true},
+	{URI: "/conversas/{usuarioId}/silenciar", Metodo: http.MethodDelete, Funcao: controllers.DessilenciarConversa, RequerAutenticacao: true},
+	{URI: "/conversas/{usuarioId}/digitando", Metodo: http.MethodPost, Funcao: controllers.AvisarDigitacao, RequerAutenticacao: true},
+	{URI: "/mensagens/{mensagemId}/reacao", Metodo: http.MethodPost, Funcao: controllers.ReagirAMensagem, RequerAutenticacao: true},
+	{URI: "/mensagens/{mensagemId}/imagem", Metodo: http.MethodPost, Funcao: controllers.EnviarImagemDeMensagem, RequerAutenticacao: true},
+	{URI: "/mensagens/{mensagemId}/imagem", Metodo: http.MethodGet, Funcao: controllers.BuscarImagemDeMensagem, RequerAutenticacao: true},
+	{URI: "/eventos", Metodo: http.MethodGet, Funcao: controllers.Eventos, RequerAutenticacao: true},
+
+	{URI: "/salvos", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeSalvos, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/salvar", Metodo: http.MethodPost, Funcao: controllers.SalvarPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/salvar", Metodo: http.MethodDelete, Funcao: controllers.RemoverPublicacaoSalva, RequerAutenticacao: true},
+	{URI: "/perfil/privacidade", Metodo: http.MethodPut, Funcao: controllers.DefinirPrivacidade, RequerAutenticacao: true},
+	{URI: "/pedidos-seguir", Metodo: http.MethodGet, Funcao: controllers.BuscarPedidosParaSeguir, RequerAutenticacao: true},
+	{URI: "/pedidos-seguir/{usuarioId}/aceitar", Metodo: http.MethodPost, Funcao: controllers.AceitarPedidoParaSeguir, RequerAutenticacao: true},
+	{URI: "/pedidos-seguir/{usuarioId}/recusar", Metodo: http.MethodPost, Funcao: controllers.RecusarPedidoParaSeguir, RequerAutenticacao: true},
+
 	{URI: "/buscar-publicacoes", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeBuscaDePublicacoes, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodGet, Funcao: controllers.BuscarImagemDaPublicacao, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodPost, Funcao: controllers.SalvarImagemDaPublicacao, RequerAutenticacao: true},

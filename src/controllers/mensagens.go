@@ -43,6 +43,8 @@ func BuscarMensagens(w http.ResponseWriter, r *http.Request) {
 	caminho := fmt.Sprintf("/conversas/%d/mensagens", usuarioID)
 	if apos, erro := strconv.ParseUint(r.URL.Query().Get("apos"), 10, 64); erro == nil {
 		caminho += fmt.Sprintf("?apos=%d", apos)
+	} else if antes, erro := strconv.ParseUint(r.URL.Query().Get("antes"), 10, 64); erro == nil {
+		caminho += fmt.Sprintf("?antes=%d", antes)
 	}
 	repassarMensagens(w, r, http.MethodGet, caminho, nil)
 }
@@ -55,7 +57,9 @@ func EnviarMensagem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var corpo struct {
-		Texto string `json:"texto"`
+		Texto     string `json:"texto"`
+		RespondeA uint64 `json:"respondeA"`
+		ComImagem bool   `json:"comImagem"`
 	}
 	r.Body = http.MaxBytesReader(w, r.Body, limiteDoCorpoDaMensagem)
 	if erro := json.NewDecoder(r.Body).Decode(&corpo); erro != nil {

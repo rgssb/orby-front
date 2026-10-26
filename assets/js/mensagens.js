@@ -1,8 +1,11 @@
 // Mensagens diretas: bloco na home (dock), página completa e contador no cabeçalho
 (function () {
-    const INTERVALO_CONTADOR = 20000;
-    const INTERVALO_LISTA = 8000;
-    const INTERVALO_CHAT = 4000;
+    // Com a conexão em tempo real (SSE) estes intervalos são só uma garantia caso ela caia
+    const INTERVALO_CONTADOR = 30000;
+    const INTERVALO_LISTA = 20000;
+    const INTERVALO_CHAT = 15000;
+    const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
+    const LIMITE_IMAGEM = 4 * 1024 * 1024;
 
     function criar(tag, classe, texto) {
         const el = document.createElement(tag);
@@ -70,9 +73,29 @@
         }).catch(function () {});
     }
 
+    // ---------- tempo real (Server-Sent Events) ----------
+    const ouvintesDeEvento = [];
+
+    function iniciarEventos() {
+        if (!window.EventSource) return;
+        const fonte = new EventSource('/eventos');
+        fonte.onmessage = function (evento) {
+            let dados;
+            try { dados = JSON.parse(evento.data); } catch (e) { return; }
+            if (dados.tipo === 'mensagem' || dados.tipo === 'lido') buscarTotal();
+            ouvintesDeEvento.forEach(function (f) { f(dados); });
+        };
+    }
+
     if (seloCabecalho) {
         buscarTotal();
         window.setInterval(buscarTotal, INTERVALO_CONTADOR);
+        iniciarEventos();
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) return;
+            buscarTotal();
+            ouvintesDeEvento.forEach(function (f) { f({ tipo: 'mensagem' }); });
+        });
     }
 
     // ---------- aplicativo de conversa ----------
@@ -110,7 +133,9 @@
         excluirConversa.title = 'Apagar conversa';
         excluirConversa.setAttribute('aria-label', 'Apagar conversa');
         excluirConversa.innerHTML = '<i class="fa-solid fa-trash" aria-hidden="true"></i>';
-        cabecalho.append(voltar, quem, excluirConversa);
+        const silenciar = criar('button', 'msg-icon msg-silenciar');
+        silenciar.type = 'button';
+        cabecalho.append(voltar, quem, silenciar, excluirConversa);
         if (modo === 'dock') cabecalho.append(abrirTela);
 
         const aviso = criar('div', 'msg-aviso');
@@ -130,14 +155,29 @@
         enviar.innerHTML = '<i class="fa-solid fa-paper-plane" aria-hidden="true"></i>';
         const erroEnvio = criar('p', 'msg-erro');
         erroEnvio.hidden = true;
-        formulario.append(campo, enviar);
+        const clipe = criar('button', 'msg-icon msg-clipe');
+        clipe.type = 'button';
+        clipe.title = 'Enviar imagem';
+        clipe.setAttribute('aria-label', 'Enviar imagem');
+        clipe.innerHTML = '<i class="fa-regular fa-image" aria-hidden="true"></i>';
+        const arquivo = document.createElement('input');
+        arquivo.type = 'file';
+        arquivo.accept = 'image/jpeg,image/png,image/webp,image/gif';
+        arquivo.hidden = true;
+        formulario.append(clipe, campo, enviar, arquivo);
+        const barraResposta = criar('div', 'msg-barra msg-resposta');
+        barraResposta.hidden = true;
+        const barraAnexo = criar('div', 'msg-barra msg-anexo');
+        barraAnexo.hidden = true;
+        const digitando = criar('p', 'msg-digitando', 'digitando…');
+        digitando.hidden = true;
         const nenhuma = criar('p', 'msg-nenhuma', 'Escolha uma conversa para começar.');
-        colChat.append(cabecalho, aviso, fluxo, erroEnvio, formulario, nenhuma);
+        colChat.append(cabecalho, aviso, fluxo, digitando, erroEnvio, barraResposta, barraAnexo, formulario, nenhuma);
 
         app.append(colLista, colChat);
         raiz.appendChild(app);
 
-        const estado = { aba: 'conversas', conversas: [], aberta: null, ultimoId: 0, dialogo: null, timerChat: null, timerLista: null };
+        const estado = { aba: 'conversas', conversas: [], aberta: null, ultimoId: 0, dialogo: null, timerChat: null, timerLista: null, respondendo: null, imagem: null, temMais: false, ultimoAviso: 0, timerDigitando: null };
 
         function definirView(view) {
             app.dataset.view = view;
@@ -165,9 +205,10 @@
                 const topo = criar('span', 'msg-item-topo');
                 topo.append(criar('strong', 'msg-item-nome', c.nome), criar('time', 'msg-item-hora', hora(c.atualizadoEm)));
                 const previa = (c.ultimaMinha ? 'Você: ' : '') + c.ultimaMensagem;
+                if (c.silenciada) topo.append(criar('i', 'fa-solid fa-bell-slash msg-item-mudo'));
                 corpo.append(topo, criar('span', 'msg-item-previa', c.desculpa ? 'Pedido de desculpas · ' + previa : (c.aguardando ? 'Aguardando resposta · ' + previa : previa)));
                 botao.append(avatar(c.usuarioId, c.fotoVersao, 'msg-avatar'), corpo);
-                if (c.naoLidas > 0) botao.append(criar('span', 'msg-ponto', String(c.naoLidas > 99 ? '99+' : c.naoLidas)));
+                if (c.naoLidas > 0) botao.append(criar('span', 'msg-ponto' + (c.silenciada ? ' is-muted' : ''), String(c.naoLidas > 99 ? '99+' : c.naoLidas)));
                 botao.addEventListener('click', function () { abrir(c.usuarioId); });
                 li.appendChild(botao);
                 lista.appendChild(li);
@@ -182,31 +223,168 @@
             }).catch(function () {});
         }
 
+        function assinatura(m) {
+            return JSON.stringify([m.lida, m.temImagem, m.reacoes]);
+        }
+
+        function nomeDe(minha) {
+            return minha ? 'Você' : (estado.dialogo ? estado.dialogo.nome : '');
+        }
+
         function criarBolha(m) {
             const bolha = criar('div', 'msg-bolha ' + (m.minha ? 'msg-bolha--minha' : 'msg-bolha--outra'));
             bolha.dataset.id = m.id;
-            bolha.appendChild(criar('p', 'msg-texto', m.texto));
+            bolha.dataset.lida = m.lida ? '1' : '0';
+            bolha.dataset.assinatura = assinatura(m);
+
+            if (m.respondeA) {
+                const citacao = criar('button', 'msg-citacao');
+                citacao.type = 'button';
+                citacao.append(criar('strong', '', nomeDe(m.respondeA.minha)), criar('span', '', m.respondeA.texto || '📷 Imagem'));
+                citacao.addEventListener('click', function () {
+                    const alvo = fluxo.querySelector('[data-id="' + m.respondeA.id + '"]');
+                    if (!alvo) return;
+                    alvo.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    alvo.classList.add('msg-destaque');
+                    window.setTimeout(function () { alvo.classList.remove('msg-destaque'); }, 1400);
+                });
+                bolha.appendChild(citacao);
+            }
+            if (m.temImagem) {
+                const link = criar('a', 'msg-imagem-link');
+                link.href = '/mensagens/' + m.id + '/imagem';
+                link.target = '_blank';
+                link.rel = 'noopener';
+                const img = document.createElement('img');
+                img.className = 'msg-imagem';
+                img.alt = 'Imagem enviada';
+                img.loading = 'lazy';
+                img.src = '/mensagens/' + m.id + '/imagem';
+                img.addEventListener('load', function () { if (estado.noFim) rolarParaOFim(); });
+                link.appendChild(img);
+                bolha.appendChild(link);
+            }
+            if (m.texto) bolha.appendChild(criar('p', 'msg-texto', m.texto));
+
+            if (m.reacoes && m.reacoes.length) {
+                const grupo = criar('div', 'msg-reacoes');
+                m.reacoes.forEach(function (r) {
+                    const chip = criar('button', 'msg-reacao' + (r.minha ? ' is-mine' : ''), r.emoji + (r.total > 1 ? ' ' + r.total : ''));
+                    chip.type = 'button';
+                    chip.title = r.minha ? 'Remover sua reação' : 'Reagir';
+                    chip.addEventListener('click', function () { reagir(m.id, r.emoji); });
+                    grupo.appendChild(chip);
+                });
+                bolha.appendChild(grupo);
+            }
+
             const rodape = criar('span', 'msg-bolha-hora');
             rodape.appendChild(criar('time', '', hora(m.criadoEm)));
+            const acoes = criar('span', 'msg-acoes');
+            acoes.append(
+                botaoAcao('fa-reply', 'Responder', function () { responderA(m); }),
+                botaoAcao('fa-face-smile', 'Reagir', function () { abrirSeletor(bolha, m); })
+            );
             if (m.minha) {
-                const apagar = criar('button', 'msg-apagar');
-                apagar.type = 'button';
-                apagar.title = 'Apagar mensagem';
-                apagar.setAttribute('aria-label', 'Apagar mensagem');
-                apagar.innerHTML = '<i class="fa-solid fa-trash" aria-hidden="true"></i>';
-                apagar.addEventListener('click', function () {
+                acoes.appendChild(botaoAcao('fa-trash', 'Apagar mensagem', function () {
                     confirmar('Apagar esta mensagem?', 'Ela some para as duas pessoas.').then(function (ok) {
                         if (!ok) return;
                         api('/mensagens/' + m.id, 'DELETE').then(function () {
                             bolha.remove();
+                            atualizarVisto();
                             carregarLista();
                         }).catch(function (erro) { if (erro.erro) alertar(erro.erro); });
                     });
-                });
-                rodape.appendChild(apagar);
+                }));
             }
+            rodape.appendChild(acoes);
             bolha.appendChild(rodape);
             return bolha;
+        }
+
+        function botaoAcao(icone, titulo, aoClicar) {
+            const botao = criar('button', 'msg-apagar');
+            botao.type = 'button';
+            botao.title = titulo;
+            botao.setAttribute('aria-label', titulo);
+            botao.innerHTML = '<i class="fa-solid ' + icone + '" aria-hidden="true"></i>';
+            botao.addEventListener('click', aoClicar);
+            return botao;
+        }
+
+        function abrirSeletor(bolha, m) {
+            const aberto = bolha.querySelector('.msg-seletor');
+            fluxo.querySelectorAll('.msg-seletor').forEach(function (el) { el.remove(); });
+            if (aberto) return;
+            const seletor = criar('div', 'msg-seletor');
+            EMOJIS.forEach(function (emoji) {
+                const botao = criar('button', '', emoji);
+                botao.type = 'button';
+                botao.addEventListener('click', function () { seletor.remove(); reagir(m.id, emoji); });
+                seletor.appendChild(botao);
+            });
+            bolha.appendChild(seletor);
+        }
+
+        function reagir(id, emoji) {
+            api('/mensagens/' + id + '/reacao', 'POST', { emoji: emoji }).then(atualizarChat)
+                .catch(function (erro) { if (erro.erro) alertar(erro.erro); });
+        }
+
+        function responderA(m) {
+            estado.respondendo = { id: m.id, texto: m.texto || '📷 Imagem', minha: m.minha };
+            barraResposta.textContent = '';
+            const texto = criar('span', 'msg-barra-texto');
+            texto.append(criar('strong', '', 'Respondendo a ' + nomeDe(m.minha)), criar('span', '', estado.respondendo.texto));
+            barraResposta.append(texto, botaoFechar('Cancelar resposta', function () { limparResposta(); }));
+            barraResposta.hidden = false;
+            campo.focus({ preventScroll: true });
+        }
+
+        function limparResposta() {
+            estado.respondendo = null;
+            barraResposta.hidden = true;
+        }
+
+        function botaoFechar(titulo, aoClicar) {
+            const botao = criar('button', 'msg-icon');
+            botao.type = 'button';
+            botao.title = titulo;
+            botao.setAttribute('aria-label', titulo);
+            botao.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+            botao.addEventListener('click', aoClicar);
+            return botao;
+        }
+
+        function definirImagem(arq) {
+            limparImagem();
+            if (!arq) return;
+            if (arq.size > LIMITE_IMAGEM) { alertar('A imagem deve ter no máximo 4 MB.'); return; }
+            estado.imagem = arq;
+            const mini = document.createElement('img');
+            mini.alt = '';
+            mini.src = URL.createObjectURL(arq);
+            barraAnexo.textContent = '';
+            barraAnexo.append(mini, criar('span', 'msg-barra-texto', arq.name), botaoFechar('Remover imagem', limparImagem));
+            barraAnexo.hidden = false;
+        }
+
+        function limparImagem() {
+            const mini = barraAnexo.querySelector('img');
+            if (mini) URL.revokeObjectURL(mini.src);
+            estado.imagem = null;
+            arquivo.value = '';
+            barraAnexo.hidden = true;
+        }
+
+        // "Visto" aparece só sob a minha última mensagem, quando a outra pessoa já leu
+        function atualizarVisto() {
+            fluxo.querySelectorAll('.msg-visto').forEach(function (el) { el.remove(); });
+            const minhas = fluxo.querySelectorAll('.msg-bolha--minha');
+            const ultima = minhas[minhas.length - 1];
+            if (ultima && ultima.dataset.lida === '1') {
+                ultima.querySelector('.msg-bolha-hora').appendChild(criar('span', 'msg-visto', 'Visto'));
+            }
         }
 
         function confirmar(titulo, texto) {
@@ -275,36 +453,92 @@
 
         function rolarParaOFim() { fluxo.scrollTop = fluxo.scrollHeight; }
 
-        function aplicarDialogo(d, completo) {
-            const pertoDoFim = fluxo.scrollHeight - fluxo.scrollTop - fluxo.clientHeight < 80;
+        // modo: 'completo' (troca tudo), 'janela' (reconcilia as últimas mensagens) ou 'incremental' (só acrescenta)
+        function aplicarDialogo(d, modo) {
+            estado.noFim = fluxo.scrollHeight - fluxo.scrollTop - fluxo.clientHeight < 80;
+            const pertoDoFim = estado.noFim;
             estado.dialogo = d;
-            if (completo) {
+            let chegouDeFora = false;
+
+            if (modo === 'completo') {
                 fluxo.textContent = '';
                 estado.ultimoId = 0;
+                estado.temMais = d.temMais;
+                if (d.temMais) fluxo.appendChild(botaoAnteriores());
             }
+
+            if (modo === 'janela') {
+                const ids = {};
+                d.mensagens.forEach(function (m) { ids[m.id] = true; });
+                const primeiro = d.mensagens.length ? d.mensagens[0].id : 0;
+                fluxo.querySelectorAll('.msg-bolha').forEach(function (el) {
+                    if (Number(el.dataset.id) >= primeiro && !ids[el.dataset.id]) el.remove();
+                });
+            }
+
             d.mensagens.forEach(function (m) {
-                if (fluxo.querySelector('[data-id="' + m.id + '"]')) return;
+                const existente = fluxo.querySelector('.msg-bolha[data-id="' + m.id + '"]');
+                if (existente) {
+                    if (existente.dataset.assinatura !== assinatura(m)) existente.replaceWith(criarBolha(m));
+                    return;
+                }
                 fluxo.appendChild(criarBolha(m));
+                if (!m.minha) chegouDeFora = true;
                 if (m.id > estado.ultimoId) estado.ultimoId = m.id;
             });
-            if (completo && !d.mensagens.length) fluxo.appendChild(criar('p', 'msg-inicio', 'Nenhuma mensagem ainda. Diga oi!'));
-            else if (d.mensagens.length) {
-                const inicio = fluxo.querySelector('.msg-inicio');
-                if (inicio) inicio.remove();
-            }
+
+            const inicio = fluxo.querySelector('.msg-inicio');
+            if (!fluxo.querySelector('.msg-bolha')) {
+                if (!inicio) fluxo.appendChild(criar('p', 'msg-inicio', 'Nenhuma mensagem ainda. Diga oi!'));
+            } else if (inicio) inicio.remove();
+
+            if (chegouDeFora) digitando.hidden = true;
+            atualizarVisto();
+            desenharSilencio();
             desenharAviso();
-            if (completo || (d.mensagens.length && pertoDoFim)) rolarParaOFim();
+            if (modo === 'completo' || (chegouDeFora && pertoDoFim)) rolarParaOFim();
+            return chegouDeFora;
+        }
+
+        function botaoAnteriores() {
+            const botao = criar('button', 'btn btn-outline-secondary btn-sm msg-mais', 'Carregar mensagens anteriores');
+            botao.type = 'button';
+            botao.addEventListener('click', function () {
+                const primeiro = fluxo.querySelector('.msg-bolha');
+                if (!primeiro || estado.aberta === null) return;
+                const id = estado.aberta;
+                botao.disabled = true;
+                api('/conversas/' + id + '/mensagens?antes=' + primeiro.dataset.id).then(function (d) {
+                    if (estado.aberta !== id) return;
+                    const altura = fluxo.scrollHeight;
+                    d.mensagens.forEach(function (m) { fluxo.insertBefore(criarBolha(m), primeiro); });
+                    if (d.temMais) botao.disabled = false; else botao.remove();
+                    fluxo.scrollTop += fluxo.scrollHeight - altura;
+                }).catch(function () { botao.disabled = false; });
+            });
+            return botao;
+        }
+
+        function desenharSilencio() {
+            const mudo = !!(estado.dialogo && estado.dialogo.silenciada);
+            silenciar.title = mudo ? 'Reativar notificações' : 'Silenciar conversa';
+            silenciar.setAttribute('aria-label', silenciar.title);
+            silenciar.classList.toggle('is-on', mudo);
+            silenciar.innerHTML = '<i class="fa-solid ' + (mudo ? 'fa-bell-slash' : 'fa-bell') + '" aria-hidden="true"></i>';
         }
 
         function abrir(usuarioId) {
             estado.aberta = usuarioId;
             window.clearInterval(estado.timerChat);
+            limparResposta();
+            limparImagem();
+            digitando.hidden = true;
             return api('/conversas/' + usuarioId + '/mensagens').then(function (d) {
                 quem.textContent = d.nome;
                 quem.href = '/usuarios/' + d.usuarioId;
                 quem.prepend(avatar(d.usuarioId, d.fotoVersao, 'msg-avatar'));
                 abrirTela.href = '/mensagens?com=' + d.usuarioId;
-                aplicarDialogo(d, true);
+                aplicarDialogo(d, 'completo');
                 app.classList.add('tem-chat');
                 definirView('chat');
                 desenharLista();
@@ -318,15 +552,26 @@
         }
 
         function atualizarChat() {
-            if (document.hidden || estado.aberta === null) return;
+            if (document.hidden || estado.aberta === null) return Promise.resolve();
             const id = estado.aberta;
-            api('/conversas/' + id + '/mensagens?apos=' + estado.ultimoId).then(function (d) {
+            return api('/conversas/' + id + '/mensagens').then(function (d) {
                 if (estado.aberta !== id) return;
-                const chegou = d.mensagens.some(function (m) { return !m.minha; });
-                aplicarDialogo(d, false);
-                if (chegou) { carregarLista(); buscarTotal(); }
+                if (aplicarDialogo(d, 'janela')) { carregarLista(); buscarTotal(); }
             }).catch(function () {});
         }
+
+        ouvintesDeEvento.push(function (evento) {
+            if (modo === 'dock' && app.offsetParent === null) return;
+            if (evento.tipo === 'digitando') {
+                if (evento.de !== estado.aberta) return;
+                digitando.hidden = false;
+                window.clearTimeout(estado.timerDigitando);
+                estado.timerDigitando = window.setTimeout(function () { digitando.hidden = true; }, 4000);
+                return;
+            }
+            carregarLista();
+            if (estado.aberta !== null && (!evento.de || evento.de === estado.aberta)) atualizarChat();
+        });
 
         function fecharChat() {
             window.clearInterval(estado.timerChat);
@@ -352,6 +597,19 @@
         abaConversas.addEventListener('click', function () { estado.aba = 'conversas'; desenharLista(); });
         abaPedidos.addEventListener('click', function () { estado.aba = 'pedidos'; desenharLista(); });
         voltar.addEventListener('click', fecharChat);
+        silenciar.addEventListener('click', function () {
+            const d = estado.dialogo;
+            if (!d) return;
+            const mudo = !d.silenciada;
+            api('/conversas/' + d.usuarioId + '/silenciar', mudo ? 'POST' : 'DELETE').then(function () {
+                d.silenciada = mudo;
+                desenharSilencio();
+                carregarLista();
+                buscarTotal();
+            }).catch(function (erro) { if (erro.erro) alertar(erro.erro); });
+        });
+        clipe.addEventListener('click', function () { arquivo.click(); });
+        arquivo.addEventListener('change', function () { definirImagem(arquivo.files[0]); });
         excluirConversa.addEventListener('click', function () { apagarConversa(false); });
 
         campo.addEventListener('keydown', function (evento) {
@@ -363,19 +621,41 @@
         campo.addEventListener('input', function () {
             campo.style.height = 'auto';
             campo.style.height = Math.min(campo.scrollHeight, 110) + 'px';
+            const agora = Date.now();
+            if (campo.value && estado.aberta !== null && agora - estado.ultimoAviso > 2500) {
+                estado.ultimoAviso = agora;
+                api('/conversas/' + estado.aberta + '/digitando', 'POST').catch(function () {});
+            }
         });
 
         formulario.addEventListener('submit', function (evento) {
             evento.preventDefault();
             const texto = campo.value.trim();
-            if (!texto || estado.aberta === null) return;
+            const imagem = estado.imagem;
+            if ((!texto && !imagem) || estado.aberta === null) return;
             enviar.disabled = true;
             erroEnvio.hidden = true;
             const id = estado.aberta;
+            const corpo = { texto: texto, respondeA: estado.respondendo ? estado.respondendo.id : 0, comImagem: !!imagem };
             campo.value = '';
             campo.style.height = 'auto';
-            api('/conversas/' + id + '/mensagens', 'POST', { texto: texto }).then(function (m) {
-                aplicarDialogo({ ...estado.dialogo, mensagens: [m] }, false);
+            api('/conversas/' + id + '/mensagens', 'POST', corpo).then(function (m) {
+                if (!imagem) return m;
+                return fetch('/mensagens/' + m.id + '/imagem', {
+                    method: 'POST', credentials: 'same-origin', body: imagem,
+                    headers: { 'Content-Type': imagem.type, 'X-Requested-With': 'XMLHttpRequest' }
+                }).then(function (resposta) {
+                    if (resposta.ok) return m;
+                    return resposta.json().catch(function () { return {}; }).then(function (dados) {
+                        return api('/mensagens/' + m.id, 'DELETE').catch(function () {}).then(function () {
+                            throw { erro: dados.erro || 'Não foi possível enviar a imagem.' };
+                        });
+                    });
+                });
+            }).then(function (m) {
+                limparResposta();
+                limparImagem();
+                aplicarDialogo({ ...estado.dialogo, mensagens: [m] }, 'incremental');
                 rolarParaOFim();
                 atualizarChat();
                 carregarLista();

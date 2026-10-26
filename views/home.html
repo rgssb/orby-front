@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=28">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
@@ -57,13 +57,23 @@
                 <header class="feed-header">
                     <h2 id="feed-title">Publicações</h2>
                 </header>
+                <nav class="feed-tabs" aria-label="Filtrar publicações">
+                    <div class="feed-tabs-group">
+                        <a class="feed-tab{{if ne .Aba "todos"}} is-active{{end}}" href="/home?aba=seguindo&ordem={{.Ordem}}">Seguindo</a>
+                        <a class="feed-tab{{if eq .Aba "todos"}} is-active{{end}}" href="/home?aba=todos&ordem={{.Ordem}}">Para você</a>
+                    </div>
+                    <div class="feed-tabs-group feed-tabs-order">
+                        <a class="feed-tab{{if ne .Ordem "populares"}} is-active{{end}}" href="/home?aba={{.Aba}}&ordem=recentes">Recentes</a>
+                        <a class="feed-tab{{if eq .Ordem "populares"}} is-active{{end}}" href="/home?aba={{.Aba}}&ordem=populares">Populares</a>
+                    </div>
+                </nav>
                 {{if .Publicacoes}}
                 <div id="feed-lista">{{template "feed-itens" .}}</div>
                 {{else}}
                 <div class="feed-empty">
                     {{template "mascote" "orby-mascot--empty"}}
                     <h3>Ainda não há publicações</h3>
-                    <p>Seja o primeiro a compartilhar algo por aqui.</p>
+                    <p>{{if eq .Aba "todos"}}Seja o primeiro a compartilhar algo por aqui.{{else}}Siga pessoas ou veja a aba "Para você" para descobrir publicações.{{end}}</p>
                 </div>
                 {{end}}
             </section>

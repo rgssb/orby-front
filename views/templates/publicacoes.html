@@ -5,6 +5,15 @@
 <span class="like-count">{{.Curtidas}}</span>
 {{end}}
 
+{{define "salvar-compartilhar"}}
+<button type="button" class="action-icon salvar-publicacao{{if .SalvoPorUsuario}} is-saved{{end}}" aria-pressed="{{.SalvoPorUsuario}}" aria-label="{{if .SalvoPorUsuario}}Remover dos salvos{{else}}Salvar publicação{{end}}" title="{{if .SalvoPorUsuario}}Remover dos salvos{{else}}Salvar publicação{{end}}">
+    <i class="{{if .SalvoPorUsuario}}fa-solid fa-circle-check{{else}}fa-regular fa-bookmark{{end}}" aria-hidden="true"></i>
+</button>
+<button type="button" class="action-icon compartilhar-publicacao" aria-label="Copiar link da publicação" title="Copiar link">
+    <i class="fa-solid fa-link" aria-hidden="true"></i>
+</button>
+{{end}}
+
 {{define "comentarios-botao"}}
 <button type="button" class="comments-toggle" aria-expanded="false" aria-label="Ver comentários" title="Comentários">
     <i class="fa-solid fa-comment" aria-hidden="true"></i> <span class="comments-count">{{.Comentarios}}</span>
@@ -51,6 +60,7 @@
     <div class="publication-actions">
         {{template "curtidas" .}}
         {{template "comentarios-botao" .}}
+        {{template "salvar-compartilhar" .}}
         {{template "editar" .}}
         {{template "deletar" .}}
     </div>
@@ -64,6 +74,7 @@
     <div class="publication-actions">
         {{template "curtidas" .}}
         {{template "comentarios-botao" .}}
+        {{template "salvar-compartilhar" .}}
     </div>
     {{template "comentarios-area" .}}
 </article>

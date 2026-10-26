@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=24">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=28">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -43,6 +43,7 @@
                             {{if .Usuario.Bio}}<p class="profile-bio">{{.Usuario.Bio}}</p>{{end}}
                             <div class="profile-chips">
                                 <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
+                                {{if .Usuario.Privado}}<span class="profile-chip"><i class="fa-solid fa-lock" aria-hidden="true"></i> Perfil privado</span>{{end}}
                                 <span class="profile-chip profile-chip-muted"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</span>
                             </div>
                         </div>
@@ -56,7 +57,11 @@
                             {{else}}
                             <a class="btn btn-outline-primary" href="/mensagens?com={{.Usuario.ID}}"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Mensagem</a>
                             {{if not $SeguidoPeloUsuarioLogado}}
-                            <button type="button" id="seguir" class="btn btn-primary" data-usuario="{{.Usuario.ID}}"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Seguir</button>
+                            {{if .Usuario.PedidoEnviado}}
+                            <button type="button" id="parar-de-seguir" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" title="Cancelar pedido"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> Pedido enviado</button>
+                            {{else}}
+                            <button type="button" id="seguir" class="btn btn-primary" data-usuario="{{.Usuario.ID}}"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> {{if .Usuario.Privado}}Solicitar para seguir{{else}}Seguir{{end}}</button>
+                            {{end}}
                             {{else}}
                             <button type="button" id="parar-de-seguir" class="btn btn-danger" data-usuario="{{.Usuario.ID}}"><i class="fa-solid fa-user-minus" aria-hidden="true"></i> Parar de seguir</button>
                             {{end}}
@@ -76,6 +81,13 @@
             <header class="feed-header">
                 <h2 id="feed-title">Publicações de @{{.Usuario.Nick}}</h2>
             </header>
+            {{if not .Usuario.PodeVerPublicacoes}}
+            <div class="users-empty">
+                <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
+                <h2>Este perfil é privado</h2>
+                <p>Siga @{{.Usuario.Nick}} para ver as publicações.</p>
+            </div>
+            {{else}}
             {{range .Usuario.Publicacoes}}
                 {{template "publicacao-sem-permissao" .}}
             {{else}}
@@ -84,6 +96,7 @@
                 <h2>Nenhuma publicação</h2>
                 <p>Este usuário ainda não publicou nada.</p>
             </div>
+            {{end}}
             {{end}}
         </section>
     </main>

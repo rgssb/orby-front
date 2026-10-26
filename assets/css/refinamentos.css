@@ -1315,3 +1315,64 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .modal-user:hover .modal-user-go, .modal-user:focus-visible .modal-user-go { opacity: 1; transform: none; }
 .modal-empty { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin: 0; padding: 1.5rem 1rem; color: var(--orby-text-muted); text-align: center; }
 .modal-empty i { font-size: 1.6rem; opacity: 0.6; }
+
+.msg-bolha-hora .msg-acoes { display: inline-flex; gap: 0.4rem; }
+.msg-visto { font-weight: 600; }
+.msg-citacao { display: flex; flex-direction: column; width: 100%; margin-bottom: 0.3rem; padding: 0.25rem 0.5rem; border: 0; border-left: 3px solid currentColor; border-radius: 0.4rem; background: rgba(127, 127, 127, 0.18); color: inherit; font-size: 0.74rem; text-align: left; cursor: pointer; }
+.msg-citacao strong { font-size: 0.7rem; }
+.msg-citacao span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.85; }
+.msg-destaque { animation: msg-pulso 1.4s ease; }
+@keyframes msg-pulso { 0%, 60% { box-shadow: 0 0 0 3px var(--orby-accent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+.msg-imagem-link { display: block; margin-bottom: 0.2rem; }
+.msg-imagem { display: block; max-width: 100%; max-height: 240px; border-radius: 0.7rem; object-fit: cover; }
+.msg-reacoes { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem; }
+.msg-reacao { padding: 0.05rem 0.4rem; border: 1px solid var(--orby-border); border-radius: 999px; background: var(--orby-surface); color: var(--orby-text); font-size: 0.74rem; cursor: pointer; }
+.msg-reacao.is-mine { border-color: var(--orby-accent); }
+.msg-seletor { position: absolute; bottom: 100%; z-index: 5; display: flex; gap: 0.15rem; margin-bottom: 0.2rem; padding: 0.25rem 0.35rem; border: 1px solid var(--orby-border); border-radius: 999px; background: var(--orby-surface); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25); }
+.msg-bolha--minha .msg-seletor { right: 0; }
+.msg-bolha--outra .msg-seletor { left: 0; }
+.msg-seletor button { padding: 0.1rem 0.2rem; border: 0; background: transparent; font-size: 1.1rem; cursor: pointer; transition: transform 0.12s ease; }
+.msg-seletor button:hover { transform: scale(1.25); }
+.msg-barra { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0.75rem; border-top: 1px solid var(--orby-border); background: var(--orby-surface-hover); font-size: 0.78rem; }
+.msg-barra[hidden], .msg-digitando[hidden] { display: none; }
+.msg-barra-texto { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.msg-barra-texto span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--orby-text-muted); }
+.msg-barra img { width: 38px; height: 38px; border-radius: 0.4rem; object-fit: cover; }
+.msg-digitando { margin: 0; padding: 0 0.9rem 0.3rem; color: var(--orby-text-muted); font-size: 0.74rem; font-style: italic; }
+.msg-mais { align-self: center; margin-bottom: 0.4rem; }
+.msg-silenciar.is-on { color: var(--orby-accent); }
+.msg-item-mudo { margin-left: 0.35rem; color: var(--orby-text-muted); font-size: 0.7rem; }
+.msg-ponto.is-muted { background: var(--orby-text-muted); }
+.msg-app--pagina:not(.tem-chat) .msg-barra, .msg-app--pagina:not(.tem-chat) .msg-digitando { display: none; }
+
+.feed-tabs { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 1rem; }
+.feed-tabs-group { display: inline-flex; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--orby-border); border-radius: 999px; background: var(--orby-surface); }
+.feed-tab { padding: 0.25rem 0.85rem; border-radius: 999px; color: var(--orby-text-muted); font-size: 0.84rem; font-weight: 600; text-decoration: none; transition: background 0.15s ease, color 0.15s ease; }
+.feed-tab:hover { color: var(--orby-text); text-decoration: none; }
+.feed-tab.is-active { background: var(--orby-btn-bg); color: var(--orby-btn-text); }
+.feed-tabs-order .feed-tab { font-weight: 500; font-size: 0.78rem; }
+
+.action-icon { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--orby-text-muted); cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
+.action-icon:hover, .action-icon:focus-visible { background: var(--orby-surface-hover); color: var(--orby-text); }
+.action-icon.is-saved { color: var(--orby-accent); }
+
+.privacy-switch .switch-row { display: flex; align-items: flex-start; gap: 0.75rem; margin: 0; cursor: pointer; }
+.privacy-switch .switch-row input { margin-top: 0.35rem; }
+.privacy-switch small { display: block; color: var(--orby-text-muted); }
+.pedidos-lista { margin: 0; padding: 0; list-style: none; text-align: left; }
+.pedidos-lista li { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0; }
+.pedido-pessoa { display: flex; align-items: center; gap: 0.6rem; min-width: 0; color: inherit; text-decoration: none; }
+.pedido-pessoa span:last-child { display: flex; flex-direction: column; min-width: 0; }
+.pedido-pessoa small { color: var(--orby-text-muted); }
+.pedido-acoes { display: inline-flex; gap: 0.4rem; }
+.pedidos-vazio { margin: 0; padding: 1rem; color: var(--orby-text-muted); text-align: center; }
+.action-icon.is-saved i { animation: salvo-pop 0.3s ease; }
+@keyframes salvo-pop { 0% { transform: scale(0.6); } 60% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+.post-image-link, .msg-imagem-link, .profile-avatar:has(img) { cursor: zoom-in; }
+.lightbox { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: rgba(0, 0, 0, 0.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.18s ease; cursor: zoom-out; }
+.lightbox.is-open { opacity: 1; }
+.lightbox img { max-width: min(94vw, 1100px); max-height: 90vh; border-radius: 0.75rem; object-fit: contain; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); transform: scale(0.94); transition: transform 0.18s ease; }
+.lightbox.is-open img { transform: none; }
+.lightbox-fechar { position: absolute; top: 1rem; right: 1rem; width: 2.4rem; height: 2.4rem; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.16); color: #fff; font-size: 1.1rem; cursor: pointer; }
+.lightbox-fechar:hover { background: rgba(255, 255, 255, 0.28); }

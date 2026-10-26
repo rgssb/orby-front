@@ -14,14 +14,16 @@
         comentario: 'comentou na sua publicação',
         curtida_comentario: 'curtiu seu comentário',
         mencao: 'mencionou você',
-        seguidor: 'começou a seguir você'
+        seguidor: 'começou a seguir você',
+        pedido_seguir: 'quer seguir você'
     };
     const ICONES = {
         curtida_publicacao: 'fa-heart',
         comentario: 'fa-comment',
         curtida_comentario: 'fa-heart',
         mencao: 'fa-at',
-        seguidor: 'fa-user-plus'
+        seguidor: 'fa-user-plus',
+        pedido_seguir: 'fa-user-clock'
     };
     const POR_VEZ = 15;
     let exibidas = 0;
@@ -59,6 +61,7 @@
     function montarItem(n) {
         const semPublicacao = !n.publicacaoId;
         let destino = semPublicacao ? '/usuarios/' + n.atorId : '/publicacoes/' + n.publicacaoId;
+        if (n.tipo === 'pedido_seguir') destino = '/perfil';
         if (!semPublicacao && n.comentarioId) destino += '?comentario=' + n.comentarioId;
 
         const texto = $('<span class="notif-texto">')

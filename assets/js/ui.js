@@ -77,11 +77,19 @@
     if (caminho === '/home') alvo = '/home';
     else if (caminho === '/perfil' || caminho.indexOf('/perfil/') === 0) alvo = '/perfil';
     else if (caminho === '/mensagens') alvo = '/mensagens';
+    else if (caminho === '/salvos') alvo = '/salvos';
     Array.prototype.forEach.call(itens, function (item) {
         var ativo = item.getAttribute('data-nav') === alvo;
         item.classList.toggle('active', ativo);
         var link = item.querySelector('.nav-link');
         if (!link) return;
+        var icone = link.querySelector('.fa-bookmark');
+        if (icone && ativo) {
+            var novo = document.createElement('i');
+            novo.className = 'fa-solid fa-circle-check';
+            novo.setAttribute('aria-hidden', 'true');
+            icone.replaceWith(novo);
+        }
         if (ativo) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
     });
 })();

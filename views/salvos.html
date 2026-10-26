@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - Salvos</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=22">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=28">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+
+<body>
+    {{template "cabecalho"}}
+
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page">
+        <section class="users-column" aria-labelledby="users-title">
+            <header class="feed-header">
+                <h1 id="users-title">Publicações salvas</h1>
+            </header>
+            {{if .Publicacoes}}
+            <div id="feed-lista">{{template "feed-itens" .}}</div>
+            {{else}}
+            <div class="users-empty">
+                <span class="composer-icon" aria-hidden="true"><i class="fa-regular fa-bookmark"></i></span>
+                <h2>Nada salvo ainda</h2>
+                <p>Toque no marcador de uma publicação para guardá-la aqui.</p>
+            </div>
+            {{end}}
+        </section>
+    </main>
+
+    {{template "rodape"}}
+    {{template "scripts" .}}
+</body>
+
+</html>

@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=25">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=24">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=28">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -36,11 +36,13 @@
                             {{if .Usuario.Bio}}<p class="profile-bio">{{.Usuario.Bio}}</p>{{end}}
                             <div class="profile-chips">
                                 <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
+                                {{if .Usuario.Privado}}<span class="profile-chip"><i class="fa-solid fa-lock" aria-hidden="true"></i> Perfil privado</span>{{end}}
                                 <span class="profile-chip profile-chip-muted"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</span>
                             </div>
                         </div>
                         <div class="profile-actions">
                             <a href="/editar-perfil" class="btn btn-primary"><i class="fa-solid fa-pen" aria-hidden="true"></i> Editar perfil</a>
+                            {{if .Usuario.Privado}}<button type="button" id="abrir-pedidos" class="btn btn-outline-primary"><i class="fa-solid fa-user-clock" aria-hidden="true"></i> Pedidos de seguir <span class="nav-badge" id="pedidos-total" hidden></span></button>{{end}}
                             <a href="/atualizar-senha" class="btn btn-outline-secondary"><i class="fa-solid fa-key" aria-hidden="true"></i> Alterar senha</a>
                         </div>
                     </div>

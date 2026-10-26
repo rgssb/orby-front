@@ -26,6 +26,10 @@ type Usuario struct {
 	Seguidores   []Usuario    `json:"seguidores"`
 	Seguindo     []Usuario    `json:"seguindo"`
 	Publicacoes  []Publicacao `json:"publicacoes"`
+	// Privado esconde as publicações de quem não segue; os dois campos seguintes dependem de quem visita
+	Privado            bool `json:"privado"`
+	PodeVerPublicacoes bool `json:"podeVerPublicacoes"`
+	PedidoEnviado      bool `json:"pedidoEnviado"`
 }
 
 // ErroUsuarioNaoEncontrado indica que a API não conhece o usuário pedido

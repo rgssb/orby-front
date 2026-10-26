@@ -75,21 +75,28 @@ function atualizarPerfil() {
 function editar(evento) {
     evento.preventDefault();
 
-    $.ajax({
-        url: "/editar-usuario",
-        method: "PUT",
-        data: {
-            nome: $('#nome').val(),
-            email: $('#email').val(),
-            nick: $('#nick').val(),
-            bio: $('#bio').val(),
-        }
-    }).done(function() {
+    const bannerSalvo = window.salvarBannerPendente ? window.salvarBannerPendente() : Promise.resolve();
+    bannerSalvo.catch(function() {
+        Swal.fire("Ops...", "Não foi possível salvar o banner.", "error");
+        return Promise.reject();
+    }).then(function() {
+        return $.ajax({
+            url: "/editar-usuario",
+            method: "PUT",
+            data: {
+                nome: $('#nome').val(),
+                email: $('#email').val(),
+                nick: $('#nick').val(),
+                bio: $('#bio').val(),
+            }
+        });
+    }).then(function() {
         Swal.fire("Sucesso", "Perfil atualizado com sucesso", "success")
             .then(function() {
                 window.location.assign("/perfil");
             });
-    }).fail(function(resposta) {
+    }, function(resposta) {
+        if (!resposta) return;
         const erro = resposta.responseJSON && resposta.responseJSON.erro;
         Swal.fire("Ops...", erro || "Erro ao atualizar o perfil", "error");
     });
@@ -189,14 +196,12 @@ function atualizarSenha(evento) {
     });
 })();
 
-// Banner: tema pronto ou imagem própria recortada; nada é salvo até clicar em "Salvar banner"
+// Banner: tema pronto ou imagem própria recortada; só é salvo ao clicar em "Salvar alterações" do perfil
 (function () {
     const previa = document.getElementById('banner-previa');
     if (!previa) return;
 
     const arquivo = document.getElementById('banner-arquivo');
-    const botaoSalvar = document.getElementById('banner-salvar');
-    const botaoCancelar = document.getElementById('banner-cancelar');
     const botaoEnviar = document.getElementById('banner-enviar');
     const temas = Array.prototype.slice.call(document.querySelectorAll('.banner-tema'));
     const TEMAS = temas.map(function (t) { return t.dataset.tema; });
@@ -223,8 +228,6 @@ function atualizarSenha(evento) {
             botao.setAttribute('aria-pressed', String(ativo));
         });
         document.getElementById('banner-padrao').classList.toggle('is-active', atual.tipo === 'padrao');
-        const mudou = atual.tipo !== inicial.tipo || atual.tema !== inicial.tema || !!atual.blob;
-        botaoSalvar.hidden = botaoCancelar.hidden = !mudou;
     }
 
     temas.forEach(function (botao) {
@@ -255,11 +258,6 @@ function atualizarSenha(evento) {
         });
     });
 
-    botaoCancelar.addEventListener('click', function () {
-        atual = { tipo: inicial.tipo, tema: inicial.tema, imagem: inicial.imagem, blob: null };
-        mostrar();
-    });
-
     function requisicao(url, metodo, corpo, tipo) {
         const cabecalhos = { 'X-Requested-With': 'XMLHttpRequest' };
         if (tipo) cabecalhos['Content-Type'] = tipo;
@@ -268,25 +266,21 @@ function atualizarSenha(evento) {
         });
     }
 
-    botaoSalvar.addEventListener('click', function () {
-        botaoSalvar.disabled = true;
+    // Chamada pelo envio do formulário de perfil; só envia se o banner foi alterado
+    window.salvarBannerPendente = function () {
+        const mudou = atual.tipo !== inicial.tipo || atual.tema !== inicial.tema || !!atual.blob;
+        if (!mudou) return Promise.resolve();
         let envio;
         if (atual.tipo === 'imagem' && atual.blob) envio = requisicao('/perfil/banner', 'POST', atual.blob, 'image/jpeg');
         else if (atual.tipo === 'tema') envio = requisicao('/perfil/banner/tema', 'POST', JSON.stringify({ preset: atual.tema }), 'application/json');
         else envio = requisicao('/perfil/banner', 'DELETE');
-
-        envio.then(function () {
+        return envio.then(function () {
             inicial.tipo = atual.tipo;
             inicial.tema = atual.tema;
             inicial.imagem = atual.imagem;
             atual.blob = null;
-            mostrar();
-            Swal.fire({ icon: 'success', title: 'Banner atualizado!', timer: 1600, showConfirmButton: false });
-        }).catch(function (erro) {
-            if (erro && erro.status === 401) return;
-            Swal.fire('Ops...', 'Não foi possível salvar o banner.', 'error');
-        }).finally(function () { botaoSalvar.disabled = false; });
-    });
+        });
+    };
 
     mostrar();
 })();

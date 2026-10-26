@@ -699,8 +699,6 @@ html[data-theme] .profile-banner.has-image::after { display: none; }
 .banner-tema.is-active { border-color: var(--orby-text); box-shadow: 0 0 0 2px var(--orby-accent); }
 .banner-options .is-active { outline: 2px solid var(--orby-accent); }
 
-.banner-save { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-.banner-save[hidden], .banner-save > [hidden] { display: none; }
 
 body.crop-aberto { overflow: hidden; }
 

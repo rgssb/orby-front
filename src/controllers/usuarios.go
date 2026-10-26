@@ -99,6 +99,11 @@ func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if response.StatusCode == http.StatusAccepted {
+		respostas.JSON(w, response.StatusCode, map[string]bool{"pedido": true})
+		return
+	}
+
 	respostas.JSON(w, response.StatusCode, nil)
 }
 
