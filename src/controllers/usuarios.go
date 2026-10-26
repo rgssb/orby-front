@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"webapp/src/config"
@@ -153,6 +154,37 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 	url := fmt.Sprintf("%s/usuarios/%d/atualizar-senha", config.ApiURL, usuarioID)
 
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodPost, url, bytes.NewBuffer(senhas))
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	respostas.JSON(w, response.StatusCode, nil)
+}
+
+//DeletarUsuario chama a API para deletar o usuario
+func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := cookies.Ler(r)
+	usuarioID, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	url := fmt.Sprintf("%s/usuarios/%d", config.ApiURL, usuarioID)
+
+	var dados struct {
+		Senha string `json:"senha"`
+	}
+	if erro := json.NewDecoder(io.LimitReader(r.Body, 1<<10)).Decode(&dados); erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: "Informe sua senha"})
+		return
+	}
+	corpo, _ := json.Marshal(map[string]string{"atual": dados.Senha})
+
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodDelete, url, bytes.NewBuffer(corpo))
 	if erro != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
 		return

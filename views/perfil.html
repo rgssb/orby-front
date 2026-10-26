@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
     <link rel="stylesheet" href="/assets/css/refinamentos.css?v=14">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=18">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=22">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -64,12 +64,20 @@
                 <p>Você ainda não publicou nada.</p>
             </div>
             {{end}}
+
+            <aside class="danger-zone" aria-label="Zona de perigo">
+                <div class="danger-zone-text" id="danger-desc">
+                    <h2><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Zona de perigo</h2>
+                    <p>Apagar sua conta remove permanentemente suas publicações, comentários, foto e seguidores. Essa ação não pode ser desfeita.</p>
+                </div>
+                <button type="button" class="btn btn-outline-danger" id="deletar-usuario" aria-describedby="danger-desc"><i class="fa-solid fa-trash" aria-hidden="true"></i> Deletar conta</button>
+            </aside>
         </section>
     </main>
 
     {{template "rodape"}}
     {{template "scripts" .}}
-    <script src="/assets/js/usuario.js?v=5"></script>
+    <script src="/assets/js/usuario.js?v=9"></script>
     {{template "modal-seguidores" .Usuario}}
     {{template "modal-seguindo" .Usuario}}
 </body>

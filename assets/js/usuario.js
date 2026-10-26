@@ -10,6 +10,11 @@ $('#editar-usuario').on('submit', editar);
 
 $('#atualizar-senha').on('submit', atualizarSenha);
 
+$(document).on('click', '#deletar-usuario', function (e) {
+    e.preventDefault();
+    deletarUsuario();
+});
+
 function alternarSeguir(botao, acao, mensagemErro) {
     const usuarioId = $(botao).data('usuario');
     $(botao).prop('disabled', true);
@@ -88,7 +93,7 @@ function atualizarSenha(evento) {
 }
 
 
-// Contador da bio
+// Contador da bio conta os caracteres digitados
 (function () {
     const bio = document.getElementById('bio');
     const contador = document.getElementById('contador-bio');
@@ -98,7 +103,7 @@ function atualizarSenha(evento) {
     atualizar();
 })();
 
-// Foto de perfil: o navegador reduz a imagem (máx. 512px, JPEG) antes de enviar
+// Foto de perfil reduz a imagem (máx. 512px, JPEG) antes de enviar
 (function () {
     const escolher = document.getElementById('foto-escolher');
     if (!escolher) return;
@@ -171,3 +176,40 @@ function atualizarSenha(evento) {
         });
     });
 })();
+
+function deletarUsuario() {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Tem certeza?',
+        text: 'Esta ação não pode ser desfeita. Todos os seus dados (publicações, comentários, foto e seguidores) serão apagados. Digite sua senha para confirmar.',
+        input: 'password',
+        inputPlaceholder: 'Sua senha',
+        inputAttributes: { autocomplete: 'current-password' },
+        showCancelButton: true,
+        confirmButtonText: 'Sim, deletar',
+        cancelButtonText: 'Cancelar',
+        preConfirm: function (senha) {
+            if (!senha) {
+                Swal.showValidationMessage('Informe sua senha');
+            }
+            return senha;
+        }
+    }).then(function (confirmacao) {
+        if (!confirmacao.isConfirmed) {
+            return;
+        }
+        $.ajax({
+            url: '/deletar-usuario',
+            method: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({ senha: confirmacao.value })
+        }).done(function () {
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Usuário deletado com sucesso.', timer: 1600, showConfirmButton: false }).then(function () {
+                window.location.href = '/logout';
+            });
+        }).fail(function (xhr) {
+            var msg = xhr.status === 403 ? 'Senha incorreta.' : 'Ocorreu um erro ao tentar deletar o usuário. Tente novamente mais tarde.';
+            Swal.fire('Ops...', msg, 'error');
+        });
+    });
+}

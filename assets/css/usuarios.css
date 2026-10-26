@@ -154,6 +154,13 @@
   font-size: 0.88rem;
 }
 
+.users-empty .orby-mascot--empty {
+  display: block;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto;
+}
+
 .users-empty .composer-icon {
   margin-inline: auto;
 }
@@ -569,4 +576,64 @@ html[data-theme="completo"] .user-avatar:not(.profile-avatar) {
   color: var(--orby-accent);
   background: color-mix(in srgb, var(--orby-accent) 14%, var(--orby-surface));
   border-color: transparent;
+}
+
+/* Zona de perigo: botão fixo no canto inferior direito; o aviso abre ao passar o mouse */
+.danger-zone {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1030;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.danger-zone .btn {
+  background: var(--orby-surface);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.danger-zone .btn:hover,
+.danger-zone .btn:focus {
+  background: #dc3545;
+  color: #fff;
+}
+
+.danger-zone-text {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  width: 320px;
+  max-width: calc(100vw - 2.5rem);
+  padding: 0.9rem 1rem;
+  background: var(--orby-surface);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: var(--orby-radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  pointer-events: none;
+}
+
+.danger-zone:hover .danger-zone-text,
+.danger-zone:focus-within .danger-zone-text {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.danger-zone h2 {
+  margin: 0 0 0.25rem;
+  color: #ef4444;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.danger-zone p {
+  margin: 0;
+  color: var(--orby-text-muted);
+  font-size: 0.82rem;
 }
