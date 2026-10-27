@@ -66,12 +66,12 @@
         <time class="repost-time" datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time>
         {{if .Titulo}}<h3 class="repost-title">{{.Titulo}}</h3>{{end}}
         <p class="repost-text">{{.Conteudo}}</p>
-        {{if .TemImagem}}<a class="post-image-link" href="/publicacoes/{{.ID}}/imagem" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem da publicação" loading="lazy"></a>{{end}}
+        {{template "imagens-publicacao" .}}
         <a class="repost-open" href="/publicacoes/{{.ID}}">Ver publicação original</a>
     </div>
     {{end}}
 {{end}}
-{{if .TemImagem}}<a class="post-image-link" href="/publicacoes/{{.ID}}/imagem" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem da publicação" loading="lazy"></a>{{end}}
+{{template "imagens-publicacao" .}}
 <hr class="my-4">
 {{end}}
 
@@ -119,15 +119,16 @@
 {{end}}
 {{end}}
 
+{{define "imagens-publicacao"}}
+{{if .Imagens}}<div class="post-images post-images--{{.Imagens}}">{{range $i := intervalo .Imagens}}<a class="post-image-link" href="/publicacoes/{{$.ID}}/imagens/{{$i}}" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{$.ID}}/imagens/{{$i}}" alt="Imagem {{inc $i}} da publicação" loading="lazy"></a>{{end}}</div>{{end}}
+{{end}}
+
 {{define "campo-imagem"}}
 <div class="form-group image-field">
-    <span class="image-field-title"><i class="fa-solid fa-image" aria-hidden="true"></i> Imagem <small class="text-muted">(opcional, até 4 MB)</small></span>
-    <input type="file" class="image-input" id="imagem-publicacao" accept="image/jpeg,image/png,image/webp,image/gif">
-    <label class="image-add-button" for="imagem-publicacao"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> <span id="imagem-nome">Adicionar um arquivo</span></label>
-    <div class="image-preview" id="imagem-previa" hidden>
-        <img class="post-image" src="" alt="Pré-visualização da imagem">
-        <button type="button" class="btn btn-sm btn-outline-secondary" id="limpar-imagem">Remover</button>
-    </div>
+    <span class="image-field-title"><i class="fa-solid fa-image" aria-hidden="true"></i> Imagens <small class="text-muted">(opcional, até 4, de até 4 MB cada)</small></span>
+    <input type="file" class="image-input" id="imagem-publicacao" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+    <label class="image-add-button" for="imagem-publicacao"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> <span id="imagem-nome">Adicionar imagens</span></label>
+    <div class="image-previews" id="imagem-previa" hidden></div>
 </div>
 {{end}}
 

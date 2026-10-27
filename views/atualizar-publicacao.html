@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=32">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=33">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -37,11 +37,17 @@
                     <label for="conteudo">Conteúdo</label>
                     <textarea class="form-control" id="conteudo" name="conteudo" placeholder="Digite o conteúdo da publicação">{{.Conteudo}}</textarea>
                 </div>
-                {{if .TemImagem}}
+                {{if .Imagens}}
                 <div class="form-group image-current">
-                    <span class="d-block mb-1">Imagem atual</span>
-                    <img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem atual da publicação">
-                    <label class="image-remove"><input type="checkbox" id="remover-imagem-atual"> Remover imagem atual</label>
+                    <span class="d-block mb-1">Imagens atuais</span>
+                    <div class="image-previews">
+                        {{range $i := intervalo .Imagens}}
+                        <label class="image-thumb">
+                            <img src="/publicacoes/{{$.ID}}/imagens/{{$i}}" alt="Imagem {{inc $i}} atual da publicação">
+                            <span class="image-remove"><input type="checkbox" class="remover-imagem-atual" data-posicao="{{$i}}"> Remover</span>
+                        </label>
+                        {{end}}
+                    </div>
                 </div>
                 {{end}}
                 {{template "campo-imagem"}}

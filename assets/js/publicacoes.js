@@ -55,10 +55,7 @@ $(document).on('click', '.deletar-publicacao', deletarPublicacao);
 function criarpublicacao(evento) {
     evento.preventDefault();
 
-    const arquivo = ($('#imagem-publicacao')[0] || {}).files && $('#imagem-publicacao')[0].files[0];
-    if (arquivo && !validarImagem(arquivo)) {
-        return;
-    }
+    const arquivos = imagensEscolhidas.slice();
 
     const botao = $('#nova-publicacao button[type="submit"]').prop('disabled', true);
 
@@ -76,14 +73,14 @@ function criarpublicacao(evento) {
             });
         };
 
-        if (!arquivo || !criada || !criada.id) {
+        if (!arquivos.length || !criada || !criada.id) {
             concluir();
             return;
         }
 
-        enviarImagem(criada.id, arquivo).done(concluir).fail(function() {
-            // A publicação já existe; só a imagem falhou
-            alertaErro('A publicação foi criada, mas a imagem não pôde ser enviada. Você pode adicioná-la ao editar.').then(function() {
+        enviarImagens(criada.id, arquivos).done(concluir).fail(function() {
+            // A publicação já existe; só as imagens falharam
+            alertaErro('A publicação foi criada, mas nem todas as imagens puderam ser enviadas. Você pode adicioná-las ao editar.').then(function() {
                 window.location = "/home";
             });
         });
@@ -109,9 +106,12 @@ function validarImagem(arquivo) {
     return true;
 }
 
+const MAXIMO_DE_IMAGENS = 4;
+let imagensEscolhidas = [];
+
 function enviarImagem(publicacaoId, arquivo) {
     return $.ajax({
-        url: '/publicacoes/' + publicacaoId + '/imagem',
+        url: '/publicacoes/' + publicacaoId + '/imagens',
         method: 'POST',
         data: arquivo,
         processData: false,
@@ -119,30 +119,57 @@ function enviarImagem(publicacaoId, arquivo) {
     });
 }
 
-// Pré-visualização da imagem escolhida (composer e edição)
+// Envia uma por vez, para manter a ordem escolhida
+function enviarImagens(publicacaoId, arquivos) {
+    return arquivos.reduce(function(anterior, arquivo) {
+        return anterior.then(function() { return enviarImagem(publicacaoId, arquivo); });
+    }, $.Deferred().resolve());
+}
+
+function espacoParaImagens() {
+    return MAXIMO_DE_IMAGENS - $('.remover-imagem-atual:not(:checked)').length;
+}
+
+function desenharPrevias() {
+    const previa = $('#imagem-previa').empty();
+    imagensEscolhidas.forEach(function(arquivo, i) {
+        const item = $('<div class="image-thumb">');
+        item.append($('<img>').attr({ src: URL.createObjectURL(arquivo), alt: 'Pré-visualização de ' + arquivo.name }));
+        item.append($('<button type="button" class="remover-previa" aria-label="Remover imagem">').attr('data-indice', i).html('&times;'));
+        previa.append(item);
+    });
+    previa.prop('hidden', imagensEscolhidas.length === 0);
+    $('#imagem-nome').text(imagensEscolhidas.length
+        ? imagensEscolhidas.length + (imagensEscolhidas.length === 1 ? ' imagem selecionada' : ' imagens selecionadas')
+        : 'Adicionar imagens');
+}
+
+// Escolha das imagens (composer e edição); acumula entre escolhas, até o limite
 $(document).on('change', '#imagem-publicacao', function() {
-    const arquivo = this.files && this.files[0];
-    const previa = $('#imagem-previa');
-    $('#imagem-nome').text(arquivo ? arquivo.name : 'Adicionar um arquivo');
-    if (!arquivo) {
-        previa.prop('hidden', true);
-        return;
+    const novas = Array.from(this.files || []);
+    this.value = '';
+    for (const arquivo of novas) {
+        if (!validarImagem(arquivo)) {
+            continue;
+        }
+        if (imagensEscolhidas.length >= espacoParaImagens()) {
+            alertaErro('Uma publicação pode ter no máximo ' + MAXIMO_DE_IMAGENS + ' imagens.');
+            break;
+        }
+        imagensEscolhidas.push(arquivo);
     }
-    if (!validarImagem(arquivo)) {
-        this.value = '';
-        $('#imagem-nome').text('Adicionar um arquivo');
-        previa.prop('hidden', true);
-        return;
-    }
-    previa.find('img').attr('src', URL.createObjectURL(arquivo));
-    previa.prop('hidden', false);
-    $('#remover-imagem-atual').prop('checked', false);
+    desenharPrevias();
 });
 
-$(document).on('click', '#limpar-imagem', function() {
-    $('#imagem-publicacao').val('');
-    $('#imagem-nome').text('Adicionar um arquivo');
-    $('#imagem-previa').prop('hidden', true);
+$(document).on('click', '.remover-previa', function() {
+    imagensEscolhidas.splice($(this).data('indice'), 1);
+    desenharPrevias();
+});
+
+// Marcar imagens atuais para remoção libera espaço; descarta o que passar do limite
+$(document).on('change', '.remover-imagem-atual', function() {
+    imagensEscolhidas = imagensEscolhidas.slice(0, Math.max(espacoParaImagens(), 0));
+    desenharPrevias();
 });
 
 function curtirPublicacao(evento) {
@@ -210,12 +237,9 @@ function atualizarPublicacao() {
     botaoAtualizar.prop('disabled', true);
 
     const publicacaoId = botaoAtualizar.data('publicacao-id');
-    const arquivo = $('#imagem-publicacao')[0].files[0];
-    if (arquivo && !validarImagem(arquivo)) {
-        botaoAtualizar.prop('disabled', false);
-        return;
-    }
-    const removerImagem = $('#remover-imagem-atual').prop('checked');
+    const arquivos = imagensEscolhidas.slice();
+    // da última para a primeira, porque as seguintes sobem uma posição a cada remoção
+    const posicoesRemovidas = $('.remover-imagem-atual:checked').map(function() { return $(this).data('posicao'); }).get().sort(function(a, b) { return b - a; });
 
     $.ajax({
         url: `/publicacoes/${publicacaoId}`,
@@ -225,12 +249,13 @@ function atualizarPublicacao() {
             conteudo: $('#conteudo').val()
         }
     }).then(function() {
-        if (arquivo) {
-            return enviarImagem(publicacaoId, arquivo);
-        }
-        if (removerImagem) {
-            return $.ajax({ url: `/publicacoes/${publicacaoId}/imagem`, method: 'DELETE' });
-        }
+        return posicoesRemovidas.reduce(function(anterior, posicao) {
+            return anterior.then(function() {
+                return $.ajax({ url: `/publicacoes/${publicacaoId}/imagens/${posicao}`, method: 'DELETE' });
+            });
+        }, $.Deferred().resolve());
+    }).then(function() {
+        return enviarImagens(publicacaoId, arquivos);
     }).done(function(){
         swalOrby.fire({
             icon: 'success',

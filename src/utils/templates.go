@@ -11,8 +11,17 @@ var templates *template.Template
 // CarregarTemplates insere os templates html na variavel templates.
 // Usa html/template, que escapa automaticamente o conteúdo dos usuários (proteção contra XSS).
 func CarregarTemplates() {
-	templates = template.Must(template.ParseGlob("views/*.html"))
+	templates = template.Must(template.New("").Funcs(template.FuncMap{"intervalo": intervalo, "inc": func(n int) int { return n + 1 }}).ParseGlob("views/*.html"))
 	templates = template.Must(templates.ParseGlob("views/templates/*.html"))
+}
+
+// intervalo devolve 0..n-1, para repetir um trecho do template n vezes
+func intervalo(n int) []int {
+	valores := make([]int, n)
+	for i := range valores {
+		valores[i] = i
+	}
+	return valores
 }
 
 // ExecutarTemplate renderiza uma pagina html na tela

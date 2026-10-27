@@ -19,15 +19,26 @@ import (
 // limiteDaImagemDePublicacao é o tamanho máximo da imagem anexada a uma publicação (a API também confere)
 const limiteDaImagemDePublicacao = 4 << 20
 
-// BuscarImagemDaPublicacao repassa a imagem guardada na API (o navegador não conhece o token)
+// posicaoDaImagem lê a posição da imagem na URL (0 quando não informada)
+func posicaoDaImagem(r *http.Request) (int, bool) {
+	texto, existe := mux.Vars(r)["posicao"]
+	if !existe {
+		return 0, true
+	}
+	posicao, erro := strconv.Atoi(texto)
+	return posicao, erro == nil && posicao >= 0 && posicao < 4
+}
+
+// BuscarImagemDaPublicacao repassa uma imagem guardada na API (o navegador não conhece o token)
 func BuscarImagemDaPublicacao(w http.ResponseWriter, r *http.Request) {
 	publicacaoID, erro := strconv.ParseUint(mux.Vars(r)["publicacaoId"], 10, 64)
-	if erro != nil {
+	posicao, posicaoValida := posicaoDaImagem(r)
+	if erro != nil || !posicaoValida {
 		http.NotFound(w, r)
 		return
 	}
 
-	url := fmt.Sprintf("%s/publicacoes/%d/imagem", config.ApiURL, publicacaoID)
+	url := fmt.Sprintf("%s/publicacoes/%d/imagens/%d", config.ApiURL, publicacaoID, posicao)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
 		http.Error(w, "indisponível", http.StatusServiceUnavailable)
@@ -62,7 +73,7 @@ func BuscarImagemDaPublicacao(w http.ResponseWriter, r *http.Request) {
 	w.Write(imagem)
 }
 
-// SalvarImagemDaPublicacao envia a imagem (corpo bruto) de uma publicação para a API
+// SalvarImagemDaPublicacao envia mais uma imagem (corpo bruto) de uma publicação para a API
 func SalvarImagemDaPublicacao(w http.ResponseWriter, r *http.Request) {
 	publicacaoID, erro := strconv.ParseUint(mux.Vars(r)["publicacaoId"], 10, 64)
 	if erro != nil {
@@ -82,7 +93,7 @@ func SalvarImagemDaPublicacao(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := fmt.Sprintf("%s/publicacoes/%d/imagem", config.ApiURL, publicacaoID)
+	url := fmt.Sprintf("%s/publicacoes/%d/imagens", config.ApiURL, publicacaoID)
 	requisicao, erro := http.NewRequestWithContext(r.Context(), http.MethodPost, url, bytes.NewReader(imagem))
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, "Não foi possível enviar a imagem.")
@@ -106,15 +117,16 @@ func SalvarImagemDaPublicacao(w http.ResponseWriter, r *http.Request) {
 	respostas.JSON(w, response.StatusCode, nil)
 }
 
-// RemoverImagemDaPublicacao pede à API para apagar a imagem de uma publicação
+// RemoverImagemDaPublicacao pede à API para apagar uma imagem de uma publicação
 func RemoverImagemDaPublicacao(w http.ResponseWriter, r *http.Request) {
 	publicacaoID, erro := strconv.ParseUint(mux.Vars(r)["publicacaoId"], 10, 64)
-	if erro != nil {
-		respostas.Erro(w, http.StatusBadRequest, "Publicação inválida.")
+	posicao, posicaoValida := posicaoDaImagem(r)
+	if erro != nil || !posicaoValida {
+		respostas.Erro(w, http.StatusBadRequest, "Imagem inválida.")
 		return
 	}
 
-	url := fmt.Sprintf("%s/publicacoes/%d/imagem", config.ApiURL, publicacaoID)
+	url := fmt.Sprintf("%s/publicacoes/%d/imagens/%d", config.ApiURL, publicacaoID, posicao)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodDelete, url, nil)
 	if erro != nil {
 		respostas.Erro(w, http.StatusServiceUnavailable, "Servidores indisponíveis.")

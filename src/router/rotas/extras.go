@@ -61,8 +61,9 @@ var rotasExtras = []Rota{
 	{URI: "/hashtags/{tag}", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeHashtag, RequerAutenticacao: true},
 	{URI: "/buscar-publicacoes", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeBuscaDePublicacoes, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodGet, Funcao: controllers.BuscarImagemDaPublicacao, RequerAutenticacao: true},
-	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodPost, Funcao: controllers.SalvarImagemDaPublicacao, RequerAutenticacao: true},
-	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodDelete, Funcao: controllers.RemoverImagemDaPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/imagens/{posicao}", Metodo: http.MethodGet, Funcao: controllers.BuscarImagemDaPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/imagens", Metodo: http.MethodPost, Funcao: controllers.SalvarImagemDaPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/imagens/{posicao}", Metodo: http.MethodDelete, Funcao: controllers.RemoverImagemDaPublicacao, RequerAutenticacao: true},
 
 	{URI: "/usuarios/{usuarioId}/foto", Metodo: http.MethodGet, Funcao: controllers.BuscarFotoDoUsuario, RequerAutenticacao: true},
 	{URI: "/perfil/foto", Metodo: http.MethodPost, Funcao: controllers.SalvarFotoDoUsuario, RequerAutenticacao: true},
