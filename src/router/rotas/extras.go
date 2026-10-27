@@ -28,6 +28,15 @@ var rotasExtras = []Rota{
 	{URI: "/mencoes/{nick}", Metodo: http.MethodGet, Funcao: controllers.IrParaMencao, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDePublicacao, RequerAutenticacao: true},
 
+	{URI: "/grupos", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeGrupos, RequerAutenticacao: true},
+	{URI: "/grupos", Metodo: http.MethodPost, Funcao: controllers.CriarGrupo, RequerAutenticacao: true},
+	{URI: "/grupos/lista", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/grupos"), RequerAutenticacao: true},
+	{URI: "/grupos/{grupoId}", Metodo: http.MethodGet, Funcao: controllers.BuscarGrupo, RequerAutenticacao: true},
+	{URI: "/grupos/{grupoId}/mensagens", Metodo: http.MethodPost, Funcao: controllers.EnviarMensagemDeGrupo, RequerAutenticacao: true},
+	{URI: "/grupos/{grupoId}/membros", Metodo: http.MethodPost, Funcao: controllers.AdicionarAoGrupo, RequerAutenticacao: true},
+	{URI: "/grupos/{grupoId}/membros/{usuarioId}/permissao", Metodo: http.MethodPut, Funcao: controllers.DefinirPermissaoNoGrupo, RequerAutenticacao: true},
+	{URI: "/grupos/{grupoId}/membros/{usuarioId}", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/grupos/{grupoId}/membros/{usuarioId}"), RequerAutenticacao: true},
+
 	{URI: "/mensagens", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeMensagens, RequerAutenticacao: true},
 	{URI: "/conversas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/conversas"), RequerAutenticacao: true},
 	{URI: "/conversas/nao-lidas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/conversas/nao-lidas"), RequerAutenticacao: true},

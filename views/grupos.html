@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - Grupos</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=24">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=34">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+
+<body>
+    {{template "cabecalho"}}
+
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid msg-page">
+        <h1 class="msg-page-title"><i class="fa-solid fa-user-group" aria-hidden="true"></i> Grupos</h1>
+        <p class="grp-voltar"><a href="/mensagens"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Mensagens diretas</a></p>
+        <section id="grupos-pagina" class="grp-app" aria-label="Grupos de conversa">
+            <aside class="grp-lado">
+                <button type="button" class="btn btn-primary btn-sm grp-novo" id="grp-novo"><i class="fa-solid fa-plus" aria-hidden="true"></i> Novo grupo</button>
+                <form id="grp-form" class="grp-form" hidden autocomplete="off">
+                    <input type="text" id="grp-nome" class="form-control" maxlength="60" placeholder="Nome do grupo" aria-label="Nome do grupo" required>
+                    <div class="grp-busca">
+                        <input type="text" id="grp-pessoa" class="form-control" placeholder="Buscar pessoa pelo @nick" aria-label="Buscar pessoa">
+                        <ul id="grp-resultados" class="grp-resultados" hidden></ul>
+                    </div>
+                    <ul id="grp-escolhidos" class="grp-chips" aria-label="Pessoas escolhidas"></ul>
+                    <div class="grp-form-acoes">
+                        <button type="submit" class="btn btn-primary btn-sm">Criar</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="grp-cancelar">Cancelar</button>
+                    </div>
+                </form>
+                <ul id="grp-lista" class="grp-lista" aria-label="Seus grupos"></ul>
+            </aside>
+            <section class="grp-chat" id="grp-chat" hidden>
+                <header class="grp-chat-topo">
+                    <strong id="grp-titulo"></strong>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="grp-membros-botao" aria-expanded="false">Membros</button>
+                </header>
+                <div id="grp-painel" class="grp-painel" hidden>
+                    <ul id="grp-membros" class="grp-membros"></ul>
+                    <div id="grp-adicionar" class="grp-busca" hidden>
+                        <input type="text" id="grp-add-pessoa" class="form-control" placeholder="Adicionar pessoa pelo @nick" aria-label="Adicionar pessoa">
+                        <ul id="grp-add-resultados" class="grp-resultados" hidden></ul>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger btn-sm" id="grp-sair">Sair do grupo</button>
+                </div>
+                <div id="grp-mensagens" class="grp-mensagens" aria-live="polite"></div>
+                <form id="grp-enviar" class="grp-enviar" autocomplete="off">
+                    <input type="text" id="grp-texto" class="form-control" maxlength="1000" placeholder="Escreva uma mensagem" aria-label="Mensagem" required>
+                    <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+                </form>
+            </section>
+            <p class="grp-vazio" id="grp-vazio">Escolha um grupo ou crie um novo.</p>
+        </section>
+    </main>
+
+{{template "rodape"}}
+
+{{template "scripts"}}
+</body>
+</html>
