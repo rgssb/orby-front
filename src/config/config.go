@@ -25,7 +25,8 @@ var (
 func Carregar() {
 	var erro error
 
-	if erro = godotenv.Load(); erro != nil {
+	// Em contêiner as variáveis vêm do ambiente, então o .env é opcional
+	if erro = godotenv.Load(); erro != nil && !os.IsNotExist(erro) {
 		log.Fatal(erro)
 	}
 
