@@ -44,3 +44,18 @@
         }
     });
 })();
+
+$(function () {
+    $(document).on('click', '.perfil-mais-toggle', function (e) {
+        e.stopPropagation();
+        const caixa = $(this).closest('.perfil-mais').toggleClass('is-aberto');
+        $(this).attr('aria-expanded', caixa.hasClass('is-aberto'));
+    });
+    $(document).on('click', function (e) {
+        if ($(e.target).closest('.perfil-mais-menu').length && !$(e.target).closest('.btn').length) return;
+        $('.perfil-mais.is-aberto').removeClass('is-aberto').find('.perfil-mais-toggle').attr('aria-expanded', 'false');
+    });
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape') $('.perfil-mais.is-aberto').removeClass('is-aberto');
+    });
+});

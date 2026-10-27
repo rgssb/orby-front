@@ -1409,6 +1409,10 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .suggest-list li { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
 .suggest-list .pedido-pessoa strong { color: var(--orby-text); }
 .suggest-why { font-size: 0.75rem; }
+.suggest-list .user-avatar { width: 2.6rem; height: 2.6rem; flex: 0 0 2.6rem; border-radius: 50%; overflow: hidden; }
+.suggest-list .user-avatar img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.suggest-list .pedido-pessoa { flex: 1 1 auto; }
+.suggest-list [data-seguir-sugestao] { flex: 0 0 auto; white-space: nowrap; }
 
 /* Várias imagens por publicação */
 .post-images { display: grid; gap: .5rem; margin-bottom: 1rem; }
@@ -1519,3 +1523,17 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .adm-stats li { display: flex; flex-direction: column; padding: 0.7rem 0.9rem; border: 1px solid var(--orby-border); border-radius: var(--orby-radius); background: var(--orby-surface); color: var(--orby-text); }
 .adm-stats strong { font-size: 1.4rem; }
 .adm-stats span { color: var(--orby-text-muted); font-size: 0.8rem; }
+
+/* Menu de mais ações do perfil */
+.profile-card .profile-actions .perfil-mais { position: relative; align-self: flex-end; }
+.perfil-mais-toggle { width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 999px; color: var(--orby-text-muted); background: transparent; border: 1px solid var(--orby-border); }
+.profile-card .profile-actions .perfil-mais-toggle { min-height: 2.5rem; padding: 0; width: 2.5rem; }
+.perfil-mais-menu { position: absolute; right: 0; top: calc(100% + 0.35rem); z-index: 30; min-width: 12rem; display: none; flex-direction: column; gap: 0.15rem; padding: 0.35rem; border: 1px solid var(--orby-border); border-radius: var(--orby-radius); background: var(--orby-surface-strong, var(--orby-surface)); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35); }
+.perfil-mais.is-aberto .perfil-mais-menu { display: flex; }
+.profile-card .profile-actions .perfil-mais-menu .btn { justify-content: flex-start; width: 100%; min-height: 2.3rem; padding: 0.4rem 0.8rem; border: 0; border-radius: 8px; background: transparent; color: var(--orby-text); font-weight: 500; }
+.profile-card .profile-actions .perfil-mais-menu .btn:hover { background: color-mix(in srgb, var(--orby-accent) 14%, transparent); color: var(--orby-text); }
+.profile-card .profile-actions .perfil-mais-menu .adm-suspender-perfil { color: var(--orby-danger); }
+.perfil-mais-menu .admin-only { display: none; }
+.is-admin .perfil-mais-menu .admin-only { display: flex; }
+.adm-stats a { display: flex; flex-direction: column; color: inherit; text-decoration: none; }
+.adm-stats li:hover { border-color: var(--orby-accent); }

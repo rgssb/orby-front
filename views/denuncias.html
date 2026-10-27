@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=39">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=40">
     <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
@@ -30,15 +30,15 @@
                 <h1 id="users-title">Administração</h1>
             </header>
             <ul class="adm-stats">
-                <li><strong>{{.Estatisticas.Usuarios}}</strong><span>Contas</span></li>
-                <li><strong>{{.Estatisticas.NovosNaSemana}}</strong><span>Novas na semana</span></li>
-                <li><strong>{{.Estatisticas.Publicacoes}}</strong><span>Publicações</span></li>
-                <li><strong>{{.Estatisticas.Comentarios}}</strong><span>Comentários</span></li>
-                <li><strong>{{.Estatisticas.PerfisDenunciados}}</strong><span>Com denúncias</span></li>
-                <li><strong>{{.Estatisticas.Suspensos}}</strong><span>Suspensas</span></li>
+                <li><a href="/usuarios"><strong>{{.Estatisticas.Usuarios}}</strong><span>Contas</span></a></li>
+                <li><a href="/usuarios"><strong>{{.Estatisticas.NovosNaSemana}}</strong><span>Novas na semana</span></a></li>
+                <li><a href="/home"><strong>{{.Estatisticas.Publicacoes}}</strong><span>Publicações</span></a></li>
+                <li><a href="/home"><strong>{{.Estatisticas.Comentarios}}</strong><span>Comentários</span></a></li>
+                <li><a href="#perfis-denunciados"><strong>{{.Estatisticas.PerfisDenunciados}}</strong><span>Com denúncias</span></a></li>
+                <li><a href="#contas-suspensas"><strong>{{.Estatisticas.Suspensos}}</strong><span>Suspensas</span></a></li>
             </ul>
 
-            <h2 class="adm-titulo">Perfis denunciados</h2>
+            <h2 class="adm-titulo" id="perfis-denunciados">Perfis denunciados</h2>
             {{if .Denunciados}}
             <ul class="den-lista">
                 {{range .Denunciados}}
@@ -64,7 +64,7 @@
             </div>
             {{end}}
 
-            <h2 class="adm-titulo">Contas suspensas</h2>
+            <h2 class="adm-titulo" id="contas-suspensas">Contas suspensas</h2>
             {{if .Suspensos}}
             <ul class="den-lista">
                 {{range .Suspensos}}
