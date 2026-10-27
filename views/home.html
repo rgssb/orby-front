@@ -60,11 +60,11 @@
                 <nav class="feed-tabs" aria-label="Filtrar publicações">
                     <div class="feed-tabs-group">
                         <a class="feed-tab{{if ne .Aba "todos"}} is-active{{end}}" href="/home?aba=seguindo&ordem={{.Ordem}}">Seguindo</a>
-                        <a class="feed-tab{{if eq .Aba "todos"}} is-active{{end}}" href="/home?aba=todos&ordem={{.Ordem}}">Para você</a>
+                        <a class="feed-tab{{if eq .Aba "todos"}} is-active{{end}}" href="/home?aba=todos&ordem={{.Ordem}}">Explorar</a>
                     </div>
                     <div class="feed-tabs-group feed-tabs-order">
                         <a class="feed-tab{{if ne .Ordem "populares"}} is-active{{end}}" href="/home?aba={{.Aba}}&ordem=recentes">Recentes</a>
-                        <a class="feed-tab{{if eq .Ordem "populares"}} is-active{{end}}" href="/home?aba={{.Aba}}&ordem=populares">Populares</a>
+                        <a class="feed-tab{{if eq .Ordem "populares"}} is-active{{end}}" href="/home?aba={{.Aba}}&ordem=populares">Em alta</a>
                     </div>
                 </nav>
                 {{if .Publicacoes}}
@@ -73,7 +73,7 @@
                 <div class="feed-empty">
                     {{template "mascote" "orby-mascot--empty"}}
                     <h3>Ainda não há publicações</h3>
-                    <p>{{if eq .Aba "todos"}}Seja o primeiro a compartilhar algo por aqui.{{else}}Siga pessoas ou veja a aba "Para você" para descobrir publicações.{{end}}</p>
+                    <p>{{if eq .Aba "todos"}}Seja o primeiro a compartilhar algo por aqui.{{else}}Siga pessoas ou veja a aba "Explorar" para descobrir publicações.{{end}}</p>
                 </div>
                 {{end}}
             </section>
