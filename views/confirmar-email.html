@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - Confirmar e-mail</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/login.css?v=6">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=28">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+<body>
+    <main class="login-container">
+        <div>
+            <div class="Orby-form">
+                {{template "mascote" "orby-mascot--empty"}}
+                <h1 class="auth-title">Confirmar e-mail</h1>
+                <input type="hidden" id="token" value="{{.Token}}">
+                <div class="alert form-message" id="form-message" role="status" aria-live="polite">Confirmando seu e-mail...</div>
+                <a href="/login">Ir para o login</a>
+            </div>
+        </div>
+    </main>
+    <script src="/assets/js/orby-mascot.js?v=3"></script>
+    <script src="/assets/js/confirmar-email.js?v=1"></script>
+</body>
+</html>

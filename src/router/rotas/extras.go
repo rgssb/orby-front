@@ -66,6 +66,9 @@ var rotasExtras = []Rota{
 	{URI: "/perfil/banner", Metodo: http.MethodDelete, Funcao: controllers.RemoverBannerDoUsuario, RequerAutenticacao: true},
 	{URI: "/perfil/foto", Metodo: http.MethodDelete, Funcao: controllers.RemoverFotoDoUsuario, RequerAutenticacao: true},
 
+	{URI: "/confirmar-email", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaConfirmarEmail, RequerAutenticacao: false},
+	{URI: "/confirmar-email", Metodo: http.MethodPost, Funcao: controllers.ConfirmarEmail, RequerAutenticacao: false},
+	{URI: "/reenviar-confirmacao", Metodo: http.MethodPost, Funcao: controllers.ReenviarConfirmacao, RequerAutenticacao: false},
 	{URI: "/esqueci-senha", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaEsqueciSenha, RequerAutenticacao: false},
 	{URI: "/esqueci-senha", Metodo: http.MethodPost, Funcao: controllers.EsqueciSenha, RequerAutenticacao: false},
 	{URI: "/redefinir-senha", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaRedefinirSenha, RequerAutenticacao: false},

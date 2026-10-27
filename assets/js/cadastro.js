@@ -58,7 +58,7 @@ async function criarUsuario(evento) {
         Swal.fire({
             icon: "success",
             title: "Conta criada!",
-            text: "Seu cadastro foi realizado com sucesso.",
+            text: "Enviamos um link de confirmação para o seu e-mail. Confirme-o para poder entrar.",
             customClass: { popup: "swal-orby" },
         }).then(() => window.location.assign("/login"));
     } catch (erro) {
