@@ -1401,3 +1401,11 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .jumbotron .repost-author { color: var(--orby-accent); }
 .jumbotron .comment-text { color: var(--orby-text); }
 .jumbotron .repost-text { color: var(--orby-text); }
+
+/* Sugestões de quem seguir */
+.suggest-card { margin-top: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--orby-border, rgba(148, 163, 184, 0.18)); border-radius: 14px; background: var(--orby-surface, transparent); }
+.suggest-card h2 { margin: 0 0 0.7rem; font-size: 1rem; color: var(--orby-text); }
+.suggest-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+.suggest-list li { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.suggest-list .pedido-pessoa strong { color: var(--orby-text); }
+.suggest-why { font-size: 0.75rem; }

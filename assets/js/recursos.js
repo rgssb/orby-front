@@ -216,3 +216,43 @@ $(document).on('click', '.repostar-publicacao', function () {
         }).fail(falhou).always(function () { botao.prop('disabled', false); });
     });
 });
+
+function textoDeSugestao(p) {
+    if (!p.emComum) return 'Popular no Orby';
+    if (p.emComum === 1) return '@' + escaparHtml(p.via) + ', que você segue, segue';
+    return p.emComum + ' pessoas que você segue seguem';
+}
+
+function desenharSugestoes(sugestoes) {
+    return sugestoes.map(function (p) {
+        const foto = p.fotoVersao
+            ? '<img src="/usuarios/' + p.id + '/foto?v=' + p.fotoVersao + '" alt="">'
+            : '<i class="fa-solid fa-user"></i>';
+        return '<li data-id="' + p.id + '" data-privado="' + p.privado + '">' +
+            '<a class="pedido-pessoa" href="/usuarios/' + p.id + '"><span class="user-avatar">' + foto + '</span>' +
+            '<span><strong>' + escaparHtml(p.nome) + '</strong><small>@' + escaparHtml(p.nick) + '</small>' +
+            '<small class="suggest-why">' + textoDeSugestao(p) + '</small></span></a>' +
+            '<button type="button" class="btn btn-primary btn-sm" data-seguir-sugestao>' + (p.privado ? 'Solicitar' : 'Seguir') + '</button></li>';
+    }).join('');
+}
+
+$(function () {
+    if (!$('#sugestoes-seguir').length) return;
+    $.get('/sugestoes-seguir').done(function (sugestoes) {
+        if (!sugestoes.length) return;
+        $('#sugestoes-lista').html(desenharSugestoes(sugestoes));
+        $('#sugestoes-seguir').prop('hidden', false);
+    });
+});
+
+$(document).on('click', '[data-seguir-sugestao]', function () {
+    const botao = $(this).prop('disabled', true);
+    const item = botao.closest('li');
+    $.post('/usuarios/' + item.data('id') + '/seguir').done(function () {
+        botao.removeClass('btn-primary').addClass('btn-outline-secondary')
+            .text(item.data('privado') ? 'Pedido enviado' : 'Seguindo');
+    }).fail(function () {
+        botao.prop('disabled', false);
+        Swal.fire('Ops...', 'Não foi possível seguir esta pessoa.', 'error');
+    });
+});
