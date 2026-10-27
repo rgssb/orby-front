@@ -190,6 +190,41 @@ func validarBuscaDePublicacoes(termo string) string {
 	return ""
 }
 
+var expressaoDeNomeDeHashtag = regexp.MustCompile(`^[\p{L}\p{N}_]{1,50}$`)
+
+// CarregarPaginaDeHashtag lista as publicações de uma hashtag, por data ou por popularidade (Em alta).
+// Com pagina >= 2 devolve só os itens, para o botão "carregar mais".
+func CarregarPaginaDeHashtag(w http.ResponseWriter, r *http.Request) {
+	tag := mux.Vars(r)["tag"]
+	if !expressaoDeNomeDeHashtag.MatchString(tag) {
+		utils.PaginaDeErro(w, http.StatusBadRequest, "Hashtag inválida", "Use apenas letras, números e _ na hashtag.")
+		return
+	}
+	pagina, _ := strconv.Atoi(r.URL.Query().Get("pagina"))
+	if pagina < 1 {
+		pagina = 1
+	}
+	ordem := "recentes"
+	if r.URL.Query().Get("ordem") == "populares" {
+		ordem = "populares"
+	}
+
+	consulta := fmt.Sprintf("/publicacoes/busca?q=%s&ordem=%s&", neturl.QueryEscape("#"+tag), ordem)
+	feed, ok := buscarPublicacoes(w, r, pagina, consulta, func(proxima int) string {
+		return fmt.Sprintf("/hashtags/%s?pagina=%d&ordem=%s", neturl.PathEscape(tag), proxima, ordem)
+	})
+	if !ok {
+		return
+	}
+	feed.Busca, feed.Ordem = tag, ordem
+
+	if pagina > 1 {
+		utils.ExecutarTemplate(w, "feed-itens", feed)
+		return
+	}
+	utils.ExecutarTemplate(w, "hashtag.html", feed)
+}
+
 // CarregarPaginaDeBuscaDePublicacoes mostra os resultados da busca de publicações (texto ou #hashtag).
 // Com pagina >= 2 devolve só os itens, para o botão "carregar mais".
 func CarregarPaginaDeBuscaDePublicacoes(w http.ResponseWriter, r *http.Request) {
@@ -201,6 +236,11 @@ func CarregarPaginaDeBuscaDePublicacoes(w http.ResponseWriter, r *http.Request) 
 
 	if termo == "" {
 		utils.ExecutarTemplate(w, "buscar-publicacoes.html", DadosDoFeed{})
+		return
+	}
+
+	if expressaoDeHashtag.MatchString(termo) {
+		http.Redirect(w, r, "/hashtags/"+neturl.PathEscape(strings.TrimPrefix(termo, "#")), http.StatusSeeOther)
 		return
 	}
 

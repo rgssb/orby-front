@@ -16,7 +16,7 @@ function comMencoes(texto) {
             link.textContent = '@' + nome;
         } else {
             link.className = 'hashtag';
-            link.href = '/buscar-publicacoes?q=' + encodeURIComponent('#' + nome);
+            link.href = '/hashtags/' + encodeURIComponent(nome);
             link.textContent = '#' + nome;
         }
         fragmento.appendChild(link);

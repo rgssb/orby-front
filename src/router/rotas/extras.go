@@ -57,6 +57,7 @@ var rotasExtras = []Rota{
 	{URI: "/pedidos-seguir/{usuarioId}/aceitar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/usuarios/{usuarioId}/pedido/aceitar"), RequerAutenticacao: true},
 	{URI: "/pedidos-seguir/{usuarioId}/recusar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/usuarios/{usuarioId}/pedido/recusar"), RequerAutenticacao: true},
 
+	{URI: "/hashtags/{tag}", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeHashtag, RequerAutenticacao: true},
 	{URI: "/buscar-publicacoes", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeBuscaDePublicacoes, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodGet, Funcao: controllers.BuscarImagemDaPublicacao, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/imagem", Metodo: http.MethodPost, Funcao: controllers.SalvarImagemDaPublicacao, RequerAutenticacao: true},
