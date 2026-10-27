@@ -4,15 +4,82 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"orby/web/src/config"
+	"orby/web/src/cookies"
+	"orby/web/src/requisicoes"
 	"orby/web/src/respostas"
-	"orby/web/src/utils"
 	"strconv"
 )
 
-// CarregarPaginaDeGrupos mostra a página de grupos; lista e conversas são carregadas pelo JavaScript
-func CarregarPaginaDeGrupos(w http.ResponseWriter, r *http.Request) {
-	utils.ExecutarTemplate(w, "grupos.html", nil)
+// IrParaGrupos leva ao lugar dos grupos: a aba Grupos das mensagens
+func IrParaGrupos(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/mensagens?aba=grupos", http.StatusSeeOther)
+}
+
+// ListarCandidatosDeGrupo repassa as pessoas que podem entrar num grupo (?q= filtra)
+func ListarCandidatosDeGrupo(w http.ResponseWriter, r *http.Request) {
+	repassar(w, r, http.MethodGet, "/grupos/candidatos?q="+url.QueryEscape(r.URL.Query().Get("q")), nil)
+}
+
+// BuscarFotoDoGrupo repassa a foto do grupo (a URL carrega a versão em ?v=)
+func BuscarFotoDoGrupo(w http.ResponseWriter, r *http.Request) {
+	id, ok := idDaRota(w, r, "grupoId")
+	if !ok {
+		return
+	}
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, fmt.Sprintf("%s/grupos/%d/foto", config.ApiURL, id), nil)
+	if erro != nil {
+		http.Error(w, "indisponível", http.StatusServiceUnavailable)
+		return
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
+	w.Header().Set("Cache-Control", "private, max-age=86400")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	io.Copy(w, response.Body)
+}
+
+// SalvarFotoDoGrupo envia a nova foto do grupo (corpo bruto da imagem)
+func SalvarFotoDoGrupo(w http.ResponseWriter, r *http.Request) {
+	id, ok := idDaRota(w, r, "grupoId")
+	if !ok {
+		return
+	}
+	dados, erro := cookies.Ler(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, "Sua sessão expirou. Entre novamente.")
+		return
+	}
+	imagem, erro := io.ReadAll(http.MaxBytesReader(w, r.Body, limiteDaFoto))
+	if erro != nil {
+		respostas.Erro(w, http.StatusRequestEntityTooLarge, "A foto deve ter no máximo 2 MB.")
+		return
+	}
+	requisicao, erro := http.NewRequestWithContext(r.Context(), http.MethodPost, fmt.Sprintf("%s/grupos/%d/foto", config.ApiURL, id), bytes.NewReader(imagem))
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, "Não foi possível enviar a foto.")
+		return
+	}
+	requisicao.Header.Set("Authorization", "Bearer "+dados["token"])
+	requisicao.Header.Set("Content-Type", r.Header.Get("Content-Type"))
+	response, erro := http.DefaultClient.Do(requisicao)
+	if erro != nil {
+		respostas.Erro(w, http.StatusServiceUnavailable, "Servidores indisponíveis.")
+		return
+	}
+	defer response.Body.Close()
+	if response.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+	respostas.JSON(w, response.StatusCode, nil)
 }
 
 // repassarCorpo lê o JSON do navegador para o formato esperado (descartando campos desconhecidos) e o repassa à API

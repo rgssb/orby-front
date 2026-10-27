@@ -16,7 +16,14 @@
         const contagemPedidos = criar('span', 'msg-count');
         contagemPedidos.hidden = true;
         abaPedidos.append(textoPedidos, contagemPedidos);
-        abas.append(abaConversas, abaPedidos);
+        const contagemGrupos = criar('span', 'msg-count');
+        contagemGrupos.hidden = true;
+        // no bloco da home os grupos abrem na página completa
+        const abaGrupos = modo === 'pagina' ? criar('button', 'msg-tab') : criar('a', 'msg-tab');
+        if (modo === 'pagina') abaGrupos.type = 'button'; else abaGrupos.href = '/mensagens?aba=grupos';
+        abaGrupos.append(criar('span', '', 'Grupos'), contagemGrupos);
+        abas.append(abaConversas, abaPedidos, abaGrupos);
+        let grupos = null;
         const lista = criar('ul', 'msg-lista');
         const vazio = criar('p', 'msg-vazio');
         colLista.append(abas, lista, vazio);
@@ -80,6 +87,9 @@
 
         app.append(colLista, colChat);
         raiz.appendChild(app);
+        if (modo === 'pagina' && window.OrbyGrupos) {
+            grupos = window.OrbyGrupos.montar(colLista, colChat, app, function (total) { mostrarSelo(contagemGrupos, total); });
+        }
 
         const estado = { aba: 'conversas', conversas: [], aberta: null, ultimoId: 0, dialogo: null, timerChat: null, timerLista: null, respondendo: null, imagem: null, temMais: false, ultimoAviso: 0, timerDigitando: null };
 
@@ -89,12 +99,16 @@
         }
 
         function desenharLista() {
+            const emGrupos = estado.aba === 'grupos';
+            app.classList.toggle('is-grupos', emGrupos);
+            abaGrupos.classList.toggle('is-active', emGrupos);
             const pedidos = estado.conversas.filter(function (c) { return c.solicitacao || c.desculpa; });
             const normais = estado.conversas.filter(function (c) { return !(c.solicitacao || c.desculpa); });
             const novosPedidos = pedidos.filter(function (c) { return c.naoLidas > 0; }).length;
             mostrarSelo(contagemPedidos, novosPedidos);
             abaConversas.classList.toggle('is-active', estado.aba === 'conversas');
             abaPedidos.classList.toggle('is-active', estado.aba === 'pedidos');
+            if (emGrupos) return;
 
             const itens = estado.aba === 'pedidos' ? pedidos : normais;
             lista.textContent = '';
@@ -498,8 +512,19 @@
             });
         }
 
-        abaConversas.addEventListener('click', function () { estado.aba = 'conversas'; desenharLista(); });
-        abaPedidos.addEventListener('click', function () { estado.aba = 'pedidos'; desenharLista(); });
+        function trocarAba(aba) {
+            const saindoDosGrupos = estado.aba === 'grupos';
+            estado.aba = aba;
+            if (grupos) grupos.definirAtivo(aba === 'grupos');
+            if (saindoDosGrupos) {
+                app.classList.toggle('tem-chat', estado.aberta !== null);
+                app.dataset.view = 'lista';
+            }
+            desenharLista();
+        }
+        abaConversas.addEventListener('click', function () { trocarAba('conversas'); });
+        abaPedidos.addEventListener('click', function () { trocarAba('pedidos'); });
+        if (grupos) abaGrupos.addEventListener('click', function () { trocarAba('grupos'); });
         voltar.addEventListener('click', fecharChat);
         silenciar.addEventListener('click', function () {
             const d = estado.dialogo;
@@ -578,7 +603,7 @@
             }, INTERVALO_LISTA);
         }
 
-        return { abrir: abrir, iniciarLista: iniciarLista, recarregar: carregarLista, estado: estado, app: app, fecharChat: fecharChat };
+        return { abrir: abrir, iniciarLista: iniciarLista, recarregar: carregarLista, irParaGrupos: function () { if (grupos) trocarAba('grupos'); }, estado: estado, app: app, fecharChat: fecharChat };
     }
 
     // ---------- página completa ----------
@@ -588,6 +613,7 @@
         interface_.iniciarLista();
         const com = Number(new URLSearchParams(window.location.search).get('com'));
         if (com > 0) interface_.abrir(com);
+        if (new URLSearchParams(window.location.search).get('aba') === 'grupos') interface_.irParaGrupos();
     }
 
     // ---------- botão flutuante na home ----------
