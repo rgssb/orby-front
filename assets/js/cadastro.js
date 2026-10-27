@@ -38,6 +38,7 @@ async function criarUsuario(evento) {
         senha: senha,
         email: document.getElementById("email").value,
         nick: document.getElementById("nick").value,
+        aceitouTermos: document.getElementById("aceitou-termos").checked ? "true" : "false",
     });
 
     try {

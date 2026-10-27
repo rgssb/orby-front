@@ -60,6 +60,15 @@ func CarregarPaginaDeCadastroDeUsuario(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "cadastro.html", nil)
 }
 
+// CarregarTermosDeUso e CarregarPoliticaDePrivacidade exibem os documentos legais (públicos)
+func CarregarTermosDeUso(w http.ResponseWriter, r *http.Request) {
+	utils.ExecutarTemplate(w, "termos.html", nil)
+}
+
+func CarregarPoliticaDePrivacidade(w http.ResponseWriter, r *http.Request) {
+	utils.ExecutarTemplate(w, "privacidade.html", nil)
+}
+
 // CarregarPaginaHome exibe a pagina inicial.
 func CarregarPaginaHome(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "home.html", nil)

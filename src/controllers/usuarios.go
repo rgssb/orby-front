@@ -17,12 +17,13 @@ import (
 
 // CriarUsuario chama a API para cadastrar um usuario no banco de dados.
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	usuario, erro := json.Marshal(map[string]string{
-		"nome":  r.FormValue("nome"),
-		"senha": r.FormValue("senha"),
-		"email": r.FormValue("email"),
-		"nick":  r.FormValue("nick"),
-		"bio":   r.FormValue("bio"),
+	usuario, erro := json.Marshal(map[string]interface{}{
+		"nome":          r.FormValue("nome"),
+		"senha":         r.FormValue("senha"),
+		"email":         r.FormValue("email"),
+		"nick":          r.FormValue("nick"),
+		"bio":           r.FormValue("bio"),
+		"aceitouTermos": r.FormValue("aceitouTermos") == "true",
 	})
 
 	if erro != nil {
