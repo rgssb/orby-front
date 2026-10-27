@@ -31,6 +31,13 @@
 </section>
 {{end}}
 
+{{define "repostar"}}
+<button type="button" class="action-icon repostar-publicacao{{if .RepostadoPorUsuario}} is-reposted{{end}}" aria-pressed="{{.RepostadoPorUsuario}}" aria-label="{{if .RepostadoPorUsuario}}Desfazer repost{{else}}Repostar publicação{{end}}" title="{{if .RepostadoPorUsuario}}Desfazer repost{{else}}Repostar{{end}}">
+    <i class="fa-solid fa-retweet" aria-hidden="true"></i>
+</button>
+<span class="repost-count">{{.Reposts}}</span>
+{{end}}
+
 {{define "editar"}}
 <a class="publication-action-link" href="/publicacoes/{{.ID}}/atualizar" aria-label="Editar publicação" title="Editar publicação"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></a>
 {{end}}
@@ -47,8 +54,23 @@
     <span class="publication-author">{{if .AutorFotoVersao}}<img class="mini-avatar" src="/usuarios/{{.AutorID}}/foto?v={{.AutorFotoVersao}}" alt="" loading="lazy" width="24" height="24">{{else}}<i class="fa-solid fa-user" aria-hidden="true"></i>{{end}} {{.AutorNick}}</span>
     <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <time datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time>{{if .Editado}} <span class="comment-edited">(editado)</span>{{end}}</span>
 </a>
+{{if .RepostDe}}<p class="repost-label"><i class="fa-solid fa-retweet" aria-hidden="true"></i> {{.AutorNick}} repostou</p>{{end}}
 {{if .Titulo}}<h2 class="display-4">{{.Titulo}}</h2>{{end}}
-<p class="lead">{{.Conteudo}}</p>
+{{if .Conteudo}}<p class="lead">{{.Conteudo}}</p>{{end}}
+{{with .RepostDe}}
+    {{if .Indisponivel}}
+    <div class="repost-card repost-card--indisponivel"><i class="fa-solid fa-lock" aria-hidden="true"></i> Esta publicação não está disponível.</div>
+    {{else}}
+    <div class="repost-card">
+        <a href="/usuarios/{{.AutorID}}" class="repost-author">{{if .AutorFotoVersao}}<img class="mini-avatar" src="/usuarios/{{.AutorID}}/foto?v={{.AutorFotoVersao}}" alt="" loading="lazy" width="24" height="24">{{else}}<i class="fa-solid fa-user" aria-hidden="true"></i>{{end}} {{.AutorNick}}</a>
+        <time class="repost-time" datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time>
+        {{if .Titulo}}<h3 class="repost-title">{{.Titulo}}</h3>{{end}}
+        <p class="repost-text">{{.Conteudo}}</p>
+        {{if .TemImagem}}<a class="post-image-link" href="/publicacoes/{{.ID}}/imagem" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem da publicação" loading="lazy"></a>{{end}}
+        <a class="repost-open" href="/publicacoes/{{.ID}}">Ver publicação original</a>
+    </div>
+    {{end}}
+{{end}}
 {{if .TemImagem}}<a class="post-image-link" href="/publicacoes/{{.ID}}/imagem" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem da publicação" loading="lazy"></a>{{end}}
 <hr class="my-4">
 {{end}}
@@ -60,8 +82,9 @@
     <div class="publication-actions">
         {{template "curtidas" .}}
         {{template "comentarios-botao" .}}
+        {{template "repostar" .}}
         {{template "salvar-compartilhar" .}}
-        {{template "editar" .}}
+        {{if .Conteudo}}{{template "editar" .}}{{end}}
         {{template "deletar" .}}
     </div>
     {{template "comentarios-area" .}}
@@ -74,6 +97,7 @@
     <div class="publication-actions">
         {{template "curtidas" .}}
         {{template "comentarios-botao" .}}
+        {{template "repostar" .}}
         {{template "salvar-compartilhar" .}}
     </div>
     {{template "comentarios-area" .}}

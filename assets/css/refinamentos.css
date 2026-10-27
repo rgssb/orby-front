@@ -1383,3 +1383,15 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .comment-reply-button { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; color: var(--orby-text-muted); background: transparent; border: 0; border-radius: 999px; cursor: pointer; }
 .comment-reply-button:hover { color: var(--orby-accent); }
 .comment-reply-form { margin-top: 0.5rem; }
+
+.repost-label { margin: 0 0 0.5rem; color: var(--orby-text-muted); font-size: 0.85rem; }
+.repost-card { margin: 0 0 1rem; padding: 0.75rem 1rem; border: 1px solid var(--orby-border); border-radius: var(--orby-radius-sm); background: var(--orby-input-bg); }
+.repost-card--indisponivel { color: var(--orby-text-muted); font-style: italic; }
+.repost-author { font-weight: 600; margin-right: 0.5rem; }
+.repost-time { color: var(--orby-text-muted); font-size: 0.8rem; }
+.repost-title { margin: 0.5rem 0 0; font-size: 1.15rem; }
+.repost-text { margin: 0.5rem 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.repost-open { font-size: 0.8rem; color: var(--orby-accent); }
+.repostar-publicacao.is-reposted { color: var(--orby-accent); }
+.repost-count { margin-right: 0.5rem; color: var(--orby-text-muted); font-size: 0.9rem; }
+.notif-icone--repost { color: var(--orby-accent); }

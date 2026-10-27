@@ -168,3 +168,51 @@ $(document).on('click', '.pedidos-lista [data-acao]', function () {
         abrir(img.currentSrc || img.src, img.alt);
     }, true);
 })();
+
+// Repostar: com um comentário opcional (citação) ou sem; clicar de novo desfaz o repost simples
+$(document).on('click', '.repostar-publicacao', function () {
+    const botao = $(this);
+    const id = botao.closest('[data-publicacao-id]').data('publicacao-id');
+    const url = '/publicacoes/' + id + '/repostar';
+    if (botao.prop('disabled')) return;
+
+    const atualizar = function (feito) {
+        const contador = botao.nextAll('.repost-count').first();
+        contador.text(Math.max(0, (parseInt(contador.text(), 10) || 0) + (feito ? 1 : -1)));
+        botao.toggleClass('is-reposted', feito).attr('aria-pressed', feito)
+            .attr('title', feito ? 'Desfazer repost' : 'Repostar');
+    };
+    const falhou = function (resposta) {
+        if (resposta.status === 401) return;
+        const erro = resposta.responseJSON && resposta.responseJSON.erro;
+        alertaErro(erro || 'Não foi possível repostar.');
+    };
+
+    if (botao.hasClass('is-reposted')) {
+        botao.prop('disabled', true);
+        $.ajax({ url: url, method: 'DELETE' }).done(function () {
+            atualizar(false);
+            avisoRapido('Repost desfeito');
+        }).fail(falhou).always(function () { botao.prop('disabled', false); });
+        return;
+    }
+
+    swalOrby.fire({
+        title: 'Repostar',
+        input: 'textarea',
+        inputPlaceholder: 'Adicione um comentário (opcional)',
+        inputAttributes: { maxlength: 500, 'aria-label': 'Comentário do repost' },
+        showCancelButton: true,
+        confirmButtonText: 'Repostar',
+        cancelButtonText: 'Cancelar'
+    }).then(function (resultado) {
+        if (!resultado.isConfirmed) return;
+        const comentario = (resultado.value || '').trim();
+        botao.prop('disabled', true);
+        $.ajax({ url: url, method: 'POST', data: { conteudo: comentario } }).done(function () {
+            // uma citação não marca o botão: ela é uma publicação própria e o repost simples continua possível
+            if (!comentario) atualizar(true); else botao.nextAll('.repost-count').first().text(function (_, t) { return (parseInt(t, 10) || 0) + 1; });
+            avisoRapido(comentario ? 'Publicado com seu comentário' : 'Repostado no seu perfil');
+        }).fail(falhou).always(function () { botao.prop('disabled', false); });
+    });
+});

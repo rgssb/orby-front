@@ -17,6 +17,9 @@ var rotasExtras = []Rota{
 	{URI: "/comentarios/{comentarioId}/curtir", Metodo: http.MethodPost, Funcao: controllers.CurtirComentario, RequerAutenticacao: true},
 	{URI: "/comentarios/{comentarioId}/descurtir", Metodo: http.MethodPost, Funcao: controllers.DescurtirComentario, RequerAutenticacao: true},
 
+	{URI: "/publicacoes/{publicacaoId}/repostar", Metodo: http.MethodPost, Funcao: controllers.RepostarPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/repostar", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/publicacoes/{publicacaoId}/repostar"), RequerAutenticacao: true},
+
 	{URI: "/notificacoes", Metodo: http.MethodGet, Funcao: controllers.BuscarNotificacoes, RequerAutenticacao: true},
 	{URI: "/notificacoes/nao-lidas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/notificacoes/nao-lidas"), RequerAutenticacao: true},
 	{URI: "/notificacoes/lidas", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/notificacoes/lidas"), RequerAutenticacao: true},

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -79,4 +80,18 @@ func repassar(w http.ResponseWriter, r *http.Request, metodo, caminho string, co
 		return
 	}
 	respostas.JSON(w, response.StatusCode, dados)
+}
+
+// RepostarPublicacao repassa o repost com o comentário opcional
+func RepostarPublicacao(w http.ResponseWriter, r *http.Request) {
+	id, ok := idDaRota(w, r, "publicacaoId")
+	if !ok {
+		return
+	}
+	if erro := r.ParseForm(); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, "Formulário inválido.")
+		return
+	}
+	corpo, _ := json.Marshal(map[string]string{"conteudo": r.FormValue("conteudo")})
+	repassar(w, r, http.MethodPost, "/publicacoes/"+strconv.FormatUint(id, 10)+"/repostar", bytes.NewReader(corpo))
 }

@@ -27,7 +27,7 @@ function comMencoes(texto) {
 }
 
 function marcarMencoes(raiz) {
-    $(raiz || document).find('.jumbotron .lead').each(function() {
+    $(raiz || document).find('.jumbotron .lead, .jumbotron .repost-text').each(function() {
         if (!this.dataset.mencoes) {
             this.dataset.mencoes = '1';
             const texto = this.textContent;
