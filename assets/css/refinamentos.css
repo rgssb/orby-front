@@ -1376,3 +1376,10 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .lightbox.is-open img { transform: none; }
 .lightbox-fechar { position: absolute; top: 1rem; right: 1rem; width: 2.4rem; height: 2.4rem; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.16); color: #fff; font-size: 1.1rem; cursor: pointer; }
 .lightbox-fechar:hover { background: rgba(255, 255, 255, 0.28); }
+
+.comment-replies { margin: 0.5rem 0 0 0.75rem; padding-left: 0.75rem; border-left: 2px solid var(--orby-border); }
+.comment-reply { background: transparent; border-color: transparent; padding-left: 0; padding-right: 0; margin-bottom: 0.25rem; }
+.comment-replies-toggle { background: none; border: 0; padding: 0.25rem 0; color: var(--orby-accent); font-size: 0.8rem; cursor: pointer; }
+.comment-reply-button { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; color: var(--orby-text-muted); background: transparent; border: 0; border-radius: 999px; cursor: pointer; }
+.comment-reply-button:hover { color: var(--orby-accent); }
+.comment-reply-form { margin-top: 0.5rem; }

@@ -25,7 +25,20 @@ func BuscarComentarios(w http.ResponseWriter, r *http.Request) {
 		respostas.Erro(w, http.StatusBadRequest, "Publicação inválida.")
 		return
 	}
+	listarComentarios(w, r, fmt.Sprintf("/publicacoes/%d/comentarios", publicacaoID))
+}
 
+// BuscarRespostas devolve as respostas de um comentário
+func BuscarRespostas(w http.ResponseWriter, r *http.Request) {
+	comentarioID, erro := strconv.ParseUint(mux.Vars(r)["comentarioId"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, "Comentário inválido.")
+		return
+	}
+	listarComentarios(w, r, fmt.Sprintf("/comentarios/%d/respostas", comentarioID))
+}
+
+func listarComentarios(w http.ResponseWriter, r *http.Request, caminho string) {
 	// A API é consultada com um comentário a mais para descobrir se existem outros depois
 	limite, _ := strconv.Atoi(r.URL.Query().Get("limite"))
 	if limite < 1 {
@@ -39,7 +52,7 @@ func BuscarComentarios(w http.ResponseWriter, r *http.Request) {
 		deslocamento = 0
 	}
 
-	url := fmt.Sprintf("%s/publicacoes/%d/comentarios?limite=%d&deslocamento=%d", config.ApiURL, publicacaoID, limite+1, deslocamento)
+	url := fmt.Sprintf("%s%s?limite=%d&deslocamento=%d", config.ApiURL, caminho, limite+1, deslocamento)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
 		respostas.Erro(w, http.StatusServiceUnavailable, "Servidores indisponíveis.")
@@ -86,7 +99,11 @@ func CriarComentario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	corpo, _ := json.Marshal(map[string]string{"conteudo": r.FormValue("conteudo")})
+	dadosComentario := map[string]interface{}{"conteudo": r.FormValue("conteudo")}
+	if parentID, erro := strconv.ParseUint(r.FormValue("parentId"), 10, 64); erro == nil && parentID > 0 {
+		dadosComentario["parentId"] = parentID
+	}
+	corpo, _ := json.Marshal(dadosComentario)
 	url := fmt.Sprintf("%s/publicacoes/%d/comentarios", config.ApiURL, publicacaoID)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodPost, url, bytes.NewBuffer(corpo))
 	if erro != nil {
@@ -140,7 +157,11 @@ func AtualizarComentario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	corpo, _ := json.Marshal(map[string]string{"conteudo": r.FormValue("conteudo")})
+	dadosComentario := map[string]interface{}{"conteudo": r.FormValue("conteudo")}
+	if parentID, erro := strconv.ParseUint(r.FormValue("parentId"), 10, 64); erro == nil && parentID > 0 {
+		dadosComentario["parentId"] = parentID
+	}
+	corpo, _ := json.Marshal(dadosComentario)
 	repassarComentario(w, r, http.MethodPut, fmt.Sprintf("/comentarios/%d", comentarioID), bytes.NewBuffer(corpo))
 }
 

@@ -13,6 +13,7 @@
         curtida_publicacao: 'curtiu sua publicação',
         comentario: 'comentou na sua publicação',
         curtida_comentario: 'curtiu seu comentário',
+        resposta: 'respondeu seu comentário',
         mencao: 'mencionou você',
         seguidor: 'começou a seguir você',
         pedido_seguir: 'quer seguir você'
@@ -21,6 +22,7 @@
         curtida_publicacao: 'fa-heart',
         comentario: 'fa-comment',
         curtida_comentario: 'fa-heart',
+        resposta: 'fa-reply',
         mencao: 'fa-at',
         seguidor: 'fa-user-plus',
         pedido_seguir: 'fa-user-clock'

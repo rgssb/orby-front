@@ -39,8 +39,8 @@ function marcarMencoes(raiz) {
 marcarMencoes();
 
 // Comentários
-function montarComentario(c, usuarioId, donoDaPublicacao) {
-    const item = $('<li class="comment-item">').attr('data-comentario-id', c.id);
+function montarComentario(c, usuarioId, donoDaPublicacao, ehResposta) {
+    const item = $('<li class="comment-item">').attr('data-comentario-id', c.id).toggleClass('comment-reply', !!ehResposta);
     const cabecalho = $('<div class="comment-head">');
     cabecalho.append($('<a>').attr('href', '/usuarios/' + c.autorId).text('@' + c.autorNick));
     if (c.criadoEm) {
@@ -57,6 +57,7 @@ function montarComentario(c, usuarioId, donoDaPublicacao) {
             .attr({ 'aria-pressed': String(c.curtidoPorUsuario), 'aria-label': c.curtidoPorUsuario ? 'Remover curtida' : 'Curtir comentário' })
             .append('<i class="fa-solid fa-heart" aria-hidden="true"></i>', $('<span class="comment-like-count">').text(c.curtidas || 0))
     );
+    acoes.append($('<button type="button" class="comment-reply-button" aria-label="Responder comentário" title="Responder">').append('<i class="fa-solid fa-reply" aria-hidden="true"></i>'));
     if (c.autorId === usuarioId) {
         acoes.append($('<button type="button" class="comment-edit" aria-label="Editar comentário" title="Editar comentário">').append('<i class="fa-solid fa-pen" aria-hidden="true"></i>'));
     }
@@ -67,7 +68,37 @@ function montarComentario(c, usuarioId, donoDaPublicacao) {
 
     const texto = $('<p class="comment-text">').attr('data-bruto', c.conteudo).append(comMencoes(c.conteudo));
     item.append(cabecalho, texto);
+    if (!ehResposta) {
+        item.attr('data-respostas', c.respostas || 0);
+        item.append($('<ul class="comment-replies list-unstyled" hidden>'));
+        if (c.respostas) item.append(botaoVerRespostas(c.respostas));
+    }
     return item;
+}
+
+function textoRespostas(quantidade) {
+    return quantidade === 1 ? 'Ver 1 resposta' : 'Ver ' + quantidade + ' respostas';
+}
+
+function botaoVerRespostas(quantidade) {
+    return $('<button type="button" class="comment-replies-toggle" aria-expanded="false">').text(textoRespostas(quantidade));
+}
+
+// Carrega (ou recarrega) as respostas de um comentário principal
+function carregarRespostas(item, artigo) {
+    const lista = item.children('.comment-replies');
+    return $.get(`/comentarios/${item.data('comentario-id')}/respostas`, { limite: 100 }).done(function(dados) {
+        const donoDaPublicacao = Number(artigo.data('autor-id')) === dados.usuarioId;
+        lista.empty();
+        (dados.comentarios || []).forEach(function(c) {
+            lista.append(montarComentario(c, dados.usuarioId, donoDaPublicacao, true));
+        });
+        lista.prop('hidden', false);
+        item.attr('data-respostas', (dados.comentarios || []).length);
+        item.children('.comment-replies-toggle').attr('aria-expanded', 'true').text('Ocultar respostas');
+    }).fail(function(resposta) {
+        if (resposta.status !== 401) alertaErro('Não foi possível carregar as respostas.');
+    });
 }
 
 // Vindo de uma notificação (?comentario=ID), destaca o comentário uma única vez
@@ -117,7 +148,7 @@ function carregarComentarios(artigo, quantidade) {
         if (dados.temMais) {
             lista.append(botaoVerMaisComentarios());
         } else {
-            artigo.find('.comments-count').text(comentarios.length);
+            artigo.find('.comments-count').text(totalDeComentarios(comentarios));
         }
         artigo.data('destacou', destacarComentarioAlvo(lista));
     }).fail(function() {
@@ -131,6 +162,11 @@ function carregarComentarios(artigo, quantidade) {
 function recarregarComentarios(artigo, delta) {
     const exibidos = Number(artigo.data('comentarios-exibidos')) || 0;
     return carregarComentarios(artigo, Math.max(COMENTARIOS_POR_VEZ, exibidos + (delta || 0)));
+}
+
+// O contador da publicação inclui as respostas
+function totalDeComentarios(comentarios) {
+    return comentarios.reduce(function(total, c) { return total + 1 + (c.respostas || 0); }, 0);
 }
 
 function ajustarContagemDeComentarios(artigo, delta) {
@@ -157,7 +193,10 @@ $(document).on('click', '.comments-more-button', function() {
             botao.prop('disabled', false);
         } else {
             linhaDoBotao.remove();
-            artigo.find('.comments-count').text(exibidos + comentarios.length);
+            const contador = artigo.find('.comments-count');
+            contador.text(totalDeComentarios(artigo.find('.comments-list > .comment-item').map(function() {
+                return { respostas: Number($(this).attr('data-respostas')) || 0 };
+            }).get()));
         }
     }).fail(function(resposta) {
         botao.prop('disabled', false);
@@ -190,14 +229,23 @@ $(document).on('submit', '.comment-form', function(evento) {
     const conteudo = campo.val().trim();
     if (!conteudo) return;
 
+    const principal = formulario.closest('.comment-item');
+    const respondendo = principal.length > 0;
     formulario.find('button').prop('disabled', true);
     $.ajax({
         url: `/publicacoes/${artigo.data('publicacao-id')}/comentarios`,
         method: 'POST',
-        data: { conteudo: conteudo }
+        data: respondendo ? { conteudo: conteudo, parentId: principal.data('comentario-id') } : { conteudo: conteudo }
     }).done(function() {
         campo.val('');
         ajustarContagemDeComentarios(artigo, 1);
+        if (respondendo) {
+            formulario.remove();
+            carregarRespostas(principal, artigo).done(function() {
+                principal.attr('data-respostas', principal.children('.comment-replies').children().length);
+            });
+            return;
+        }
         recarregarComentarios(artigo, 1);
     }).fail(function(resposta) {
         const erro = resposta.responseJSON && resposta.responseJSON.erro;
@@ -222,7 +270,13 @@ $(document).on('click', '.comment-delete', function() {
         if (!confirmacao.isConfirmed) return;
 
         $.ajax({ url: `/comentarios/${item.data('comentario-id')}`, method: 'DELETE' }).done(function() {
-            ajustarContagemDeComentarios(artigo, -1);
+            const principal = item.parent().closest('.comment-item');
+            if (principal.length) {
+                ajustarContagemDeComentarios(artigo, -1);
+                carregarRespostas(principal, artigo);
+                return;
+            }
+            ajustarContagemDeComentarios(artigo, -(1 + (Number(item.attr('data-respostas')) || 0)));
             recarregarComentarios(artigo);
         }).fail(function(resposta) {
             if (resposta.status !== 401) alertaErro('Não foi possível excluir o comentário.');
@@ -252,9 +306,9 @@ $(document).on('click', '.comment-like', function() {
 
 $(document).on('click', '.comment-edit', function() {
     const item = $(this).closest('.comment-item');
-    if (item.find('.comment-edit-form').length) return;
+    if (item.children('.comment-edit-form').length) return;
 
-    const texto = item.find('.comment-text');
+    const texto = item.children('.comment-text');
     const formulario = $('<form class="comment-edit-form">').append(
         $('<input type="text" class="form-control" maxlength="500" aria-label="Editar comentário" required>').val(texto.attr('data-bruto')),
         $('<button type="submit" class="btn btn-primary btn-sm">Salvar</button>'),
@@ -266,8 +320,8 @@ $(document).on('click', '.comment-edit', function() {
 
 $(document).on('click', '.comment-edit-cancel', function() {
     const item = $(this).closest('.comment-item');
-    item.find('.comment-edit-form').remove();
-    item.find('.comment-text').show();
+    item.children('.comment-edit-form').remove();
+    item.children('.comment-text').show();
 });
 
 $(document).on('submit', '.comment-edit-form', function(evento) {
@@ -280,12 +334,50 @@ $(document).on('submit', '.comment-edit-form', function(evento) {
 
     formulario.find('button').prop('disabled', true);
     $.ajax({ url: `/comentarios/${item.data('comentario-id')}`, method: 'PUT', data: { conteudo: conteudo } }).done(function() {
-        recarregarComentarios(artigo);
+        const principal = item.parent().closest('.comment-item');
+        if (principal.length) {
+            carregarRespostas(principal, artigo);
+        } else {
+            recarregarComentarios(artigo);
+        }
     }).fail(function(resposta) {
         formulario.find('button').prop('disabled', false);
         const erro = resposta.responseJSON && resposta.responseJSON.erro;
         if (resposta.status !== 401) alertaErro(erro || 'Não foi possível editar o comentário.');
     });
+});
+
+$(document).on('click', '.comment-replies-toggle', function() {
+    const botao = $(this);
+    const item = botao.closest('.comment-item');
+    const lista = item.children('.comment-replies');
+    if (botao.attr('aria-expanded') === 'true') {
+        lista.prop('hidden', true);
+        botao.attr('aria-expanded', 'false').text(textoRespostas(Number(item.attr('data-respostas')) || 0));
+        return;
+    }
+    carregarRespostas(item, botao.closest('[data-publicacao-id]'));
+});
+
+$(document).on('click', '.comment-reply-button', function() {
+    const item = $(this).closest('.comment-item');
+    const principal = item.hasClass('comment-reply') ? item.parent().closest('.comment-item') : item;
+    principal.children('.comment-form').remove();
+
+    const nick = item.children('.comment-head').find('a').first().text();
+    const formulario = $('<form class="comment-form comment-reply-form">').append(
+        $('<input type="text" name="conteudo" class="form-control" maxlength="500" autocomplete="off" aria-label="Responder comentário" required>').val(nick + ' '),
+        $('<button type="submit" class="btn btn-primary btn-sm">Responder</button>'),
+        $('<button type="button" class="btn btn-outline-secondary btn-sm comment-reply-cancel">Cancelar</button>')
+    );
+    principal.append(formulario);
+    const campo = formulario.find('input');
+    campo.trigger('focus');
+    campo[0].setSelectionRange(campo.val().length, campo.val().length);
+});
+
+$(document).on('click', '.comment-reply-cancel', function() {
+    $(this).closest('.comment-form').remove();
 });
 
 // Página de uma publicação (destino das notificações): já abre os comentários
