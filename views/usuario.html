@@ -65,6 +65,11 @@
                             {{else}}
                             <button type="button" id="parar-de-seguir" class="btn btn-danger" data-usuario="{{.Usuario.ID}}"><i class="fa-solid fa-user-minus" aria-hidden="true"></i> Parar de seguir</button>
                             {{end}}
+                            {{if $.Silenciei}}
+                            <button type="button" id="dessilenciar" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" title="Voltar a ver as publicações no feed"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> Deixar de silenciar</button>
+                            {{else}}
+                            <button type="button" id="silenciar" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}" title="Esconder as publicações do seu feed"><i class="fa-solid fa-volume-xmark" aria-hidden="true"></i> Silenciar</button>
+                            {{end}}
                             <button type="button" id="bloquear" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear</button>
                             {{end}}
                         </div>
@@ -103,7 +108,7 @@
 
     {{template "rodape"}}
     {{template "scripts" .}}
-    <script src="/assets/js/usuario.js?v=6"></script>
+    <script src="/assets/js/usuario.js?v=7"></script>
     {{template "modal-seguidores" .Usuario}}
     {{template "modal-seguindo" .Usuario}}
 </body>

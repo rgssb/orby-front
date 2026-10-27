@@ -32,6 +32,8 @@ var rotasExtras = []Rota{
 	{URI: "/conversas/{usuarioId}/aceitar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/conversas/{usuarioId}/aceitar"), RequerAutenticacao: true},
 	{URI: "/conversas/{usuarioId}", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/conversas/{usuarioId}"), RequerAutenticacao: true},
 	{URI: "/usuarios/{usuarioId}/bloquear", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/usuarios/{usuarioId}/bloquear"), RequerAutenticacao: true},
+	{URI: "/usuarios/{usuarioId}/silenciar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/usuarios/{usuarioId}/silenciar"), RequerAutenticacao: true},
+	{URI: "/usuarios/{usuarioId}/dessilenciar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/usuarios/{usuarioId}/dessilenciar"), RequerAutenticacao: true},
 	{URI: "/usuarios/{usuarioId}/desbloquear", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/usuarios/{usuarioId}/desbloquear"), RequerAutenticacao: true},
 	{URI: "/mensagens/{mensagemId}", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/mensagens/{mensagemId}"), RequerAutenticacao: true},
 

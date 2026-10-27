@@ -398,6 +398,7 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 	var bloqueio struct {
 		Bloqueei  bool `json:"bloqueei"`
 		Bloqueado bool `json:"bloqueado"`
+		Silenciei bool `json:"silenciei"`
 	}
 	if resposta, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, fmt.Sprintf("%s/usuarios/%d/bloqueio", config.ApiURL, usuarioID), nil); erro == nil {
 		defer resposta.Body.Close()
@@ -411,11 +412,13 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		UsuarioLogadoID uint64
 		Bloqueei        bool
 		Bloqueado       bool
+		Silenciei       bool
 	}{
 		Usuario:         usuario,
 		UsuarioLogadoID: usuarioLogadoID,
 		Bloqueei:        bloqueio.Bloqueei,
 		Bloqueado:       bloqueio.Bloqueado,
+		Silenciei:       bloqueio.Silenciei,
 	})
 }
 

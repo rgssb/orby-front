@@ -25,6 +25,24 @@ $(document).on('click', '#desbloquear', function () {
     mudarBloqueio(this, $(this).data('usuario'), 'desbloquear', 'Erro ao desbloquear o usuário');
 });
 
+$(document).on('click', '#silenciar', function () {
+    const botao = this;
+    Swal.fire({
+        title: 'Silenciar ' + $(botao).data('nome') + '?',
+        text: 'As publicações dessa pessoa deixam de aparecer no seu feed. Ela não é avisada e você continua podendo ver o perfil dela.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Silenciar',
+        cancelButtonText: 'Cancelar'
+    }).then(function (r) {
+        if (r.isConfirmed) mudarBloqueio(botao, $(botao).data('usuario'), 'silenciar', 'Erro ao silenciar o usuário');
+    });
+});
+
+$(document).on('click', '#dessilenciar', function () {
+    mudarBloqueio(this, $(this).data('usuario'), 'dessilenciar', 'Erro ao deixar de silenciar o usuário');
+});
+
 function mudarBloqueio(botao, usuarioId, acao, mensagemErro) {
     $(botao).prop('disabled', true);
     $.ajax({ url: `/usuarios/${usuarioId}/${acao}`, method: 'POST' }).done(function () {
