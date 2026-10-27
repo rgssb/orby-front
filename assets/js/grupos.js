@@ -1,7 +1,7 @@
 // Grupos de conversa: aba "Grupos" da página de mensagens (usa mensagens-base.js)
 (function () {
     if (!window.OrbyMensagens) return;
-    const { criar, api, hora, avatar, ouvintesDeEvento } = window.OrbyMensagens;
+    const { criar, api, hora, avatar, ouvintesDeEvento, buscarTotal } = window.OrbyMensagens;
     const LIMITE_MEMBROS = 67;
     const LIMITE_FOTO = 2 * 1024 * 1024;
 
@@ -146,6 +146,7 @@
             return api('/grupos/lista').then(function (grupos) {
                 estado.grupos = grupos || [];
                 desenharLista();
+                buscarTotal();
             }).catch(function () {});
         }
 

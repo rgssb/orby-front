@@ -1491,3 +1491,20 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 @media (max-width: 768px) {
   .grp-voltar-btn { display: inline-flex; }
 }
+
+/* Denúncias: o ícone fica discreto até receber o foco */
+.denunciar { opacity: 0.35; transition: opacity 0.15s ease; }
+.denunciar:hover, .denunciar:focus-visible { opacity: 1; }
+.comment-report { padding: 0 0.25rem; border: 0; background: transparent; color: var(--orby-text-muted); font-size: 0.8rem; cursor: pointer; }
+.denunciar-perfil { color: var(--orby-text-muted); }
+.den-lista { display: flex; flex-direction: column; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.den-item { padding: 0.9rem 1rem; border: 1px solid var(--orby-border); border-left-width: 4px; border-radius: var(--orby-radius); background: var(--orby-surface); color: var(--orby-text); }
+.den-item--alerta { border-left-color: #d9a400; }
+.den-item--revisao { border-left-color: var(--orby-danger); }
+.den-topo { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.den-topo a { color: inherit; text-decoration: none; }
+.den-topo span:not(.den-selo) { color: var(--orby-text-muted); }
+.den-selo { padding: 1px 10px; border: 1px solid var(--orby-border-strong); border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+.den-resumo, .den-motivos { margin: 0.4rem 0 0; color: var(--orby-text-muted); font-size: 0.85rem; }
+.den-motivos span { margin-right: 0.75rem; }
+.den-resolver { margin-top: 0.6rem; }

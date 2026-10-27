@@ -61,6 +61,9 @@ function montarComentario(c, usuarioId, donoDaPublicacao, ehResposta) {
     if (c.autorId === usuarioId) {
         acoes.append($('<button type="button" class="comment-edit" aria-label="Editar comentário" title="Editar comentário">').append('<i class="fa-solid fa-pen" aria-hidden="true"></i>'));
     }
+    if (c.autorId !== usuarioId) {
+        acoes.append($('<button type="button" class="comment-report denunciar" aria-label="Denunciar comentário" title="Denunciar">').attr({ 'data-tipo': 'comentario', 'data-id': c.id }).append('<i class="fa-regular fa-flag" aria-hidden="true"></i>'));
+    }
     if (c.autorId === usuarioId || donoDaPublicacao) {
         acoes.append($('<button type="button" class="comment-delete" aria-label="Excluir comentário" title="Excluir comentário">').append('<i class="fa-solid fa-xmark" aria-hidden="true"></i>'));
     }

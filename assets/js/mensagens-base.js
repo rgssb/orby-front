@@ -82,7 +82,7 @@
         fonte.onmessage = function (evento) {
             let dados;
             try { dados = JSON.parse(evento.data); } catch (e) { return; }
-            if (dados.tipo === 'mensagem' || dados.tipo === 'lido') buscarTotal();
+            if (dados.tipo === 'mensagem' || dados.tipo === 'lido' || dados.tipo === 'grupo') buscarTotal();
             ouvintesDeEvento.forEach(function (f) { f(dados); });
         };
     }

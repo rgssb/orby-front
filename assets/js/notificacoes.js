@@ -17,7 +17,9 @@
         repost: 'repostou sua publicação',
         mencao: 'mencionou você',
         seguidor: 'começou a seguir você',
-        pedido_seguir: 'quer seguir você'
+        pedido_seguir: 'quer seguir você',
+        perfil_alerta: 'entrou em alerta por denúncias',
+        perfil_revisao: 'foi enviado para revisão por denúncias'
     };
     const ICONES = {
         curtida_publicacao: 'fa-heart',
@@ -27,7 +29,9 @@
         repost: 'fa-retweet',
         mencao: 'fa-at',
         seguidor: 'fa-user-plus',
-        pedido_seguir: 'fa-user-clock'
+        pedido_seguir: 'fa-user-clock',
+        perfil_alerta: 'fa-flag',
+        perfil_revisao: 'fa-flag'
     };
     const POR_VEZ = 15;
     let exibidas = 0;
@@ -66,6 +70,7 @@
         const semPublicacao = !n.publicacaoId;
         let destino = semPublicacao ? '/usuarios/' + n.atorId : '/publicacoes/' + n.publicacaoId;
         if (n.tipo === 'pedido_seguir') destino = '/perfil';
+        if (n.tipo === 'perfil_alerta' || n.tipo === 'perfil_revisao') destino = '/admin/denuncias';
         if (!semPublicacao && n.comentarioId) destino += '?comentario=' + n.comentarioId;
 
         const texto = $('<span class="notif-texto">')

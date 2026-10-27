@@ -649,7 +649,7 @@
         dock.append(corpo, alternar);
 
         const interface_ = montar(corpo, 'dock');
-        ouvintesDoTotal.push(function (dados) { mostrarSelo(seloDock, dados.mensagens || 0); });
+        ouvintesDoTotal.push(function (dados) { mostrarSelo(seloDock, (dados.mensagens || 0) + (dados.grupos || 0)); });
 
         let iniciou = false;
         function definir(abrir) {

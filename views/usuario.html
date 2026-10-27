@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=37">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=38">
     <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
@@ -71,6 +71,7 @@
                             <button type="button" id="silenciar" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}" title="Esconder as publicações do seu feed"><i class="fa-solid fa-volume-xmark" aria-hidden="true"></i> Silenciar</button>
                             {{end}}
                             <button type="button" id="bloquear" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear</button>
+                            <button type="button" class="btn btn-link denunciar denunciar-perfil" data-tipo="perfil" data-id="{{.Usuario.ID}}" aria-label="Denunciar perfil" title="Denunciar"><i class="fa-regular fa-flag" aria-hidden="true"></i></button>
                             {{end}}
                         </div>
                         {{end}}

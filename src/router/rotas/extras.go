@@ -28,6 +28,10 @@ var rotasExtras = []Rota{
 	{URI: "/mencoes/{nick}", Metodo: http.MethodGet, Funcao: controllers.IrParaMencao, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDePublicacao, RequerAutenticacao: true},
 
+	{URI: "/denuncias", Metodo: http.MethodPost, Funcao: controllers.Denunciar, RequerAutenticacao: true},
+	{URI: "/admin/denuncias", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeDenuncias, RequerAutenticacao: true},
+	{URI: "/admin/denuncias/{usuarioId}/resolver", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/admin/denuncias/{usuarioId}/resolver"), RequerAutenticacao: true},
+
 	{URI: "/grupos", Metodo: http.MethodGet, Funcao: controllers.IrParaGrupos, RequerAutenticacao: true},
 	{URI: "/grupos", Metodo: http.MethodPost, Funcao: controllers.CriarGrupo, RequerAutenticacao: true},
 	{URI: "/grupos/lista", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/grupos"), RequerAutenticacao: true},
