@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"time"
 	"orby/web/src/config"
+	"time"
 
 	"orby/web/src/requisicoes"
 )

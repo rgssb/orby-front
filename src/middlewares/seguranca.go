@@ -3,8 +3,8 @@ package middlewares
 import (
 	"log"
 	"net/http"
-	"strings"
 	"orby/web/src/utils"
+	"strings"
 )
 
 // CabecalhosDeSeguranca adiciona cabeçalhos de proteção a todas as respostas

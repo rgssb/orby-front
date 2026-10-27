@@ -32,28 +32,7 @@ func ReagirAMensagem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dados, _ := json.Marshal(corpo)
-	repassarMensagens(w, r, http.MethodPost, fmt.Sprintf("/mensagens/%d/reacao", mensagemID), bytes.NewReader(dados))
-}
-
-// SilenciarConversa repassa o pedido para silenciar a conversa
-func SilenciarConversa(w http.ResponseWriter, r *http.Request) {
-	if usuarioID, ok := idDaRota(w, r, "usuarioId"); ok {
-		repassarMensagens(w, r, http.MethodPost, fmt.Sprintf("/conversas/%d/silenciar", usuarioID), nil)
-	}
-}
-
-// DessilenciarConversa repassa o pedido para reativar a conversa
-func DessilenciarConversa(w http.ResponseWriter, r *http.Request) {
-	if usuarioID, ok := idDaRota(w, r, "usuarioId"); ok {
-		repassarMensagens(w, r, http.MethodDelete, fmt.Sprintf("/conversas/%d/silenciar", usuarioID), nil)
-	}
-}
-
-// AvisarDigitacao repassa o aviso de que o usuário está digitando
-func AvisarDigitacao(w http.ResponseWriter, r *http.Request) {
-	if usuarioID, ok := idDaRota(w, r, "usuarioId"); ok {
-		repassarMensagens(w, r, http.MethodPost, fmt.Sprintf("/conversas/%d/digitando", usuarioID), nil)
-	}
+	repassar(w, r, http.MethodPost, fmt.Sprintf("/mensagens/%d/reacao", mensagemID), bytes.NewReader(dados))
 }
 
 // EnviarImagemDeMensagem envia a imagem (corpo bruto) de uma mensagem para a API
@@ -180,20 +159,6 @@ func Eventos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// SalvarPublicacao repassa o pedido para salvar uma publicação
-func SalvarPublicacao(w http.ResponseWriter, r *http.Request) {
-	if id, ok := idDaRota(w, r, "publicacaoId"); ok {
-		repassarMensagens(w, r, http.MethodPost, fmt.Sprintf("/publicacoes/%d/salvar", id), nil)
-	}
-}
-
-// RemoverPublicacaoSalva repassa o pedido para tirar uma publicação dos salvos
-func RemoverPublicacaoSalva(w http.ResponseWriter, r *http.Request) {
-	if id, ok := idDaRota(w, r, "publicacaoId"); ok {
-		repassarMensagens(w, r, http.MethodDelete, fmt.Sprintf("/publicacoes/%d/salvar", id), nil)
-	}
-}
-
 // DefinirPrivacidade repassa a troca entre perfil público e privado do usuário logado
 func DefinirPrivacidade(w http.ResponseWriter, r *http.Request) {
 	dados, erro := cookies.Ler(r)
@@ -210,24 +175,5 @@ func DefinirPrivacidade(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json, _ := json.Marshal(corpo)
-	repassarMensagens(w, r, http.MethodPut, fmt.Sprintf("/usuarios/%s/privacidade", dados["id"]), bytes.NewReader(json))
-}
-
-// BuscarPedidosParaSeguir repassa a lista de quem pediu para seguir o usuário logado
-func BuscarPedidosParaSeguir(w http.ResponseWriter, r *http.Request) {
-	repassarMensagens(w, r, http.MethodGet, "/usuarios/pedidos", nil)
-}
-
-// AceitarPedidoParaSeguir repassa a aceitação de um pedido de seguimento
-func AceitarPedidoParaSeguir(w http.ResponseWriter, r *http.Request) {
-	if id, ok := idDaRota(w, r, "usuarioId"); ok {
-		repassarMensagens(w, r, http.MethodPost, fmt.Sprintf("/usuarios/%d/pedido/aceitar", id), nil)
-	}
-}
-
-// RecusarPedidoParaSeguir repassa a recusa de um pedido de seguimento
-func RecusarPedidoParaSeguir(w http.ResponseWriter, r *http.Request) {
-	if id, ok := idDaRota(w, r, "usuarioId"); ok {
-		repassarMensagens(w, r, http.MethodPost, fmt.Sprintf("/usuarios/%d/pedido/recusar", id), nil)
-	}
+	repassar(w, r, http.MethodPut, fmt.Sprintf("/usuarios/%s/privacidade", dados["id"]), bytes.NewReader(json))
 }

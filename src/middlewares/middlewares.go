@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
-	"time"
 	"orby/web/src/cookies"
 	"orby/web/src/respostas"
+	"strings"
+	"time"
 )
 
 // Logger escreve as informacoes no terminal

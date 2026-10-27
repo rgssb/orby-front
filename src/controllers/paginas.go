@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"net/http"
 	neturl "net/url"
-	"regexp"
-	"strconv"
-	"strings"
-	"unicode/utf8"
 	"orby/web/src/config"
 	"orby/web/src/cookies"
 	"orby/web/src/modelos"
 	"orby/web/src/requisicoes"
 	"orby/web/src/utils"
+	"regexp"
+	"strconv"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/gorilla/mux"
 )
@@ -333,7 +333,7 @@ func CarregarPaginaDePublicacao(w http.ResponseWriter, r *http.Request) {
 func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
 	url := fmt.Sprintf("%s/usuarios?usuario=%s", config.ApiURL, neturl.QueryEscape(nomeOuNick))
-	
+
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
 		utils.ServidorIndisponivel(w)

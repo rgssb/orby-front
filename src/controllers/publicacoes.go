@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"orby/web/src/config"
 	"orby/web/src/cookies"
 	"orby/web/src/requisicoes"
 	"orby/web/src/respostas"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )

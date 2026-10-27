@@ -2,8 +2,8 @@ package cookies
 
 import (
 	"net/http"
-	"time"
 	"orby/web/src/config"
+	"time"
 
 	"github.com/gorilla/securecookie"
 )
@@ -43,23 +43,22 @@ func Salvar(w http.ResponseWriter, ID, token string) error {
 	return nil
 }
 
-//Ler retorna os valores armazenados no cookie
+// Ler retorna os valores armazenados no cookie
 func Ler(r *http.Request) (map[string]string, error) {
 	cookie, erro := r.Cookie("dados")
 	if erro != nil {
 		return nil, erro
 	}
 
-
 	valores := make(map[string]string)
-	if erro = s.Decode("dados", cookie.Value, &valores); erro != nil{
+	if erro = s.Decode("dados", cookie.Value, &valores); erro != nil {
 		return nil, erro
 	}
 
 	return valores, nil
 }
 
-//Deletar deleta as informacoes de login do usuario de dentro do cookie
+// Deletar deleta as informacoes de login do usuario de dentro do cookie
 func Deletar(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "dados",

@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"orby/web/src/config"
 	"orby/web/src/cookies"
 	"orby/web/src/modelos"
 	"orby/web/src/respostas"
+	"strings"
 )
 
 // RealizarLogin utiliza o email e a senha para autenticar a aplicacao

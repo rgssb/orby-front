@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"orby/web/src/config"
 	"orby/web/src/cookies"
 	"orby/web/src/requisicoes"
 	"orby/web/src/respostas"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -173,7 +173,7 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 	respostas.JSON(w, response.StatusCode, nil)
 }
 
-//DeletarUsuario chama a API para deletar o usuario
+// DeletarUsuario chama a API para deletar o usuario
 func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := cookies.Ler(r)
 	usuarioID, _ := strconv.ParseUint(cookie["id"], 10, 64)
