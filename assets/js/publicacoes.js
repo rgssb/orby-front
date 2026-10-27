@@ -329,6 +329,27 @@ function sairDaConta(evento) {
 }
 
 
+// Scroll infinito: clica sozinho no botão quando ele se aproxima da tela (o botão continua como alternativa)
+const observadorDoFeed = 'IntersectionObserver' in window ? new IntersectionObserver(function(entradas) {
+    entradas.forEach(function(entrada) {
+        if (entrada.isIntersecting) {
+            observadorDoFeed.unobserve(entrada.target);
+            if (!entrada.target.disabled) {
+                entrada.target.click();
+            }
+        }
+    });
+}, { rootMargin: '400px' }) : null;
+
+function observarCarregarMais() {
+    const botao = document.getElementById('carregar-mais');
+    if (observadorDoFeed && botao) {
+        observadorDoFeed.observe(botao);
+    }
+}
+
+$(observarCarregarMais);
+
 // Carregar mais publicações (paginação do feed)
 $(document).on('click', '#carregar-mais', function() {
     const botao = $(this);
@@ -340,6 +361,7 @@ $(document).on('click', '#carregar-mais', function() {
         container.replaceWith(novo.children());
         window.OrbyUI && window.OrbyUI.datasRelativas(document.getElementById('feed-lista'));
         marcarMencoes(document.getElementById('feed-lista'));
+        observarCarregarMais();
     }).fail(function() {
         botao.prop('disabled', false).removeAttr('aria-busy');
         alertaErro('Não foi possível carregar mais publicações.');
