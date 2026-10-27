@@ -198,7 +198,7 @@ function curtirPublicacao(evento) {
 function atualizarPublicacao() {
     const botaoAtualizar = $(this);
 
-    if (!$('#titulo').val().trim() || !$('#conteudo').val().trim()) {
+    if (!$('#conteudo').val().trim()) {
         swalOrby.fire({
             icon: 'warning',
             title: 'Atenção',

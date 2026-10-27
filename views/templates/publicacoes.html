@@ -47,9 +47,9 @@
     <span class="publication-author">{{if .AutorFotoVersao}}<img class="mini-avatar" src="/usuarios/{{.AutorID}}/foto?v={{.AutorFotoVersao}}" alt="" loading="lazy" width="24" height="24">{{else}}<i class="fa-solid fa-user" aria-hidden="true"></i>{{end}} {{.AutorNick}}</span>
     <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <time datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time>{{if .Editado}} <span class="comment-edited">(editado)</span>{{end}}</span>
 </a>
-<h2 class="display-4">{{.Titulo}}</h2>
+{{if .Titulo}}<h2 class="display-4">{{.Titulo}}</h2>{{end}}
 <p class="lead">{{.Conteudo}}</p>
-{{if .TemImagem}}<a class="post-image-link" href="/publicacoes/{{.ID}}/imagem" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem da publicação {{.Titulo}}" loading="lazy"></a>{{end}}
+{{if .TemImagem}}<a class="post-image-link" href="/publicacoes/{{.ID}}/imagem" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{.ID}}/imagem" alt="Imagem da publicação" loading="lazy"></a>{{end}}
 <hr class="my-4">
 {{end}}
 
