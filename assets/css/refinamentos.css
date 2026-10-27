@@ -1429,7 +1429,7 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .msg-app:not(.is-grupos) .grp-lista-painel, .msg-app:not(.is-grupos) .grp-chat-painel { display: none; }
 .msg-app.is-grupos .msg-lista-col > :not(.msg-tabs):not(.grp-lista-painel),
 .msg-app.is-grupos .msg-chat-col > :not(.grp-chat-painel) { display: none !important; }
-.msg-app--dock a.msg-tab { text-decoration: none; }
+.msg-app--dock .grp-voltar-btn { display: inline-flex; }
 
 .grp-lista-painel { display: flex; flex: 1; flex-direction: column; min-height: 0; }
 .grp-novo { margin: 0.65rem; }

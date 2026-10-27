@@ -18,9 +18,8 @@
         abaPedidos.append(textoPedidos, contagemPedidos);
         const contagemGrupos = criar('span', 'msg-count');
         contagemGrupos.hidden = true;
-        // no bloco da home os grupos abrem na página completa
-        const abaGrupos = modo === 'pagina' ? criar('button', 'msg-tab') : criar('a', 'msg-tab');
-        if (modo === 'pagina') abaGrupos.type = 'button'; else abaGrupos.href = '/mensagens?aba=grupos';
+        const abaGrupos = criar('button', 'msg-tab');
+        abaGrupos.type = 'button';
         abaGrupos.append(criar('span', '', 'Grupos'), contagemGrupos);
         abas.append(abaConversas, abaPedidos, abaGrupos);
         let grupos = null;
@@ -87,7 +86,7 @@
 
         app.append(colLista, colChat);
         raiz.appendChild(app);
-        if (modo === 'pagina' && window.OrbyGrupos) {
+        if (window.OrbyGrupos) {
             grupos = window.OrbyGrupos.montar(colLista, colChat, app, function (total) { mostrarSelo(contagemGrupos, total); });
         }
 
