@@ -10,11 +10,11 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf8"
-	"webapp/src/config"
-	"webapp/src/cookies"
-	"webapp/src/modelos"
-	"webapp/src/requisicoes"
-	"webapp/src/utils"
+	"orby/web/src/config"
+	"orby/web/src/cookies"
+	"orby/web/src/modelos"
+	"orby/web/src/requisicoes"
+	"orby/web/src/utils"
 
 	"github.com/gorilla/mux"
 )

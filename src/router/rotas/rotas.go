@@ -2,7 +2,7 @@ package rotas
 
 import (
 	"net/http"
-	"webapp/src/middlewares"
+	"orby/web/src/middlewares"
 
 	"github.com/gorilla/mux"
 )

@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"webapp/src/config"
-	"webapp/src/cookies"
-	"webapp/src/requisicoes"
-	"webapp/src/respostas"
+	"orby/web/src/config"
+	"orby/web/src/cookies"
+	"orby/web/src/requisicoes"
+	"orby/web/src/respostas"
 )
 
 // limiteDaImagemDeMensagem é o tamanho máximo da imagem de uma mensagem (a API também confere)

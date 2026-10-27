@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"net/http"
-	"webapp/src/cookies"
+	"orby/web/src/cookies"
 )
 
 //FazerLogout remove os dados salvos no browser

@@ -1,7 +1,7 @@
 package rotas
 
 import "net/http"
-import "webapp/src/controllers"
+import "orby/web/src/controllers"
 
 var rotasUsuarios = []Rota{
 	{

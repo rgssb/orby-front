@@ -2,9 +2,9 @@ package router
 
 import (
 	"net/http"
-	"webapp/src/middlewares"
-	"webapp/src/router/rotas"
-	"webapp/src/utils"
+	"orby/web/src/middlewares"
+	"orby/web/src/router/rotas"
+	"orby/web/src/utils"
 
 	"github.com/gorilla/mux"
 )

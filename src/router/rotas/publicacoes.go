@@ -2,7 +2,7 @@ package rotas
 
 import (
 	"net/http"
-	"webapp/src/controllers"
+	"orby/web/src/controllers"
 )
 
 var rotasPublicacoes = []Rota{

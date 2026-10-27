@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"webapp/src/cookies"
-	"webapp/src/respostas"
+	"orby/web/src/cookies"
+	"orby/web/src/respostas"
 )
 
 // Logger escreve as informacoes no terminal

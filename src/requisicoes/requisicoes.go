@@ -3,7 +3,7 @@ package requisicoes
 import (
 	"io"
 	"net/http"
-	"webapp/src/cookies"
+	"orby/web/src/cookies"
 )
 
 // FazerRequisicaoComAutenticacao encaminha uma requisição à API usando o token do cookie.

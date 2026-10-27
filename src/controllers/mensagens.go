@@ -7,10 +7,10 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"webapp/src/config"
-	"webapp/src/requisicoes"
-	"webapp/src/respostas"
-	"webapp/src/utils"
+	"orby/web/src/config"
+	"orby/web/src/requisicoes"
+	"orby/web/src/respostas"
+	"orby/web/src/utils"
 
 	"github.com/gorilla/mux"
 )

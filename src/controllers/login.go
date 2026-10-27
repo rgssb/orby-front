@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"webapp/src/config"
-	"webapp/src/cookies"
-	"webapp/src/modelos"
-	"webapp/src/respostas"
+	"orby/web/src/config"
+	"orby/web/src/cookies"
+	"orby/web/src/modelos"
+	"orby/web/src/respostas"
 )
 
 // RealizarLogin utiliza o email e a senha para autenticar a aplicacao

@@ -3,7 +3,7 @@ package cookies
 import (
 	"net/http"
 	"time"
-	"webapp/src/config"
+	"orby/web/src/config"
 
 	"github.com/gorilla/securecookie"
 )

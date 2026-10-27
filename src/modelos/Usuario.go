@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"time"
-	"webapp/src/config"
+	"orby/web/src/config"
 
-	"webapp/src/requisicoes"
+	"orby/web/src/requisicoes"
 )
 
 // Usuario representa uma pessoa utilizando a rede social

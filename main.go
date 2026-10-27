@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"webapp/src/config"
-	"webapp/src/cookies"
-	"webapp/src/router"
-	"webapp/src/utils"
+	"orby/web/src/config"
+	"orby/web/src/cookies"
+	"orby/web/src/router"
+	"orby/web/src/utils"
 )
 
 func main() {

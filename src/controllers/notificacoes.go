@@ -6,9 +6,9 @@ import (
 	"net/http"
 	neturl "net/url"
 	"strconv"
-	"webapp/src/config"
-	"webapp/src/requisicoes"
-	"webapp/src/respostas"
+	"orby/web/src/config"
+	"orby/web/src/requisicoes"
+	"orby/web/src/respostas"
 
 	"github.com/gorilla/mux"
 )

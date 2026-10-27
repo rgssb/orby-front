@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	"webapp/src/config"
-	"webapp/src/respostas"
-	"webapp/src/utils"
+	"orby/web/src/config"
+	"orby/web/src/respostas"
+	"orby/web/src/utils"
 )
 
 // CarregarPaginaEsqueciSenha exibe o formulário que pede o e-mail para recuperar a senha
