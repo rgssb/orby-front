@@ -1395,3 +1395,9 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .repostar-publicacao.is-reposted { color: var(--orby-accent); }
 .repost-count { margin-right: 0.5rem; color: var(--orby-text-muted); font-size: 0.9rem; }
 .notif-icone--repost { color: var(--orby-accent); }
+
+.jumbotron .repost-label { color: var(--orby-text-muted); }
+.jumbotron .repost-title { color: var(--orby-text); }
+.jumbotron .repost-author { color: var(--orby-accent); }
+.jumbotron .comment-text { color: var(--orby-text); }
+.jumbotron .repost-text { color: var(--orby-text); }

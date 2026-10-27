@@ -256,7 +256,7 @@ h1 {
 
 .jumbotron .lead,
 .jumbotron p {
-  color: #C7CAD0;
+  color: color-mix(in srgb, var(--orby-text) 82%, var(--orby-bg));
 }
 
 .jumbotron .lead {
