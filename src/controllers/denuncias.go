@@ -19,34 +19,53 @@ func Denunciar(w http.ResponseWriter, r *http.Request) {
 	repassarCorpo(w, r, &corpo, http.MethodPost, "/denuncias")
 }
 
-// CarregarPaginaDeDenuncias mostra os perfis denunciados; quem não é administrador vê a página como inexistente
+// CarregarPaginaDeDenuncias mostra o painel da administração; quem não é administrador vê a página como inexistente
 func CarregarPaginaDeDenuncias(w http.ResponseWriter, r *http.Request) {
-	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, config.ApiURL+"/admin/denuncias", nil)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, config.ApiURL+"/admin/painel", nil)
 	if erro != nil {
 		utils.ServidorIndisponivel(w)
 		return
 	}
 	defer response.Body.Close()
 
+	if sessaoExpirada(w, r, response) {
+		return
+	}
 	if response.StatusCode != http.StatusOK {
 		utils.PaginaDeErro(w, http.StatusNotFound, "Página não encontrada", "A página que você procura não existe.")
 		return
 	}
-	var perfis []struct {
-		UsuarioID   uint64         `json:"usuarioId"`
-		Nick        string         `json:"nick"`
-		Nome        string         `json:"nome"`
-		Total       uint64         `json:"total"`
-		Nivel       string         `json:"nivel"`
-		Perfis      uint64         `json:"perfis"`
-		Publicacoes uint64         `json:"publicacoes"`
-		Comentarios uint64         `json:"comentarios"`
-		Motivos     map[string]int `json:"motivos"`
-		UltimaEm    time.Time      `json:"ultimaEm"`
+	var painel struct {
+		Denunciados []struct {
+			UsuarioID   uint64         `json:"usuarioId"`
+			Nick        string         `json:"nick"`
+			Nome        string         `json:"nome"`
+			Total       uint64         `json:"total"`
+			Nivel       string         `json:"nivel"`
+			Perfis      uint64         `json:"perfis"`
+			Publicacoes uint64         `json:"publicacoes"`
+			Comentarios uint64         `json:"comentarios"`
+			Motivos     map[string]int `json:"motivos"`
+			UltimaEm    time.Time      `json:"ultimaEm"`
+		} `json:"denunciados"`
+		Suspensos []struct {
+			UsuarioID  uint64    `json:"usuarioId"`
+			Nome       string    `json:"nome"`
+			Nick       string    `json:"nick"`
+			SuspensaEm time.Time `json:"suspensaEm"`
+		} `json:"suspensos"`
+		Estatisticas struct {
+			Usuarios          uint64 `json:"usuarios"`
+			Publicacoes       uint64 `json:"publicacoes"`
+			Comentarios       uint64 `json:"comentarios"`
+			Suspensos         uint64 `json:"suspensos"`
+			PerfisDenunciados uint64 `json:"perfisDenunciados"`
+			NovosNaSemana     uint64 `json:"novosNaSemana"`
+		} `json:"estatisticas"`
 	}
-	if erro = json.NewDecoder(response.Body).Decode(&perfis); erro != nil {
+	if erro = json.NewDecoder(response.Body).Decode(&painel); erro != nil {
 		utils.ServidorIndisponivel(w)
 		return
 	}
-	utils.ExecutarTemplate(w, "denuncias.html", perfis)
+	utils.ExecutarTemplate(w, "denuncias.html", painel)
 }

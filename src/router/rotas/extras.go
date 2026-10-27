@@ -29,6 +29,9 @@ var rotasExtras = []Rota{
 	{URI: "/publicacoes/{publicacaoId}", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDePublicacao, RequerAutenticacao: true},
 
 	{URI: "/denuncias", Metodo: http.MethodPost, Funcao: controllers.Denunciar, RequerAutenticacao: true},
+	{URI: "/admin/eu", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/admin/eu"), RequerAutenticacao: true},
+	{URI: "/admin/usuarios/{usuarioId}/suspender", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/admin/usuarios/{usuarioId}/suspender"), RequerAutenticacao: true},
+	{URI: "/admin/usuarios/{usuarioId}/reativar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/admin/usuarios/{usuarioId}/reativar"), RequerAutenticacao: true},
 	{URI: "/admin/denuncias", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeDenuncias, RequerAutenticacao: true},
 	{URI: "/admin/denuncias/{usuarioId}/resolver", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/admin/denuncias/{usuarioId}/resolver"), RequerAutenticacao: true},
 

@@ -1,0 +1,46 @@
+// Opções exclusivas de administradores: o servidor confere a permissão em cada ação; aqui só se mostra a interface
+(function () {
+    window.OrbyEhAdmin = false;
+
+    function erro(xhr, titulo) {
+        const mensagem = xhr && xhr.responseJSON && xhr.responseJSON.erro;
+        Swal.fire({ icon: 'error', title: titulo, text: mensagem || 'Tente novamente.' });
+    }
+
+    function suspender(id, nome, depois) {
+        Swal.fire({
+            title: 'Suspender ' + (nome || 'esta conta') + '?',
+            text: 'A pessoa será desconectada e não conseguirá entrar até ser reativada. O conteúdo dela é mantido.',
+            icon: 'warning', showCancelButton: true, confirmButtonText: 'Suspender', cancelButtonText: 'Cancelar'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            $.post('/admin/usuarios/' + id + '/suspender').done(depois).fail(function (xhr) { erro(xhr, 'Não foi possível suspender'); });
+        });
+    }
+
+    $(document).on('click', '.adm-suspender', function () {
+        const item = $(this).closest('.den-item');
+        suspender(item.data('usuario'), item.data('nome'), function () { window.location.reload(); });
+    });
+    $(document).on('click', '.adm-suspender-perfil', function () {
+        const botao = $(this);
+        suspender(botao.data('usuario'), botao.data('nome'), function () {
+            Swal.fire({ icon: 'success', title: 'Conta suspensa' });
+        });
+    });
+    $(document).on('click', '.adm-reativar', function () {
+        $.post('/admin/usuarios/' + $(this).closest('.den-item').data('usuario') + '/reativar')
+            .done(function () { window.location.reload(); })
+            .fail(function (xhr) { erro(xhr, 'Não foi possível reativar'); });
+    });
+
+    $.get('/admin/eu').done(function (dados) {
+        if (!dados || !dados.admin) return;
+        window.OrbyEhAdmin = true;
+        document.body.classList.add('is-admin');
+        const menu = document.querySelector('.navbar-nav');
+        if (menu && !menu.querySelector('[data-nav="/admin/denuncias"]')) {
+            $(menu).append('<li class="nav-item" data-nav="/admin/denuncias"><a class="nav-link" href="/admin/denuncias"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Administração</a></li>');
+        }
+    });
+})();

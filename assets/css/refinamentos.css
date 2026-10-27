@@ -1508,3 +1508,14 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .den-resumo, .den-motivos { margin: 0.4rem 0 0; color: var(--orby-text-muted); font-size: 0.85rem; }
 .den-motivos span { margin-right: 0.75rem; }
 .den-resolver { margin-top: 0.6rem; }
+
+/* Administração */
+.admin-only { display: none !important; }
+.is-admin .admin-only { display: inline-flex !important; }
+.den-acoes { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+.den-acoes .den-resolver { margin-top: 0; }
+.adm-titulo { margin: 1.5rem 0 0.75rem; color: var(--orby-text); font-size: 1.1rem; }
+.adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.adm-stats li { display: flex; flex-direction: column; padding: 0.7rem 0.9rem; border: 1px solid var(--orby-border); border-radius: var(--orby-radius); background: var(--orby-surface); color: var(--orby-text); }
+.adm-stats strong { font-size: 1.4rem; }
+.adm-stats span { color: var(--orby-text-muted); font-size: 0.8rem; }

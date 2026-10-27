@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orby - Denúncias</title>
+    <title>Orby - Administração</title>
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png?v=5">
@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=38">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=39">
     <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
@@ -27,19 +27,32 @@
     <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page">
         <section class="users-column" aria-labelledby="users-title">
             <header class="feed-header">
-                <h1 id="users-title">Denúncias</h1>
+                <h1 id="users-title">Administração</h1>
             </header>
-            {{if .}}
+            <ul class="adm-stats">
+                <li><strong>{{.Estatisticas.Usuarios}}</strong><span>Contas</span></li>
+                <li><strong>{{.Estatisticas.NovosNaSemana}}</strong><span>Novas na semana</span></li>
+                <li><strong>{{.Estatisticas.Publicacoes}}</strong><span>Publicações</span></li>
+                <li><strong>{{.Estatisticas.Comentarios}}</strong><span>Comentários</span></li>
+                <li><strong>{{.Estatisticas.PerfisDenunciados}}</strong><span>Com denúncias</span></li>
+                <li><strong>{{.Estatisticas.Suspensos}}</strong><span>Suspensas</span></li>
+            </ul>
+
+            <h2 class="adm-titulo">Perfis denunciados</h2>
+            {{if .Denunciados}}
             <ul class="den-lista">
-                {{range .}}
-                <li class="den-item den-item--{{.Nivel}}" data-usuario="{{.UsuarioID}}">
+                {{range .Denunciados}}
+                <li class="den-item den-item--{{.Nivel}}" data-usuario="{{.UsuarioID}}" data-nome="{{.Nome}}">
                     <div class="den-topo">
                         <a href="/usuarios/{{.UsuarioID}}"><strong>{{.Nome}}</strong> <span>@{{.Nick}}</span></a>
                         <span class="den-selo">{{if eq .Nivel "revisao"}}Em revisão{{else}}Em alerta{{end}}</span>
                     </div>
                     <p class="den-resumo">{{.Total}} pessoas diferentes denunciaram · perfil {{.Perfis}} · publicações {{.Publicacoes}} · comentários {{.Comentarios}}</p>
                     <p class="den-motivos">{{range $motivo, $quantidade := .Motivos}}<span>{{$motivo}}: {{$quantidade}}</span>{{end}}</p>
-                    <button type="button" class="btn btn-outline-secondary btn-sm den-resolver"><i class="fa-solid fa-check" aria-hidden="true"></i> Arquivar denúncias</button>
+                    <div class="den-acoes">
+                        <button type="button" class="btn btn-outline-secondary btn-sm den-resolver"><i class="fa-solid fa-check" aria-hidden="true"></i> Arquivar denúncias</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm adm-suspender"><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Suspender conta</button>
+                    </div>
                 </li>
                 {{end}}
             </ul>
@@ -49,6 +62,23 @@
                 <h2>Nenhum perfil em alerta</h2>
                 <p>Perfis aparecem aqui a partir de 10 denúncias de pessoas diferentes.</p>
             </div>
+            {{end}}
+
+            <h2 class="adm-titulo">Contas suspensas</h2>
+            {{if .Suspensos}}
+            <ul class="den-lista">
+                {{range .Suspensos}}
+                <li class="den-item" data-usuario="{{.UsuarioID}}">
+                    <div class="den-topo">
+                        <a href="/usuarios/{{.UsuarioID}}"><strong>{{.Nome}}</strong> <span>@{{.Nick}}</span></a>
+                        <button type="button" class="btn btn-outline-primary btn-sm adm-reativar"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar</button>
+                    </div>
+                    <p class="den-resumo">Suspensa em {{.SuspensaEm.Format "02/01/2006 15:04"}}</p>
+                </li>
+                {{end}}
+            </ul>
+            {{else}}
+            <p class="den-resumo">Nenhuma conta suspensa.</p>
             {{end}}
         </section>
     </main>

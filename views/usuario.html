@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=38">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=39">
     <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
@@ -72,6 +72,7 @@
                             {{end}}
                             <button type="button" id="bloquear" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear</button>
                             <button type="button" class="btn btn-link denunciar denunciar-perfil" data-tipo="perfil" data-id="{{.Usuario.ID}}" aria-label="Denunciar perfil" title="Denunciar"><i class="fa-regular fa-flag" aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-outline-danger admin-only adm-suspender-perfil" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}" title="Suspender conta (administração)"><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Suspender</button>
                             {{end}}
                         </div>
                         {{end}}

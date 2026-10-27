@@ -14,6 +14,12 @@
 </button>
 {{end}}
 
+{{define "deletar-admin"}}
+<button type="button" class="publication-action-link delete-action deletar-publicacao admin-only" aria-label="Apagar publicação (administração)" title="Apagar publicação (administração)">
+    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+</button>
+{{end}}
+
 {{define "denunciar-publicacao"}}
 <button type="button" class="action-icon denunciar" data-tipo="publicacao" data-id="{{.ID}}" aria-label="Denunciar publicação" title="Denunciar">
     <i class="fa-regular fa-flag" aria-hidden="true"></i>
@@ -106,6 +112,7 @@
         {{template "repostar" .}}
         {{template "salvar-compartilhar" .}}
         {{template "denunciar-publicacao" .}}
+        {{template "deletar-admin" .}}
     </div>
     {{template "comentarios-area" .}}
 </article>
