@@ -68,11 +68,9 @@ function montarComentario(c, usuarioId, donoDaPublicacao, ehResposta) {
 
     const texto = $('<p class="comment-text">').attr('data-bruto', c.conteudo).append(comMencoes(c.conteudo));
     item.append(cabecalho, texto);
-    if (!ehResposta) {
-        item.attr('data-respostas', c.respostas || 0);
-        item.append($('<ul class="comment-replies list-unstyled" hidden>'));
-        if (c.respostas) item.append(botaoVerRespostas(c.respostas));
-    }
+    item.attr({ 'data-respostas': c.respostas || 0, 'data-total': c.totalRespostas || 0 });
+    item.append($('<ul class="comment-replies list-unstyled" hidden>'));
+    if (c.respostas) item.append(botaoVerRespostas(c.respostas));
     return item;
 }
 
@@ -94,8 +92,14 @@ function carregarRespostas(item, artigo) {
             lista.append(montarComentario(c, dados.usuarioId, donoDaPublicacao, true));
         });
         lista.prop('hidden', false);
-        item.attr('data-respostas', (dados.comentarios || []).length);
-        item.children('.comment-replies-toggle').attr('aria-expanded', 'true').text('Ocultar respostas');
+        const quantidade = (dados.comentarios || []).length;
+        item.attr('data-respostas', quantidade);
+        let toggle = item.children('.comment-replies-toggle');
+        if (!toggle.length && quantidade) {
+            toggle = botaoVerRespostas(quantidade).insertAfter(lista);
+        }
+        toggle.attr('aria-expanded', 'true').text('Ocultar respostas');
+        if (!quantidade) toggle.remove();
     }).fail(function(resposta) {
         if (resposta.status !== 401) alertaErro('Não foi possível carregar as respostas.');
     });
@@ -166,7 +170,15 @@ function recarregarComentarios(artigo, delta) {
 
 // O contador da publicação inclui as respostas
 function totalDeComentarios(comentarios) {
-    return comentarios.reduce(function(total, c) { return total + 1 + (c.respostas || 0); }, 0);
+    return comentarios.reduce(function(total, c) { return total + 1 + (c.totalRespostas || 0); }, 0);
+}
+
+// Mantém o total de respostas dos comentários acima de "item" (inclusive ele) em dia
+function ajustarTotais(item, delta) {
+    item.parents('.comment-item').addBack().each(function() {
+        const atual = Number($(this).attr('data-total')) || 0;
+        $(this).attr('data-total', Math.max(0, atual + delta));
+    });
 }
 
 function ajustarContagemDeComentarios(artigo, delta) {
@@ -195,7 +207,7 @@ $(document).on('click', '.comments-more-button', function() {
             linhaDoBotao.remove();
             const contador = artigo.find('.comments-count');
             contador.text(totalDeComentarios(artigo.find('.comments-list > .comment-item').map(function() {
-                return { respostas: Number($(this).attr('data-respostas')) || 0 };
+                return { totalRespostas: Number($(this).attr('data-total')) || 0 };
             }).get()));
         }
     }).fail(function(resposta) {
@@ -241,9 +253,8 @@ $(document).on('submit', '.comment-form', function(evento) {
         ajustarContagemDeComentarios(artigo, 1);
         if (respondendo) {
             formulario.remove();
-            carregarRespostas(principal, artigo).done(function() {
-                principal.attr('data-respostas', principal.children('.comment-replies').children().length);
-            });
+            ajustarTotais(principal, 1);
+            carregarRespostas(principal, artigo);
             return;
         }
         recarregarComentarios(artigo, 1);
@@ -270,13 +281,14 @@ $(document).on('click', '.comment-delete', function() {
         if (!confirmacao.isConfirmed) return;
 
         $.ajax({ url: `/comentarios/${item.data('comentario-id')}`, method: 'DELETE' }).done(function() {
+            const removidos = 1 + (Number(item.attr('data-total')) || 0);
+            ajustarContagemDeComentarios(artigo, -removidos);
             const principal = item.parent().closest('.comment-item');
             if (principal.length) {
-                ajustarContagemDeComentarios(artigo, -1);
+                ajustarTotais(principal, -removidos);
                 carregarRespostas(principal, artigo);
                 return;
             }
-            ajustarContagemDeComentarios(artigo, -(1 + (Number(item.attr('data-respostas')) || 0)));
             recarregarComentarios(artigo);
         }).fail(function(resposta) {
             if (resposta.status !== 401) alertaErro('Não foi possível excluir o comentário.');
@@ -360,9 +372,9 @@ $(document).on('click', '.comment-replies-toggle', function() {
 });
 
 $(document).on('click', '.comment-reply-button', function() {
-    const item = $(this).closest('.comment-item');
-    const principal = item.hasClass('comment-reply') ? item.parent().closest('.comment-item') : item;
-    principal.children('.comment-form').remove();
+    const principal = $(this).closest('.comment-item');
+    const item = principal;
+    $('.comment-reply-form').remove();
 
     const nick = item.children('.comment-head').find('a').first().text();
     const formulario = $('<form class="comment-form comment-reply-form">').append(
