@@ -256,3 +256,20 @@ $(document).on('click', '[data-seguir-sugestao]', function () {
         Swal.fire('Ops...', 'Não foi possível seguir esta pessoa.', 'error');
     });
 });
+
+// Aviso em tempo real de novas publicações no feed da home
+$(function () {
+    const abas = $('.feed-tabs').first();
+    if (!abas.length || !window.OrbyMensagens) return;
+    let total = 0;
+    const aviso = $('<button type="button" class="feed-new-posts" hidden></button>').insertAfter(abas);
+    window.OrbyMensagens.ouvintesDeEvento.push(function (evento) {
+        if (evento.tipo !== 'publicacao') return;
+        total++;
+        aviso.text(total === 1 ? '1 nova publicação — clique para ver' : total + ' novas publicações — clique para ver').prop('hidden', false);
+    });
+    aviso.on('click', function () {
+        window.scrollTo(0, 0);
+        window.location.reload();
+    });
+});

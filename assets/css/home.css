@@ -1100,3 +1100,17 @@ footer.text-muted .container {
     min-height: 160px;
   }
 }
+
+.feed-new-posts {
+    display: block;
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--orby-accent-strong);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+.feed-new-posts[hidden] { display: none; }
