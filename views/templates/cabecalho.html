@@ -2,7 +2,7 @@
     <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/home">{{template "mascote" "orby-mascot--nav"}}Orby</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Menu de navegação">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -13,6 +13,14 @@
                 </li>
                 <li class="nav-item navbar-profile-item" data-nav="/perfil">
                     <a class="nav-link" href="/perfil"><i class="fa-solid fa-user" aria-hidden="true"></i> Meu Perfil</a>
+                </li>
+                <li class="nav-item" data-nav="/salvos">
+                    <a class="nav-link" href="/salvos"><i class="fa-regular fa-bookmark" aria-hidden="true"></i> Salvos</a>
+                </li>
+                <li class="nav-item" data-nav="/mensagens">
+                    <a class="nav-link" id="msg-link" href="/mensagens"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Mensagens <span class="nav-badge" id="msg-badge" hidden></span></a>
+                </li>
+                <li class="nav-item navbar-search-item">
                     <form class="form-inline navbar-search" action="/buscar-usuarios" method="get" role="search">
                         <button class="navbar-search-toggle" type="button" aria-label="Abrir pesquisa" aria-expanded="false" aria-controls="navbar-search-input">
                             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -22,12 +30,6 @@
                         </button>
                         <input class="form-control" id="navbar-search-input" type="search" name="usuario" placeholder="O que busca?" aria-label="Buscar usuários" aria-hidden="true" tabindex="-1" disabled required>
                     </form>
-                </li>
-                <li class="nav-item" data-nav="/salvos">
-                    <a class="nav-link" href="/salvos"><i class="fa-regular fa-bookmark" aria-hidden="true"></i> Salvos</a>
-                </li>
-                <li class="nav-item" data-nav="/mensagens">
-                    <a class="nav-link" id="msg-link" href="/mensagens"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Mensagens <span class="nav-badge" id="msg-badge" hidden></span></a>
                 </li>
             </ul>
             <div class="notif-wrap">

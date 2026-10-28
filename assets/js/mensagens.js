@@ -452,6 +452,7 @@
             digitando.hidden = true;
             return api('/conversas/' + usuarioId + '/mensagens').then(function (d) {
                 quem.textContent = d.nome;
+                if (d.admin) quem.appendChild(criar('span', 'admin-badge', '🛡 Administrador'));
                 quem.href = '/usuarios/' + d.usuarioId;
                 quem.prepend(avatar(d.usuarioId, d.fotoVersao, 'msg-avatar'));
                 abrirTela.href = '/mensagens?com=' + d.usuarioId;

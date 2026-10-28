@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=40">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -30,12 +30,12 @@
                 <h1 id="users-title">Administração</h1>
             </header>
             <ul class="adm-stats">
-                <li><a href="/usuarios"><strong>{{.Estatisticas.Usuarios}}</strong><span>Contas</span></a></li>
-                <li><a href="/usuarios"><strong>{{.Estatisticas.NovosNaSemana}}</strong><span>Novas na semana</span></a></li>
-                <li><a href="/home"><strong>{{.Estatisticas.Publicacoes}}</strong><span>Publicações</span></a></li>
-                <li><a href="/home"><strong>{{.Estatisticas.Comentarios}}</strong><span>Comentários</span></a></li>
-                <li><a href="#perfis-denunciados"><strong>{{.Estatisticas.PerfisDenunciados}}</strong><span>Com denúncias</span></a></li>
-                <li><a href="#contas-suspensas"><strong>{{.Estatisticas.Suspensos}}</strong><span>Suspensas</span></a></li>
+                <li><a href="/admin/lista/contas"><strong>{{.Estatisticas.Usuarios}}</strong><span>Contas</span></a></li>
+                <li><a href="/admin/lista/novas"><strong>{{.Estatisticas.NovosNaSemana}}</strong><span>Contas novas dessa semana</span></a></li>
+                <li><a href="/admin/lista/publicacoes"><strong>{{.Estatisticas.Publicacoes}}</strong><span>Publicações</span></a></li>
+                <li><a href="/admin/lista/comentarios"><strong>{{.Estatisticas.Comentarios}}</strong><span>Comentários</span></a></li>
+                <li><a href="/admin/lista/denunciadas"><strong>{{.Estatisticas.PerfisDenunciados}}</strong><span>Com denúncias</span></a></li>
+                <li><a href="/admin/lista/suspensas"><strong>{{.Estatisticas.Suspensos}}</strong><span>Suspensas</span></a></li>
             </ul>
 
             <h2 class="adm-titulo" id="perfis-denunciados">Perfis denunciados</h2>
@@ -51,7 +51,7 @@
                     <p class="den-motivos">{{range $motivo, $quantidade := .Motivos}}<span>{{$motivo}}: {{$quantidade}}</span>{{end}}</p>
                     <div class="den-acoes">
                         <button type="button" class="btn btn-outline-secondary btn-sm den-resolver"><i class="fa-solid fa-check" aria-hidden="true"></i> Arquivar denúncias</button>
-                        <button type="button" class="btn btn-outline-danger btn-sm adm-suspender"><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Suspender conta</button>
+                        {{if .Suspenso}}<button type="button" class="btn btn-primary btn-sm adm-reativar"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar conta</button>{{else}}<button type="button" class="btn btn-outline-danger btn-sm adm-suspender"><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Suspender conta</button>{{end}}
                     </div>
                 </li>
                 {{end}}
@@ -71,7 +71,7 @@
                 <li class="den-item" data-usuario="{{.UsuarioID}}">
                     <div class="den-topo">
                         <a href="/usuarios/{{.UsuarioID}}"><strong>{{.Nome}}</strong> <span>@{{.Nick}}</span></a>
-                        <button type="button" class="btn btn-outline-primary btn-sm adm-reativar"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar</button>
+                        <button type="button" class="btn btn-primary btn-sm adm-reativar"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar</button>
                     </div>
                     <p class="den-resumo">Suspensa em {{.SuspensaEm.Format "02/01/2006 15:04"}}</p>
                 </li>

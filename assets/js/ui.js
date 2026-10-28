@@ -10,7 +10,7 @@
         if (campo.value) ajustar();
     }
 
-    // Botão Publicar só habilita com título e conteúdo preenchidos; contador de caracteres.
+    // O título é opcional; o conteúdo habilita a publicação.
     var formulario = document.getElementById('nova-publicacao');
     if (formulario) {
         var titulo = document.getElementById('titulo-publicacao');
@@ -18,7 +18,7 @@
         var contador = document.getElementById('contador-conteudo');
         var atualizar = function () {
             var n = campo.value.length;
-            botao.disabled = !titulo.value.trim() || !campo.value.trim();
+            botao.disabled = !campo.value.trim();
             contador.textContent = n + ' / ' + campo.maxLength;
             contador.classList.toggle('is-near-limit', n >= campo.maxLength * 0.9);
 

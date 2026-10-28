@@ -23,6 +23,8 @@ type Usuario struct {
 	BannerPreset string       `json:"bannerPreset"`
 	BannerVersao uint64       `json:"bannerVersao"`
 	CriadoEm     time.Time    `json:"criadoEm"`
+	Admin        bool         `json:"admin"`
+	Suspenso     bool         `json:"suspenso"`
 	Seguidores   []Usuario    `json:"seguidores"`
 	Seguindo     []Usuario    `json:"seguindo"`
 	Publicacoes  []Publicacao `json:"publicacoes"`
@@ -30,6 +32,7 @@ type Usuario struct {
 	Privado            bool `json:"privado"`
 	PodeVerPublicacoes bool `json:"podeVerPublicacoes"`
 	PedidoEnviado      bool `json:"pedidoEnviado"`
+	AcessoModeracao    bool `json:"acessoModeracao"`
 }
 
 // ErroUsuarioNaoEncontrado indica que a API não conhece o usuário pedido

@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=40">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -32,7 +32,7 @@
                     <span class="user-avatar profile-avatar" aria-hidden="true">{{if .Usuario.FotoVersao}}<img src="/usuarios/{{.Usuario.ID}}/foto?v={{.Usuario.FotoVersao}}" alt="">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
                     <div class="profile-heading">
                         <div class="user-info">
-                            <h1 id="profile-title" class="profile-name">{{.Usuario.Nome}}</h1>
+                            <h1 id="profile-title" class="profile-name">{{.Usuario.Nome}} {{if .Usuario.Admin}}<span class="admin-badge" title="Conta de administração"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Administrador</span>{{end}}</h1>
                             {{if .Usuario.Bio}}<p class="profile-bio">{{.Usuario.Bio}}</p>{{end}}
                             <div class="profile-chips">
                                 <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>

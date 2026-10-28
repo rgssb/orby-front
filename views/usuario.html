@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=40">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=25">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -39,7 +39,7 @@
                     <span class="user-avatar profile-avatar" aria-hidden="true">{{if .Usuario.FotoVersao}}<img src="/usuarios/{{.Usuario.ID}}/foto?v={{.Usuario.FotoVersao}}" alt="">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
                     <div class="profile-heading">
                         <div class="user-info">
-                            <h1 id="profile-title" class="profile-name">{{.Usuario.Nome}}</h1>
+                            <h1 id="profile-title" class="profile-name">{{.Usuario.Nome}} {{if .Usuario.Admin}}<span class="admin-badge" title="Conta de administração"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Administrador</span>{{end}}</h1>
                             {{if .Usuario.Bio}}<p class="profile-bio">{{.Usuario.Bio}}</p>{{end}}
                             <div class="profile-chips">
                                 <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
@@ -74,8 +74,12 @@
                             <button type="button" id="silenciar" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}" title="Esconder as publicações do seu feed"><i class="fa-solid fa-volume-xmark" aria-hidden="true"></i> Silenciar</button>
                             {{end}}
                             <button type="button" id="bloquear" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear</button>
-                            <button type="button" class="btn btn-link denunciar denunciar-perfil" data-tipo="perfil" data-id="{{.Usuario.ID}}" aria-label="Denunciar perfil"><i class="fa-regular fa-flag" aria-hidden="true"></i> Denunciar</button>
+                            <button type="button" class="btn btn-link denunciar denunciar-perfil" data-tipo="perfil" data-id="{{.Usuario.ID}}" data-usuario="{{.Usuario.ID}}" aria-label="Denunciar perfil"><i class="fa-regular fa-flag" aria-hidden="true"></i> Denunciar</button>
+                            {{if .Usuario.Suspenso}}
+                            <button type="button" class="btn btn-outline-primary admin-only adm-reativar-perfil" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}" title="Reativar conta (administração)"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar conta</button>
+                            {{else}}
                             <button type="button" class="btn btn-outline-danger admin-only adm-suspender-perfil" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}" title="Suspender conta (administração)"><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Suspender</button>
+                            {{end}}
                                 </div>
                             </div>
                             {{end}}
@@ -92,6 +96,7 @@
 
             <header class="feed-header">
                 <h2 id="feed-title">Publicações de @{{.Usuario.Nick}}</h2>
+                {{if .Usuario.AcessoModeracao}}<p><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Acesso de moderação a perfil privado. Esta visualização é registrada.</p>{{end}}
             </header>
             {{if not .Usuario.PodeVerPublicacoes}}
             <div class="users-empty">

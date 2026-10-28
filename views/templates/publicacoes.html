@@ -21,7 +21,7 @@
 {{end}}
 
 {{define "denunciar-publicacao"}}
-<button type="button" class="action-icon denunciar" data-tipo="publicacao" data-id="{{.ID}}" aria-label="Denunciar publicação" title="Denunciar">
+<button type="button" class="action-icon denunciar" data-tipo="publicacao" data-id="{{.ID}}" data-usuario="{{.AutorID}}" aria-label="Denunciar publicação" title="Denunciar">
     <i class="fa-regular fa-flag" aria-hidden="true"></i>
 </button>
 {{end}}
@@ -35,11 +35,11 @@
 {{define "comentarios-area"}}
 <section class="comments-area" hidden aria-label="Comentários">
     <ul class="comments-list" aria-live="polite"></ul>
-    <form class="comment-form">
+    {{if not .AcessoModeracao}}<form class="comment-form">
         <label class="sr-only" for="comentario-{{.ID}}">Escreva um comentário</label>
         <input type="text" class="form-control" id="comentario-{{.ID}}" name="conteudo" maxlength="500" placeholder="Escreva um comentário..." autocomplete="off" required>
         <button type="submit" class="btn btn-primary" aria-label="Enviar comentário"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
-    </form>
+    </form>{{end}}
 </section>
 {{end}}
 
@@ -89,7 +89,7 @@
 
 
 {{define "publicacao-com-permissao"}}
-<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}">
+<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}"{{if .AcessoModeracao}} data-moderacao="true"{{end}}>
     {{template "cabecalho-publicacao" .}}
     <div class="publication-actions">
         {{template "curtidas" .}}
@@ -104,15 +104,19 @@
 {{end}}
 
 {{define "publicacao-sem-permissao"}}
-<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}">
+<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}"{{if .AcessoModeracao}} data-moderacao="true"{{end}}>
     {{template "cabecalho-publicacao" .}}
     <div class="publication-actions">
+        {{if not .AcessoModeracao}}
         {{template "curtidas" .}}
+        {{end}}
         {{template "comentarios-botao" .}}
+        {{if not .AcessoModeracao}}
         {{template "repostar" .}}
         {{template "salvar-compartilhar" .}}
         {{template "denunciar-publicacao" .}}
-        {{template "deletar-admin" .}}
+        {{end}}
+        {{if .AutorSuspenso}}{{template "deletar-admin" .}}{{end}}
     </div>
     {{template "comentarios-area" .}}
 </article>

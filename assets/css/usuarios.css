@@ -171,12 +171,14 @@
 }
 
 .profile-card {
-  overflow: hidden;
+  overflow: visible;
   padding: 0;
   margin-bottom: 2rem;
 }
 
 .profile-banner {
+  overflow: hidden;
+  border-radius: var(--orby-radius) var(--orby-radius) 0 0;
   height: clamp(6rem, 14vw, 9rem);
   background:
     radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--orby-accent) 55%, transparent), transparent 60%),
@@ -490,7 +492,7 @@ a.profile-stat:focus-visible span {
 html .jumbotron.profile-card {
   padding: 0;
   margin-bottom: 2rem;
-  overflow: hidden;
+  overflow: visible;
   background: var(--orby-surface);
   border: 1px solid var(--orby-border);
   box-shadow: none;

@@ -1407,12 +1407,34 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .suggest-card h2 { margin: 0 0 0.7rem; font-size: 1rem; color: var(--orby-text); }
 .suggest-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; }
 .suggest-list li { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.suggest-list li[hidden] { display: none; }
 .suggest-list .pedido-pessoa strong { color: var(--orby-text); }
 .suggest-why { font-size: 0.75rem; }
-.suggest-list .user-avatar { width: 2.6rem; height: 2.6rem; flex: 0 0 2.6rem; border-radius: 50%; overflow: hidden; }
+.suggest-list .user-avatar { display: inline-flex; align-items: center; justify-content: center; color: var(--orby-accent); background: color-mix(in srgb, var(--orby-accent-strong) 18%, transparent); width: 2.6rem; height: 2.6rem; flex: 0 0 2.6rem; border-radius: 50%; overflow: hidden; }
 .suggest-list .user-avatar img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .suggest-list .pedido-pessoa { flex: 1 1 auto; }
 .suggest-list [data-seguir-sugestao] { flex: 0 0 auto; white-space: nowrap; }
+
+.composer-toggle { display: none; }
+@media (max-width: 991.98px) {
+  .home-page .home-layout { row-gap: 1rem; }
+  .home-page .composer-card { padding: 1rem; }
+  .home-page .composer-toggle:not([hidden]) { display: flex; align-items: center; gap: .75rem; width: 100%; padding: 0; border: 0; background: transparent; color: var(--orby-text); text-align: left; font-weight: 700; cursor: pointer; }
+  .home-page .composer-toggle:focus-visible { outline: 2px solid var(--orby-accent); outline-offset: 4px; border-radius: 8px; }
+  .composer-toggle-icon { display: grid; width: 2.5rem; height: 2.5rem; flex: 0 0 2.5rem; place-items: center; border-radius: 12px; color: var(--orby-accent); background: color-mix(in srgb, var(--orby-accent) 15%, var(--orby-surface)); }
+  .composer-toggle-text { flex: 1; }
+  .composer-toggle-chevron { color: var(--orby-text-muted); }
+  .composer-toggle[aria-expanded="true"] .composer-toggle-chevron { transform: rotate(180deg); }
+  .home-page .composer-mobile .composer-header { display: none; }
+  .home-page .composer-mobile:not(.composer-collapsed) #nova-publicacao { margin-top: 1rem; }
+  .home-page .composer-collapsed #nova-publicacao { display: none; }
+  .home-page .feed-column .suggest-card { margin: 0 0 1rem; }
+  .home-page .suggest-card { padding: .85rem 1rem; }
+  .home-page .suggest-list { gap: .55rem; }
+  .home-page .suggest-list .user-avatar { width: 2.25rem; height: 2.25rem; flex-basis: 2.25rem; }
+  .home-page .suggest-more:not([hidden]) { display: inline-flex; align-items: center; min-height: 2.5rem; margin-top: .5rem; padding: .35rem 0; border: 0; background: transparent; color: var(--orby-accent); font-size: .85rem; font-weight: 600; cursor: pointer; }
+  .home-page .suggest-more:focus-visible { outline: 2px solid var(--orby-accent); outline-offset: 3px; border-radius: 4px; }
+}
 
 /* Várias imagens por publicação */
 .post-images { display: grid; gap: .5rem; margin-bottom: 1rem; }
@@ -1499,6 +1521,8 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 /* Denúncias: o ícone fica discreto até receber o foco */
 .denunciar { opacity: 0.35; transition: opacity 0.15s ease; }
 .denunciar:hover, .denunciar:focus-visible { opacity: 1; }
+.denunciar.is-denunciado, .denunciar.is-denunciado:disabled { opacity: 1; color: var(--orby-accent); cursor: default; }
+.profile-card .profile-actions .perfil-mais-menu .denunciar.is-denunciado { color: var(--orby-accent); }
 .comment-report { padding: 0 0.25rem; border: 0; background: transparent; color: var(--orby-text-muted); font-size: 0.8rem; cursor: pointer; }
 .denunciar-perfil { color: var(--orby-text-muted); }
 .den-lista { display: flex; flex-direction: column; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
@@ -1537,3 +1561,28 @@ html[data-theme="acolhedor"] .navbar.bg-light {
 .is-admin .perfil-mais-menu .admin-only { display: flex; }
 .adm-stats a { display: flex; flex-direction: column; color: inherit; text-decoration: none; }
 .adm-stats li:hover { border-color: var(--orby-accent); }
+.admin-badge { display: inline-flex; align-items: center; gap: .25rem; margin-left: .35rem; padding: .15rem .45rem; border: 1px solid var(--orby-accent); border-radius: 999px; color: var(--orby-accent); font-size: .75rem; font-weight: 600; vertical-align: middle; }
+.adm-busca { margin: 1rem 0; }
+.adm-busca > div { display: flex; gap: .5rem; }
+.adm-busca .form-control { flex: 1; min-width: 0; }
+.adm-conteudo { white-space: pre-wrap; overflow-wrap: anywhere; }
+#adm-resultados .den-item { margin-bottom: .75rem; }
+.adm-denuncias .adm-denuncia { padding: 1.1rem; border-left: 4px solid var(--orby-accent); background: linear-gradient(135deg, color-mix(in srgb, var(--orby-accent) 7%, var(--orby-surface)), var(--orby-surface) 55%); }
+.adm-denuncia-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.adm-denuncia-perfil { display: inline-flex; align-items: center; gap: .75rem; min-width: 0; color: var(--orby-text); text-decoration: none; }
+.adm-denuncia-perfil:hover { color: var(--orby-accent); text-decoration: none; }
+.adm-denuncia-avatar { display: grid; flex: 0 0 2.75rem; width: 2.75rem; height: 2.75rem; place-items: center; border-radius: 50%; color: var(--orby-accent); background: color-mix(in srgb, var(--orby-accent) 16%, var(--orby-surface)); }
+.adm-denuncia-identidade { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
+.adm-denuncia-identidade span { color: var(--orby-text-muted); font-size: .85rem; }
+.adm-denuncia-situacao { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .65rem; border: 1px solid color-mix(in srgb, var(--orby-accent) 35%, var(--orby-border)); border-radius: 999px; color: var(--orby-accent); font-size: .76rem; font-weight: 600; }
+.adm-denuncia-info { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-top: 1rem; color: var(--orby-text-muted); font-size: .85rem; }
+.adm-denuncia-info i { margin-right: .25rem; color: var(--orby-accent); }
+.adm-denuncia .den-acoes { margin-top: 1rem; padding-top: .9rem; border-top: 1px solid var(--orby-border); }
+.adm-denuncia .den-acoes .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .7rem; }
+.adm-denuncia .den-resolver { color: var(--orby-text); border-color: var(--orby-border-strong); }
+.adm-denuncia .den-resolver:hover { color: var(--orby-text); background: var(--orby-surface-hover); }
+.adm-denuncia .adm-suspender { color: var(--orby-danger); border-color: var(--orby-danger); }
+.adm-denuncia .adm-suspender:hover { color: var(--orby-danger); background: color-mix(in srgb, var(--orby-danger) 12%, var(--orby-surface)); }
+[data-moderacao="true"] .comment-like,
+[data-moderacao="true"] .comment-reply-button,
+[data-moderacao="true"] .comment-report { display: none; }

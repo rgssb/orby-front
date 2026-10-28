@@ -260,7 +260,11 @@
         function desenharMensagem(m) {
             const caixa = criar('div', 'grp-msg' + (m.minha ? ' grp-msg--minha' : ''));
             caixa.dataset.id = m.id;
-            if (!m.minha) caixa.appendChild(criar('span', 'grp-msg-autor', m.nome));
+            if (!m.minha) {
+                const autor = criar('span', 'grp-msg-autor', m.nome);
+                if (m.admin) autor.appendChild(criar('span', 'admin-badge', '🛡 Administrador'));
+                caixa.appendChild(autor);
+            }
             caixa.append(criar('span', 'grp-msg-texto', m.texto), criar('time', 'grp-msg-hora', hora(m.criadoEm)));
             return caixa;
         }

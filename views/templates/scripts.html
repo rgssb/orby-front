@@ -3,27 +3,19 @@
     <script src="/assets/js/bootstrap.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/assets/js/orby-mascot.js?v=3"></script>
-    <script src="/assets/js/admin.js?v=2"></script>
-    <script src="/assets/js/ui.js?v=7"></script>
+    <script src="/assets/js/admin.js?v=5"></script>
+    <script src="/assets/js/ui.js?v=8"></script>
     <script src="/assets/js/publicacoes.js?v=17"></script>
-    <script src="/assets/js/comentarios.js?v=7"></script>
+    <script src="/assets/js/comentarios.js?v=10"></script>
     <script src="/assets/js/notificacoes.js?v=8"></script>
-    <script src="/assets/js/denuncias.js?v=1"></script>
+    <script src="/assets/js/denuncias.js?v=3"></script>
     <script src="/assets/js/mensagens-base.js?v=2"></script>
-    <script src="/assets/js/grupos.js?v=4"></script>
-    <script src="/assets/js/mensagens.js?v=9"></script>
+    <script src="/assets/js/grupos.js?v=5"></script>
+    <script src="/assets/js/mensagens.js?v=10"></script>
     <script src="/assets/js/mencoes.js?v=1"></script>
     <script src="/assets/js/recursos.js?v=7"></script>
     <script src="https://kit.fontawesome.com/db88157b12.js" crossorigin="anonymous"></script>
     <script>
-        const navbarToggle = document.querySelector(".navbar-toggler");
-        const navbarMenu = document.getElementById("navbarTogglerDemo02");
-        navbarToggle.addEventListener("click", () => {
-            const expanded = navbarToggle.getAttribute("aria-expanded") === "true";
-            navbarToggle.setAttribute("aria-expanded", String(!expanded));
-            navbarMenu.classList.toggle("show", !expanded);
-        });
-
         const searchToggle = document.querySelector(".navbar-search-toggle");
         const searchInput = document.getElementById("navbar-search-input");
         const searchForm = searchToggle.closest(".navbar-search");

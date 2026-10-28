@@ -43,6 +43,7 @@ function montarComentario(c, usuarioId, donoDaPublicacao, ehResposta) {
     const item = $('<li class="comment-item">').attr('data-comentario-id', c.id).toggleClass('comment-reply', !!ehResposta);
     const cabecalho = $('<div class="comment-head">');
     cabecalho.append($('<a>').attr('href', '/usuarios/' + c.autorId).text('@' + c.autorNick));
+    if (c.autorAdmin) cabecalho.append($('<span class="admin-badge" title="Conta de administração">').text('🛡 Administrador'));
     if (c.criadoEm) {
         cabecalho.append($('<time>').text(new Date(c.criadoEm).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })));
     }
@@ -62,7 +63,7 @@ function montarComentario(c, usuarioId, donoDaPublicacao, ehResposta) {
         acoes.append($('<button type="button" class="comment-edit" aria-label="Editar comentário" title="Editar comentário">').append('<i class="fa-solid fa-pen" aria-hidden="true"></i>'));
     }
     if (c.autorId !== usuarioId) {
-        acoes.append($('<button type="button" class="comment-report denunciar" aria-label="Denunciar comentário" title="Denunciar">').attr({ 'data-tipo': 'comentario', 'data-id': c.id }).append('<i class="fa-regular fa-flag" aria-hidden="true"></i>'));
+        acoes.append($('<button type="button" class="comment-report denunciar" aria-label="Denunciar comentário" title="Denunciar">').attr({ 'data-tipo': 'comentario', 'data-id': c.id, 'data-usuario': c.autorId }).append('<i class="fa-regular fa-flag" aria-hidden="true"></i>'));
     }
     if (c.autorId === usuarioId || donoDaPublicacao || window.OrbyEhAdmin) {
         acoes.append($('<button type="button" class="comment-delete" aria-label="Excluir comentário" title="Excluir comentário">').append('<i class="fa-solid fa-xmark" aria-hidden="true"></i>'));
@@ -89,7 +90,7 @@ function botaoVerRespostas(quantidade) {
 function carregarRespostas(item, artigo) {
     const lista = item.children('.comment-replies');
     return $.get(`/comentarios/${item.data('comentario-id')}/respostas`, { limite: 100 }).done(function(dados) {
-        const donoDaPublicacao = Number(artigo.data('autor-id')) === dados.usuarioId;
+        const donoDaPublicacao = Number(artigo.data('autor-id')) === dados.usuarioId || artigo.attr('data-moderacao') === 'true';
         lista.empty();
         (dados.comentarios || []).forEach(function(c) {
             lista.append(montarComentario(c, dados.usuarioId, donoDaPublicacao, true));
@@ -141,7 +142,7 @@ function carregarComentarios(artigo, quantidade) {
     const limite = quantidade || (alvo ? 100 : COMENTARIOS_POR_VEZ);
 
     return $.get(`/publicacoes/${publicacaoId}/comentarios`, { limite: limite }).done(function(dados) {
-        const donoDaPublicacao = Number(artigo.data('autor-id')) === dados.usuarioId;
+        const donoDaPublicacao = Number(artigo.data('autor-id')) === dados.usuarioId || artigo.attr('data-moderacao') === 'true';
         const comentarios = dados.comentarios || [];
         lista.empty();
         comentarios.forEach(function(c) {
@@ -195,7 +196,7 @@ $(document).on('click', '.comments-more-button', function() {
     const lista = artigo.find('.comments-list');
     const exibidos = Number(artigo.data('comentarios-exibidos')) || 0;
     const usuarioId = artigo.data('comentarios-usuario');
-    const donoDaPublicacao = Number(artigo.data('autor-id')) === usuarioId;
+    const donoDaPublicacao = Number(artigo.data('autor-id')) === usuarioId || artigo.attr('data-moderacao') === 'true';
 
     $.get(`/publicacoes/${artigo.data('publicacao-id')}/comentarios`, { limite: COMENTARIOS_POR_VEZ, deslocamento: exibidos }).done(function(dados) {
         const comentarios = dados.comentarios || [];

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Orby - {{.Titulo}}</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=24">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+<body>
+    {{template "cabecalho"}}
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page">
+        <section class="users-column">
+            <header class="feed-header">
+                <a class="btn btn-primary btn-sm mb-2" href="/admin/denuncias"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar à administração</a>
+                <h1>{{.Titulo}}</h1>
+                {{if or (eq .Tipo "publicacoes") (eq .Tipo "comentarios")}}<p>O acesso a conteúdo de perfis privados é registrado para moderação.</p>{{end}}
+            </header>
+            <form method="get" class="adm-busca">
+                <label for="adm-busca">Pesquisar por nome ou nick{{if or (eq .Tipo "publicacoes") (eq .Tipo "comentarios")}} ou conteúdo{{end}}</label>
+                <div><input class="form-control" id="adm-busca" name="q" value="{{.Busca}}" placeholder="Pesquisar">
+                <button class="btn btn-primary" type="submit">Pesquisar</button></div>
+            </form>
+            <div id="adm-resultados"{{if eq .Tipo "denunciadas"}} class="adm-denuncias"{{end}}>
+                {{range .Itens}}
+                <article class="den-item{{if eq $.Tipo "denunciadas"}} adm-denuncia{{end}}" data-usuario="{{.UsuarioID}}" data-nome="{{.Nome}}">
+                    {{if eq $.Tipo "denunciadas"}}
+                    <div class="adm-denuncia-topo">
+                        <a class="adm-denuncia-perfil" href="/usuarios/{{.UsuarioID}}">
+                            <span class="adm-denuncia-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                            <span class="adm-denuncia-identidade"><strong>{{.Nome}}</strong><span>@{{.Nick}}</span></span>
+                        </a>
+                        <span class="adm-denuncia-situacao"><i class="fa-solid fa-flag" aria-hidden="true"></i> Denúncias abertas</span>
+                    </div>
+                    <div class="adm-denuncia-info">
+                        <span><i class="fa-solid fa-users" aria-hidden="true"></i> {{.Total}} {{if eq .Total 1}}pessoa denunciou{{else}}pessoas denunciaram{{end}}</span>
+                        <span><i class="fa-regular fa-clock" aria-hidden="true"></i> Última denúncia: {{.Data.Format "02/01/2006 15:04"}}</span>
+                    </div>
+                    {{else}}
+                    <div class="den-topo"><a href="/usuarios/{{.UsuarioID}}"><strong>{{.Nome}}</strong> <span>@{{.Nick}}</span></a></div>
+                    {{end}}
+                    {{if .Titulo}}<h2 class="adm-titulo">{{.Titulo}}</h2>{{end}}
+                    {{if .Conteudo}}<p class="adm-conteudo">{{.Conteudo}}</p>{{end}}
+                    {{if ne $.Tipo "denunciadas"}}<p class="den-resumo">{{.Data.Format "02/01/2006 15:04"}}</p>{{end}}
+                    {{if or (eq $.Tipo "publicacoes") (eq $.Tipo "comentarios")}}<a class="btn btn-primary btn-sm mt-2" href="/publicacoes/{{.ID}}"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Ver publicação</a>{{end}}
+                    {{if eq $.Tipo "denunciadas"}}<div class="den-acoes"><button type="button" class="btn btn-outline-secondary btn-sm den-resolver"><i class="fa-solid fa-box-archive" aria-hidden="true"></i> Arquivar denúncias</button>{{if .Suspenso}}<button type="button" class="btn btn-primary btn-sm adm-reativar"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar conta</button>{{else}}<button type="button" class="btn btn-outline-danger btn-sm adm-suspender"><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Suspender conta</button>{{end}}</div>{{end}}
+                    {{if eq $.Tipo "suspensas"}}<div class="den-acoes"><button type="button" class="btn btn-primary btn-sm adm-reativar">Reativar</button></div>{{end}}
+                </article>
+                {{else}}
+                <p>Nenhum resultado encontrado.</p>
+                {{end}}
+            </div>
+            {{if .Proxima}}<a id="adm-mais" class="btn btn-primary" href="{{.Proxima}}">Mostrar mais</a>{{end}}
+        </section>
+    </main>
+    {{template "rodape"}}
+    {{template "scripts" .}}
+</body>
+</html>

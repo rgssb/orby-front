@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=40">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -26,6 +26,7 @@
             <section class="feed-column" aria-labelledby="feed-title">
                 <header class="feed-header">
                     <h2 id="feed-title">Publicação</h2>
+                    {{if .Publicacao.AcessoModeracao}}<p><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Acesso de moderação a publicação privada. Esta visualização é registrada.</p>{{end}}
                     <a class="btn btn-outline-secondary btn-sm" href="/home"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar</a>
                 </header>
                 {{if eq .Publicacao.AutorID .UsuarioID}}

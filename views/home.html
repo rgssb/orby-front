@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=40">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=45">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
@@ -27,6 +27,11 @@
         <div class="row mt-4 home-layout">
             <section class="compose-column" aria-labelledby="compose-title">
                 <div class="composer-card">
+                    <button type="button" class="composer-toggle" aria-expanded="false" aria-controls="nova-publicacao" hidden>
+                        <span class="composer-toggle-icon"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i></span>
+                        <span class="composer-toggle-text">Criar publicação</span>
+                        <i class="fa-solid fa-chevron-down composer-toggle-chevron" aria-hidden="true"></i>
+                    </button>
                     <header class="composer-header">
                         <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-feather-pointed"></i></span>
                         <h1 id="compose-title">Nova publicação</h1>
@@ -55,6 +60,7 @@
                 <div class="suggest-card" id="sugestoes-seguir" hidden>
                     <h2><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Quem seguir</h2>
                     <ul class="suggest-list" id="sugestoes-lista"></ul>
+                    <button type="button" class="suggest-more" aria-controls="sugestoes-lista" aria-expanded="false" hidden>Mostrar mais pessoas</button>
                 </div>
             </section>
             <section class="feed-column" aria-labelledby="feed-title">
@@ -89,5 +95,6 @@
 {{template "rodape"}}
 
 {{template "scripts" }}
+<script src="/assets/js/home.js?v=2"></script>
 </body>
 </html>
