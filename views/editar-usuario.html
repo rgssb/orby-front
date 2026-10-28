@@ -83,6 +83,48 @@
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Salvar alterações</button>
                     </div>
                 </form>
+                <form id="privacidade-interacoes" class="edit-profile-form mt-4">
+                    <fieldset disabled>
+                        <legend class="fs-5">Privacidade das interações</legend>
+                        <p>“Pessoas que sigo” significa as contas que você segue. As regras de mensagens também valem para conversas e grupos existentes: o envio ao grupo é bloqueado se algum destinatário não permitir.</p>
+                        <div class="form-group">
+                            <label for="privacidade-mensagens">Quem pode enviar mensagens para mim</label>
+                            <select class="form-control" id="privacidade-mensagens" name="mensagens">
+                                <option value="todos">Todos</option><option value="seguindo">Pessoas que sigo</option><option value="ninguem">Ninguém</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="privacidade-comentarios">Quem pode comentar minhas publicações ou responder meus comentários</label>
+                            <select class="form-control" id="privacidade-comentarios" name="comentarios">
+                                <option value="todos">Todos</option><option value="seguindo">Pessoas que sigo</option><option value="ninguem">Ninguém</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="privacidade-mencoes">Quem pode me mencionar</label>
+                            <select class="form-control" id="privacidade-mencoes" name="mencoes">
+                                <option value="todos">Todos</option><option value="seguindo">Pessoas que sigo</option><option value="ninguem">Ninguém</option>
+                            </select>
+                            <small>Menções fora da regra não geram aviso. Quando limitada a pessoas que você segue, a menção aparece como link para quem segue você ou é seguido por você; os demais veem texto comum.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar privacidade</button>
+                    </fieldset>
+                    <p id="privacidade-interacoes-status" role="status">Carregando preferências...</p>
+                </form>
+                <form id="preferencias-notificacoes" class="edit-profile-form mt-4">
+                    <fieldset disabled>
+                        <legend class="fs-5">Notificações</legend>
+                        <p>Escolha quais interações aparecem no sino. As notificações ocultas continuam guardadas e reaparecem se você ativá-las novamente. Avisos de moderação e pedidos para seguir continuam aparecendo.</p>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-curtida-publicacao" value="curtida_publicacao"><label class="form-check-label" for="notif-curtida-publicacao">Curtidas nas publicações</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-curtida-comentario" value="curtida_comentario"><label class="form-check-label" for="notif-curtida-comentario">Curtidas nos comentários</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-comentario" value="comentario"><label class="form-check-label" for="notif-comentario">Comentários</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-resposta" value="resposta"><label class="form-check-label" for="notif-resposta">Respostas</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-repost" value="repost"><label class="form-check-label" for="notif-repost">Reposts</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-mencao" value="mencao"><label class="form-check-label" for="notif-mencao">Menções</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-seguidor" value="seguidor"><label class="form-check-label" for="notif-seguidor">Novos seguidores</label></div>
+                        <button type="submit" class="btn btn-primary mt-3">Salvar notificações</button>
+                    </fieldset>
+                    <p id="notificacoes-status" role="status">Carregando preferências...</p>
+                </form>
             </article>
         </section>
     </main>
@@ -90,6 +132,6 @@
     {{template "rodape"}}
     {{template "scripts"}}
     <script src="/assets/js/recorte.js?v=1"></script>
-    <script src="/assets/js/usuario.js?v=11"></script>
+    <script src="/assets/js/usuario.js?v=13"></script>
 </body>
 </html>

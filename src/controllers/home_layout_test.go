@@ -26,10 +26,14 @@ func TestHomeRenderizaComposerEFeed(t *testing.T) {
 		resposta := httptest.NewRecorder()
 		utils.ExecutarTemplate(resposta, "home.html", dados)
 		html := resposta.Body.String()
-		for _, texto := range []string{`aria-controls="nova-publicacao"`, `id="sugestoes-seguir"`, `id="sugestoes-lista"`, `aria-controls="sugestoes-lista"`, `/assets/js/home.js?v=2`} {
+		for _, texto := range []string{`aria-controls="nova-publicacao"`, `id="sugestoes-seguir"`, `id="sugestoes-lista"`, `aria-controls="sugestoes-lista"`, `/assets/js/home.js?v=3`} {
 			if !strings.Contains(html, texto) {
 				t.Errorf("home sem %q", texto)
 			}
+			if !strings.Contains(html, `id="audiencia-publicacao" aria-label="Publicar somente para Felas" aria-pressed="false"`) {
+				t.Error("botão de Felas ausente ou não inicia desmarcado")
+			}
+
 		}
 		if len(dados.Publicacoes) > 0 && (!strings.Contains(html, `id="feed-lista"`) || !strings.Contains(html, `id="carregar-mais"`)) {
 			t.Error("feed ou paginação ausente")

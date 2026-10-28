@@ -54,6 +54,14 @@
                 </div>
             </article>
 
+            <section class="composer-card mt-3" aria-labelledby="meus-felas-titulo">
+                <h2 id="meus-felas-titulo"><i class="fa-solid fa-star" aria-hidden="true"></i> Meus Felas</h2>
+                <p>Só você vê esta lista. Para adicionar alguém que segue você e que você também segue, abra o perfil da pessoa e escolha “Adicionar aos Felas”.</p>
+                <p>Em perfis privados, as pessoas também precisam seguir você para ver suas publicações exclusivas.</p>
+                <ul id="felas-lista" class="suggest-list" aria-live="polite"></ul>
+                <p id="felas-status" role="status">Carregando Felas...</p>
+            </section>
+
             <header class="feed-header">
                 <h2 id="feed-title">Minhas publicações</h2>
             </header>
@@ -80,6 +88,7 @@
     {{template "rodape"}}
     {{template "scripts" .}}
     <script src="/assets/js/usuario.js?v=9"></script>
+    <script src="/assets/js/felas.js?v=2"></script>
     {{template "modal-seguidores" .Usuario}}
     {{template "modal-seguindo" .Usuario}}
 </body>

@@ -44,10 +44,12 @@
 {{end}}
 
 {{define "repostar"}}
+{{if not .Felas}}
 <button type="button" class="action-icon repostar-publicacao{{if .RepostadoPorUsuario}} is-reposted{{end}}" aria-pressed="{{.RepostadoPorUsuario}}" aria-label="{{if .RepostadoPorUsuario}}Desfazer repost{{else}}Repostar publicação{{end}}" title="{{if .RepostadoPorUsuario}}Desfazer repost{{else}}Repostar{{end}}">
     <i class="fa-solid fa-retweet" aria-hidden="true"></i>
 </button>
 <span class="repost-count">{{.Reposts}}</span>
+{{end}}
 {{end}}
 
 {{define "editar"}}
@@ -67,6 +69,8 @@
     <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <time datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time>{{if .Editado}} <span class="comment-edited">(editado)</span>{{end}}</span>
 </a>
 {{if .RepostDe}}<p class="repost-label"><i class="fa-solid fa-retweet" aria-hidden="true"></i> {{.AutorNick}} repostou</p>{{end}}
+{{if .Felas}}<p class="repost-label"><i class="fa-solid fa-star" aria-hidden="true"></i> Publicação para Felas</p>{{end}}
+{{if .AcessoModeracao}}<p class="repost-label"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Acesso de moderação registrado</p>{{end}}
 {{if .Titulo}}<h2 class="display-4">{{.Titulo}}</h2>{{end}}
 {{if .Conteudo}}<p class="lead">{{.Conteudo}}</p>{{end}}
 {{with .RepostDe}}
@@ -143,7 +147,7 @@
 
 {{define "campo-imagem"}}
 <div class="form-group image-field">
-    <span class="image-field-title"><i class="fa-solid fa-image" aria-hidden="true"></i> Imagens <small class="text-muted">(opcional, até 4, de até 4 MB cada)</small></span>
+    <span class="image-field-title"><i class="fa-solid fa-image" aria-hidden="true"></i> Imagens <small class="text-muted" title="Até 4 MB por imagem">Max. 4<span class="sr-only"> imagens de até 4 MB cada</span></small></span>
     <input type="file" class="image-input" id="imagem-publicacao" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
     <label class="image-add-button" for="imagem-publicacao"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> <span id="imagem-nome">Adicionar imagens</span></label>
     <div class="image-previews" id="imagem-previa" hidden></div>

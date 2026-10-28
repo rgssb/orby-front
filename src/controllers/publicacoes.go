@@ -27,9 +27,10 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	publicacao, erro := json.Marshal(map[string]string{
+	publicacao, erro := json.Marshal(map[string]interface{}{
 		"titulo":   r.FormValue("titulo"),
 		"conteudo": r.FormValue("conteudo"),
+		"felas":    r.FormValue("felas") == "true",
 	})
 	if erro != nil {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})

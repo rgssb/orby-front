@@ -56,6 +56,7 @@
                             <a class="btn btn-outline-primary" href="/mensagens?com={{.Usuario.ID}}"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Enviar pedido de desculpas</a>
                             {{else}}
                             <a class="btn btn-outline-primary" href="/mensagens?com={{.Usuario.ID}}"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Mensagem</a>
+                            <button type="button" class="btn btn-outline-primary" id="felas-alternar" data-usuario="{{.Usuario.ID}}" hidden><i class="fa-solid fa-star" aria-hidden="true"></i> <span></span></button>
                             {{if not $SeguidoPeloUsuarioLogado}}
                             {{if .Usuario.PedidoEnviado}}
                             <button type="button" id="parar-de-seguir" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" title="Cancelar pedido"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> Pedido enviado</button>
@@ -75,6 +76,7 @@
                             {{end}}
                             <button type="button" id="bloquear" class="btn btn-outline-secondary" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}"><i class="fa-solid fa-ban" aria-hidden="true"></i> Bloquear</button>
                             <button type="button" class="btn btn-link denunciar denunciar-perfil" data-tipo="perfil" data-id="{{.Usuario.ID}}" data-usuario="{{.Usuario.ID}}" aria-label="Denunciar perfil"><i class="fa-regular fa-flag" aria-hidden="true"></i> Denunciar</button>
+                            <a class="btn btn-outline-secondary admin-only" href="/admin/usuarios/{{.Usuario.ID}}/denuncias"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i> Histórico de moderação</a>
                             {{if .Usuario.Suspenso}}
                             <button type="button" class="btn btn-outline-primary admin-only adm-reativar-perfil" data-usuario="{{.Usuario.ID}}" data-nome="{{.Usuario.Nome}}" title="Reativar conta (administração)"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar conta</button>
                             {{else}}
@@ -120,7 +122,8 @@
 
     {{template "rodape"}}
     {{template "scripts" .}}
-    <script src="/assets/js/usuario.js?v=7"></script>
+    <script src="/assets/js/usuario.js?v=8"></script>
+    <script src="/assets/js/felas.js?v=2"></script>
     {{template "modal-seguidores" .Usuario}}
     {{template "modal-seguindo" .Usuario}}
 </body>

@@ -17,6 +17,9 @@ type Rota struct {
 
 // Configurar coloca todas as rotas dentro do router
 func Configurar(router *mux.Router) *mux.Router {
+	router.HandleFunc("/service-worker.js", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./assets/service-worker.js")
+	}).Methods(http.MethodGet)
 	rotas := rotasLogin
 	rotas = append(rotas, rotasUsuarios...)
 	rotas = append(rotas, rotaPaginaPrincipal)

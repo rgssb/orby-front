@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#11141D">
+    <link rel="manifest" href="/assets/manifest.webmanifest">
     <title>Orby - Início</title>
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png?v=5">
@@ -15,7 +17,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=45">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=48">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
@@ -25,7 +27,7 @@
 
     <main id="conteudo-principal" tabindex="-1" class="container-fluid home-page">
         <div class="row mt-4 home-layout">
-            <section class="compose-column" aria-labelledby="compose-title">
+            <section class="compose-column" aria-labelledby="compose-title" tabindex="0">
                 <div class="composer-card">
                     <button type="button" class="composer-toggle" aria-expanded="false" aria-controls="nova-publicacao" hidden>
                         <span class="composer-toggle-icon"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i></span>
@@ -46,6 +48,10 @@
                             <textarea class="form-control" id="conteudo-publicacao" name="conteudo" required="required" maxlength="5000" placeholder="Escreva sua publicação..."></textarea>
                             <small class="char-counter" id="contador-conteudo" aria-live="polite">0 / 5000</small>
                         </div>
+                        <button type="button" class="composer-felas" id="audiencia-publicacao" aria-label="Publicar somente para Felas" aria-pressed="false">
+                            <i class="fa-solid fa-star" aria-hidden="true"></i> Felas
+                            <i class="fa-solid fa-check composer-felas-check" aria-hidden="true"></i>
+                        </button>
                         <div class="composer-preview" id="previa" hidden>
                             <span class="composer-preview-label">Pré-visualização</span>
                             <h3 id="previa-titulo"></h3>
@@ -69,7 +75,8 @@
                 </header>
                 <nav class="feed-tabs" aria-label="Filtrar publicações">
                     <div class="feed-tabs-group">
-                        <a class="feed-tab{{if ne .Aba "todos"}} is-active{{end}}" href="/home?aba=seguindo&ordem={{.Ordem}}">Seguindo</a>
+                        <a class="feed-tab{{if eq .Aba "seguindo"}} is-active{{end}}" href="/home?aba=seguindo&ordem={{.Ordem}}">Seguindo</a>
+                        <a class="feed-tab{{if eq .Aba "felas"}} is-active{{end}}" href="/home?aba=felas&ordem={{.Ordem}}">Felas</a>
                         <a class="feed-tab{{if eq .Aba "todos"}} is-active{{end}}" href="/home?aba=todos&ordem={{.Ordem}}">Explorar</a>
                     </div>
                     <div class="feed-tabs-group feed-tabs-order">
@@ -82,8 +89,17 @@
                 {{else}}
                 <div class="feed-empty">
                     {{template "mascote" "orby-mascot--empty"}}
+                    {{if eq .Aba "felas"}}
+                    <h3>Por enquanto, tudo quietinho por aqui</h3>
+                    <div class="felas-explicacao">
+                        <p>Quando alguém compartilhar uma publicação com você, ela aparecerá por aqui.</p>
+                        <p>Monte sua lista privada com pessoas que seguem você e que você também segue. Em perfis privados, é preciso seguir o autor para ver suas publicações.</p>
+                        <p>Publicações para Felas não podem ser repostadas. Para moderação, administradores podem vê-las, com acesso registrado.</p>
+                    </div>
+                    {{else}}
                     <h3>Ainda não há publicações</h3>
                     <p>{{if eq .Aba "todos"}}Seja o primeiro a compartilhar algo por aqui.{{else}}Siga pessoas ou veja a aba "Explorar" para descobrir publicações.{{end}}</p>
+                    {{end}}
                 </div>
                 {{end}}
             </section>
@@ -95,6 +111,7 @@
 {{template "rodape"}}
 
 {{template "scripts" }}
-<script src="/assets/js/home.js?v=2"></script>
+<script src="/assets/js/home.js?v=3"></script>
+<script src="/assets/js/pwa.js?v=1"></script>
 </body>
 </html>

@@ -1,5 +1,39 @@
 // Comentários e menções das publicações (usa os helpers de publicacoes.js)
-// Menções e hashtags: @nick vira link para o perfil e #tag para a busca (o texto é sempre inserido como texto, nunca como HTML)
+const mencoesPendentes = new Map();
+let timerDasMencoes = null;
+function verificarMencao(nome, elemento) {
+    if (!mencoesPendentes.has(nome)) mencoesPendentes.set(nome, []);
+    mencoesPendentes.get(nome).push(elemento);
+    if (timerDasMencoes) return;
+    timerDasMencoes = window.setTimeout(function () {
+        timerDasMencoes = null;
+        const pendentes = new Map(mencoesPendentes);
+        mencoesPendentes.clear();
+        const nicks = Array.from(pendentes.keys());
+        for (let inicio = 0; inicio < nicks.length; inicio += 100) {
+            const lote = nicks.slice(inicio, inicio + 100);
+            $.ajax({
+                url: '/mencoes/visibilidade',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ nicks: lote })
+            }).done(function (visibilidade) {
+                lote.forEach(function (nick) {
+                    if (!visibilidade[nick]) return;
+                    pendentes.get(nick).forEach(function (span) {
+                        const link = document.createElement('a');
+                        link.className = 'mention';
+                        link.href = '/mencoes/' + encodeURIComponent(nick);
+                        link.textContent = span.textContent;
+                        span.replaceWith(link);
+                    });
+                });
+            }).fail(function () { console.error('Não foi possível verificar a privacidade das menções.'); });
+        }
+    }, 0);
+}
+
+// Menções só viram links depois de verificar a privacidade; hashtags continuam sendo links.
 function comMencoes(texto) {
     const fragmento = document.createDocumentFragment();
     const regex = /(^|[^\p{L}\p{N}_@#])(?:@([A-Za-z0-9_]{1,50})|#([\p{L}\p{N}_]{1,50}))/gu;
@@ -9,12 +43,13 @@ function comMencoes(texto) {
         const inicio = achado.index + achado[1].length;
         const nome = achado[2] || achado[3];
         fragmento.appendChild(document.createTextNode(texto.slice(ultimo, inicio)));
-        const link = document.createElement('a');
+        let link;
         if (achado[2]) {
-            link.className = 'mention';
-            link.href = '/mencoes/' + encodeURIComponent(nome);
+            link = document.createElement('span');
             link.textContent = '@' + nome;
+            verificarMencao(nome, link);
         } else {
+            link = document.createElement('a');
             link.className = 'hashtag';
             link.href = '/hashtags/' + encodeURIComponent(nome);
             link.textContent = '#' + nome;

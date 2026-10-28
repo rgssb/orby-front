@@ -93,8 +93,8 @@ type DadosDoFeed struct {
 // para descobrir se existe uma próxima página.
 func buscarFeed(w http.ResponseWriter, r *http.Request, pagina int) (DadosDoFeed, bool) {
 	aba, ordem := "seguindo", "recentes"
-	if r.URL.Query().Get("aba") == "todos" {
-		aba = "todos"
+	if escolhida := r.URL.Query().Get("aba"); escolhida == "todos" || escolhida == "felas" {
+		aba = escolhida
 	}
 	if r.URL.Query().Get("ordem") == "populares" {
 		ordem = "populares"

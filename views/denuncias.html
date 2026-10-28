@@ -50,6 +50,7 @@
                     <p class="den-resumo">{{.Total}} pessoas diferentes denunciaram · perfil {{.Perfis}} · publicações {{.Publicacoes}} · comentários {{.Comentarios}}</p>
                     <p class="den-motivos">{{range $motivo, $quantidade := .Motivos}}<span>{{$motivo}}: {{$quantidade}}</span>{{end}}</p>
                     <div class="den-acoes">
+                        <a class="btn btn-primary btn-sm" href="/admin/usuarios/{{.UsuarioID}}/denuncias">Ver detalhes</a>
                         <button type="button" class="btn btn-outline-secondary btn-sm den-resolver"><i class="fa-solid fa-check" aria-hidden="true"></i> Arquivar denúncias</button>
                         {{if .Suspenso}}<button type="button" class="btn btn-primary btn-sm adm-reativar"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Reativar conta</button>{{else}}<button type="button" class="btn btn-outline-danger btn-sm adm-suspender"><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Suspender conta</button>{{end}}
                     </div>

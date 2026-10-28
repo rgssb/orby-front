@@ -20,6 +20,11 @@ $(document).ajaxError(function(evento, resposta) {
 
 $('#nova-publicacao').on('submit', criarpublicacao);
 
+$('#audiencia-publicacao').on('click', function () {
+    const botao = $(this);
+    botao.attr('aria-pressed', String(botao.attr('aria-pressed') !== 'true'));
+});
+
 $(document).on('click', '.curtir-publicacao', curtirPublicacao);
 
 $('#atualizar').on('click', atualizarPublicacao);
@@ -64,7 +69,8 @@ function criarpublicacao(evento) {
         method: "POST",
         data: {
             titulo: $('#titulo-publicacao').val(),
-            conteudo: $('#conteudo-publicacao').val()
+            conteudo: $('#conteudo-publicacao').val(),
+            felas: $('#audiencia-publicacao').attr('aria-pressed') === 'true'
         }
     }).done(function(criada) {
         const concluir = function() {

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Orby - Detalhes das denúncias</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg?v=5">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/home.css?v=24">
+    <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
+    <link rel="stylesheet" href="/assets/css/swal-orby.css">
+    <link rel="stylesheet" href="/assets/css/themes.css?v=12">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
+    <script src="/assets/js/tema.js?v=3"></script>
+</head>
+<body>
+    {{template "cabecalho"}}
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page">
+        <section class="users-column">
+            <header class="feed-header">
+                <a class="btn btn-primary btn-sm mb-2" href="/admin/lista/denunciadas">Voltar às denúncias</a>
+                <h1>Detalhes das denúncias</h1>
+                <p>As denúncias são agrupadas por alvo e motivo. As identidades das pessoas que denunciaram não são exibidas.</p>
+                <a href="/usuarios/{{.UsuarioID}}">Ver perfil denunciado</a>
+            </header>
+            {{range .Denuncias}}
+            <article class="den-item">
+                <div class="den-topo">
+                    <strong>{{if eq .Tipo "perfil"}}Perfil{{else if eq .Tipo "publicacao"}}Publicação{{else}}Comentário{{end}} #{{.AlvoID}}</strong>
+                    <span class="den-selo">{{if .Resolvida}}Arquivada{{else}}Aberta{{end}}</span>
+                </div>
+                <p class="den-resumo">Motivo: {{if eq .Motivo "assedio"}}Assédio{{else if eq .Motivo "falso"}}Identidade falsa{{else if eq .Motivo "improprio"}}Conteúdo impróprio{{else if eq .Motivo "spam"}}Spam{{else}}Outro{{end}} · {{.Total}} denúncia(s) · Última: {{.UltimaEm.Format "02/01/2006 15:04"}}</p>
+                {{if .PublicacaoID}}<a class="btn btn-primary btn-sm" href="/publicacoes/{{.PublicacaoID}}">Ver publicação</a>{{else if ne .Tipo "perfil"}}<p class="den-resumo">Conteúdo indisponível ou removido.</p>{{end}}
+            </article>
+            {{else}}<p>Nenhuma denúncia encontrada.</p>{{end}}
+            <div class="den-acoes">
+                {{if .Anterior}}<a class="btn btn-outline-secondary" href="{{.Anterior}}">Anterior</a>{{end}}
+                {{if .Proxima}}<a class="btn btn-primary" href="{{.Proxima}}">Mostrar mais</a>{{end}}
+            </div>
+            <h2 class="adm-titulo">Ações recentes da administração</h2>
+            <p>Somente ações registradas após a disponibilização deste histórico aparecem aqui.</p>
+            {{range .Acoes}}
+            <article class="den-item">
+                <strong>{{if eq .Acao "suspender"}}Conta suspensa{{else if eq .Acao "reativar"}}Conta reativada e denúncias abertas arquivadas{{else}}Denúncias arquivadas{{end}}</strong>
+                <p class="den-resumo">Por {{.Admin}} · {{.Data.Format "02/01/2006 15:04"}}</p>
+            </article>
+            {{else}}<p>Nenhuma ação registrada.</p>{{end}}
+        </section>
+    </main>
+    {{template "rodape"}}
+    {{template "scripts" .}}
+</body>
+</html>

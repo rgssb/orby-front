@@ -218,7 +218,11 @@ $(document).on('click', '.repostar-publicacao', function () {
 });
 
 function textoDeSugestao(p) {
-    if (!p.emComum) return 'Popular no Orby';
+    if (!p.emComum) {
+        if (p.motivo === 'interesses') return 'Interesses em comum';
+        if (p.motivo === 'interacoes') return 'Você interagiu com publicações';
+        return 'Popular no Orby';
+    }
     if (p.emComum === 1) return '@' + escaparHtml(p.via) + ', que você segue, segue';
     return p.emComum + ' pessoas que você segue seguem';
 }

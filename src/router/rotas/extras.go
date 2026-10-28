@@ -6,6 +6,13 @@ import (
 )
 
 var rotasExtras = []Rota{
+	{URI: "/privacidade/interacoes", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/privacidade/interacoes"), RequerAutenticacao: true},
+	{URI: "/privacidade/interacoes", Metodo: http.MethodPut, Funcao: controllers.SalvarPrivacidadeInteracoes, RequerAutenticacao: true},
+	{URI: "/mencoes/visibilidade", Metodo: http.MethodPost, Funcao: controllers.VisibilidadeDasMencoes, RequerAutenticacao: true},
+	{URI: "/felas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/felas"), RequerAutenticacao: true},
+	{URI: "/felas/{usuarioId}", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/felas/{usuarioId}"), RequerAutenticacao: true},
+	{URI: "/felas/{usuarioId}", Metodo: http.MethodPut, Funcao: controllers.Repassar(http.MethodPut, "/felas/{usuarioId}"), RequerAutenticacao: true},
+	{URI: "/felas/{usuarioId}", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/felas/{usuarioId}"), RequerAutenticacao: true},
 	{URI: "/feed", Metodo: http.MethodGet, Funcao: controllers.CarregarMaisPublicacoes, RequerAutenticacao: true},
 
 	{URI: "/publicacoes/{publicacaoId}/comentarios", Metodo: http.MethodGet, Funcao: controllers.BuscarComentarios, RequerAutenticacao: true},
@@ -21,6 +28,8 @@ var rotasExtras = []Rota{
 	{URI: "/publicacoes/{publicacaoId}/repostar", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/publicacoes/{publicacaoId}/repostar"), RequerAutenticacao: true},
 
 	{URI: "/notificacoes", Metodo: http.MethodGet, Funcao: controllers.BuscarNotificacoes, RequerAutenticacao: true},
+	{URI: "/notificacoes/preferencias", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/notificacoes/preferencias"), RequerAutenticacao: true},
+	{URI: "/notificacoes/preferencias", Metodo: http.MethodPut, Funcao: controllers.SalvarPreferenciasDeNotificacao, RequerAutenticacao: true},
 	{URI: "/notificacoes/nao-lidas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/notificacoes/nao-lidas"), RequerAutenticacao: true},
 	{URI: "/notificacoes/lidas", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/notificacoes/lidas"), RequerAutenticacao: true},
 	{URI: "/notificacoes/{notificacaoId}", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/notificacoes/{notificacaoId}"), RequerAutenticacao: true},
@@ -34,6 +43,7 @@ var rotasExtras = []Rota{
 	{URI: "/admin/usuarios/{usuarioId}/suspender", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/admin/usuarios/{usuarioId}/suspender"), RequerAutenticacao: true},
 	{URI: "/admin/usuarios/{usuarioId}/reativar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/admin/usuarios/{usuarioId}/reativar"), RequerAutenticacao: true},
 	{URI: "/admin/denuncias", Metodo: http.MethodGet, Funcao: controllers.CarregarPaginaDeDenuncias, RequerAutenticacao: true},
+	{URI: "/admin/usuarios/{usuarioId}/denuncias", Metodo: http.MethodGet, Funcao: controllers.CarregarDetalhesDeDenuncias, RequerAutenticacao: true},
 	{URI: "/admin/lista/{tipo}", Metodo: http.MethodGet, Funcao: controllers.CarregarListaAdministrativa, RequerAutenticacao: true},
 	{URI: "/admin/denuncias/{usuarioId}/resolver", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/admin/denuncias/{usuarioId}/resolver"), RequerAutenticacao: true},
 

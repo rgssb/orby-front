@@ -41,9 +41,9 @@
         const itens = pessoas.querySelectorAll(':scope > li');
         const expandido = maisPessoas.getAttribute('aria-expanded') === 'true';
         itens.forEach(function (item, indice) {
-            item.hidden = celular.matches && !expandido && indice >= 2;
+            item.hidden = !expandido && indice >= 2;
         });
-        maisPessoas.hidden = !celular.matches || itens.length <= 2;
+        maisPessoas.hidden = itens.length <= 2;
         maisPessoas.textContent = expandido ? 'Mostrar menos' : 'Mostrar mais pessoas';
     }
 

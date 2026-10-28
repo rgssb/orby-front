@@ -82,6 +82,7 @@ function atualizarPerfil() {
     $.get(window.location.href).done(function(html) {
         const novo = $('<div>').append($.parseHTML(html));
         $('.profile-card').replaceWith(novo.find('.profile-card'));
+        document.dispatchEvent(new Event('perfil-atualizado'));
         $('#modal-seguidores .modal-count').text(novo.find('#modal-seguidores .modal-count').text());
         $('#modal-seguidores .modal-body').html(novo.find('#modal-seguidores .modal-body').html());
     }).fail(function() {
@@ -146,6 +147,70 @@ function atualizarSenha(evento) {
         Swal.fire("Ops...", erro || "Erro ao atualizar a senha", "error");
     });
 }
+
+(function () {
+    const form = document.getElementById('privacidade-interacoes');
+    if (!form) return;
+    const campos = form.querySelector('fieldset');
+    const status = document.getElementById('privacidade-interacoes-status');
+    $.get('/privacidade/interacoes').done(function (dados) {
+        ['mensagens', 'mencoes', 'comentarios'].forEach(function (nome) {
+            form.elements[nome].value = dados[nome];
+        });
+        campos.disabled = false;
+        status.textContent = '';
+    }).fail(function () {
+        status.textContent = 'Não foi possível carregar as preferências. Recarregue a página para tentar novamente.';
+    });
+    form.addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        const dados = {};
+        ['mensagens', 'mencoes', 'comentarios'].forEach(function (nome) { dados[nome] = form.elements[nome].value; });
+        campos.disabled = true;
+        status.textContent = 'Salvando...';
+        $.ajax({ url: '/privacidade/interacoes', method: 'PUT', contentType: 'application/json', data: JSON.stringify(dados) })
+            .done(function () { status.textContent = 'Preferências de privacidade salvas.'; })
+            .fail(function () { status.textContent = 'Não foi possível salvar. Tente novamente.'; })
+            .always(function () { campos.disabled = false; });
+    });
+})();
+
+(function () {
+    const form = document.getElementById('preferencias-notificacoes');
+    if (!form) return;
+    const campos = form.querySelector('fieldset');
+    const status = document.getElementById('notificacoes-status');
+
+    $.get('/notificacoes/preferencias').done(function (dados) {
+        form.querySelectorAll('input[type="checkbox"]').forEach(function (campo) {
+            campo.checked = !dados.silenciados.includes(campo.value);
+        });
+        campos.disabled = false;
+        status.textContent = '';
+    }).fail(function () {
+        status.textContent = 'Não foi possível carregar as preferências. Recarregue a página para tentar novamente.';
+    });
+
+    form.addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        const silenciados = Array.from(form.querySelectorAll('input[type="checkbox"]:not(:checked)'))
+            .map(function (campo) { return campo.value; });
+        campos.disabled = true;
+        status.textContent = 'Salvando...';
+        $.ajax({
+            url: '/notificacoes/preferencias',
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ silenciados: silenciados })
+        }).done(function () {
+            status.textContent = 'Preferências salvas.';
+        }).fail(function () {
+            status.textContent = 'Não foi possível salvar. Tente novamente.';
+        }).always(function () {
+            campos.disabled = false;
+        });
+    });
+})();
 
 
 // Contador da bio conta os caracteres digitados
