@@ -76,6 +76,8 @@ func TestListaAdministrativaPaginacaoEBusca(t *testing.T) {
 				Usuario                        modelos.Usuario
 				UsuarioLogadoID                uint64
 				Bloqueei, Bloqueado, Silenciei bool
+				Curtidas                       modelos.CurtidasPerfil
+				AbaCurtidas                    bool
 			}{Usuario: modelos.Usuario{ID: 2, Suspenso: suspenso, PodeVerPublicacoes: true}, UsuarioLogadoID: 1})
 			htmlPerfil := pagina.Body.String()
 			if strings.Contains(htmlPerfil, "adm-suspender-perfil") == suspenso || strings.Contains(htmlPerfil, "adm-reativar-perfil") != suspenso {

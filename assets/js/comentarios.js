@@ -107,6 +107,7 @@ function montarComentario(c, usuarioId, donoDaPublicacao, ehResposta) {
 
     const texto = $('<p class="comment-text">').attr('data-bruto', c.conteudo).append(comMencoes(c.conteudo));
     item.append(cabecalho, texto);
+    item.append($('<div class="reacoes">').attr({ 'data-reacoes-tipo': 'comentarios', 'data-reacoes-id': c.id }));
     item.attr({ 'data-respostas': c.respostas || 0, 'data-total': c.totalRespostas || 0 });
     item.append($('<ul class="comment-replies list-unstyled" hidden>'));
     if (c.respostas) item.append(botaoVerRespostas(c.respostas));

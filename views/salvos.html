@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=62">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=29">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -29,13 +29,20 @@
             <header class="feed-header">
                 <h1 id="users-title">Publicações salvas</h1>
             </header>
+            <section class="pastas-salvos" aria-labelledby="pastas-titulo" data-pasta-atual="{{.PastaID}}">
+                <h2 id="pastas-titulo">Minhas pastas</h2>
+                <p>Organize seus momentos favoritos do seu jeito.</p>
+                <div id="pastas-lista" aria-live="polite"></div>
+            </section>
             {{if .Publicacoes}}
             <div id="feed-lista">{{template "feed-itens" .}}</div>
             {{else}}
             <div class="users-empty">
                 <span class="composer-icon" aria-hidden="true"><i class="fa-regular fa-bookmark"></i></span>
-                <h2>Nada salvo ainda</h2>
-                <p>Toque no marcador de uma publicação para guardá-la aqui.</p>
+                {{if .PastaID}}<h2>Nenhuma publicação nesta pasta</h2>
+                <p>Ao salvar uma publicação, escolha esta pasta para guardá-la aqui.</p>
+                {{else}}<h2>Nada salvo ainda</h2>
+                <p>Toque no marcador de uma publicação para guardá-la aqui.</p>{{end}}
             </div>
             {{end}}
         </section>

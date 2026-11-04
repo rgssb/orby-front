@@ -7,7 +7,6 @@
     const lista = document.getElementById('notif-lista');
     const selo = document.getElementById('notif-badge');
     const INTERVALO = 45000;
-    let timer = null;
 
     const MENSAGENS = {
         curtida_publicacao: 'curtiu sua publicação',
@@ -46,7 +45,7 @@
         return $.get('/notificacoes/nao-lidas').done(function (dados) {
             mostrarTotal(dados.total || 0);
         }).fail(function () {
-            window.clearInterval(timer);
+            console.error('Não foi possível atualizar o total de notificações.');
         });
     }
 
@@ -176,7 +175,10 @@
     });
 
     buscarTotal();
-    timer = window.setInterval(function () {
+    window.setInterval(function () {
         if (!document.hidden && painel.hidden) buscarTotal();
     }, INTERVALO);
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && painel.hidden) buscarTotal();
+    });
 })();

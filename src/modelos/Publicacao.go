@@ -18,22 +18,41 @@ type Publicacao struct {
 	CriadaEm            time.Time           `json:"criadaEm,omitempty"`
 	Editado             bool                `json:"editado"`
 	Imagens             int                 `json:"imagens"`
+	DescricoesImagens   []string            `json:"descricoesImagens,omitempty"`
 	Reposts             uint64              `json:"reposts"`
 	RepostadoPorUsuario bool                `json:"repostadoPorUsuario"`
 	RepostDe            *PublicacaoOriginal `json:"repostDe,omitempty"`
 	AcessoModeracao     bool                `json:"acessoModeracao"`
 	Felas               bool                `json:"felas"`
+	Enquete             *Enquete            `json:"enquete,omitempty"`
+}
+
+type Enquete struct {
+	Titulo     string         `json:"titulo,omitempty"`
+	Opcoes     []OpcaoEnquete `json:"opcoes"`
+	EncerraEm  *time.Time     `json:"encerraEm,omitempty"`
+	Encerrada  bool           `json:"encerrada"`
+	Votou      bool           `json:"votou"`
+	TotalVotos uint64         `json:"totalVotos"`
+}
+
+type OpcaoEnquete struct {
+	ID    uint64 `json:"id"`
+	Texto string `json:"texto"`
+	Votos uint64 `json:"votos"`
+	Minha bool   `json:"minha"`
 }
 
 // PublicacaoOriginal é a publicação repostada; Indisponivel vale quando quem vê não tem acesso a ela.
 type PublicacaoOriginal struct {
-	ID              uint64    `json:"id"`
-	AutorID         uint64    `json:"autorId"`
-	AutorNick       string    `json:"autorNick"`
-	AutorFotoVersao uint64    `json:"autorFotoVersao"`
-	Titulo          string    `json:"titulo"`
-	Conteudo        string    `json:"conteudo"`
-	CriadaEm        time.Time `json:"criadaEm"`
-	Imagens         int       `json:"imagens"`
-	Indisponivel    bool      `json:"indisponivel"`
+	ID                uint64    `json:"id"`
+	AutorID           uint64    `json:"autorId"`
+	AutorNick         string    `json:"autorNick"`
+	AutorFotoVersao   uint64    `json:"autorFotoVersao"`
+	Titulo            string    `json:"titulo"`
+	Conteudo          string    `json:"conteudo"`
+	CriadaEm          time.Time `json:"criadaEm"`
+	Imagens           int       `json:"imagens"`
+	DescricoesImagens []string  `json:"descricoesImagens,omitempty"`
+	Indisponivel      bool      `json:"indisponivel"`
 }

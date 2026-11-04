@@ -193,6 +193,36 @@
   margin-top: -3rem;
 }
 
+.profile-card--own .profile-banner { height: clamp(11rem, 24vw, 16rem); }
+.profile-card--own .profile-body { margin-top: -3.75rem; gap: 1.6rem; }
+.profile-card--own .profile-avatar { width: 7.5rem; height: 7.5rem; flex: 0 0 7.5rem; }
+.profile-card--own .profile-heading { align-items: flex-start; padding-top: 4.5rem; padding-bottom: 1rem; gap: 1.5rem; }
+.users-column .profile-card--own .profile-name { line-height: 1.2; margin-bottom: .85rem; }
+.profile-card--own .profile-bio { margin-bottom: .9rem; }
+.profile-card--own .profile-stats { margin-top: 1rem; }
+.profile-card--own .profile-pedidos { border-width: 1px; border-color: var(--orby-accent); }
+.profile-card--own .profile-pedidos.has-pedidos {
+  background: color-mix(in srgb, var(--orby-accent) 20%, var(--orby-surface));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--orby-accent) 25%, transparent);
+}
+.profile-card--own .profile-pedidos .nav-badge { position: static; margin-left: auto; }
+.profile-felas-heading { display: flex; align-items: center; gap: .35rem; }
+.profile-felas h2 { font-size: 1.25rem; margin: 0; }
+.profile-felas .felas-info-conteudo { margin: .5rem 0 1rem; }
+.profile-felas .suggest-list:not(:empty) { margin-top: 1rem; }
+.profile-felas #felas-status { margin: .75rem 0 0; color: var(--orby-text-muted); }
+.config-nav { display: flex; flex-wrap: wrap; gap: .75rem; margin: 0 0 1.5rem; }
+.config-nav a { padding: .5rem .85rem; border: 1px solid var(--orby-border); border-radius: 999px; color: var(--orby-text); }
+.config-help { color: var(--orby-text-muted); font-size: .9rem; }
+
+@media (max-width: 575px) {
+  .profile-card--own .profile-banner { height: 10rem; }
+  .profile-card--own .profile-body { gap: .6rem; }
+  .profile-card--own .profile-avatar { width: 6rem; height: 6rem; flex-basis: 6rem; }
+  .profile-card--own .profile-heading { width: 100%; padding-top: .5rem; }
+  .profile-card--own .profile-actions { flex: 1 1 100%; }
+}
+
 .profile-avatar {
   width: 6.5rem;
   height: 6.5rem;
@@ -240,7 +270,7 @@
 
 .profile-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-top: 1.5rem;
   border-top: 1px solid var(--orby-border);
 }
@@ -265,7 +295,18 @@
   line-height: 1.2;
 }
 
+.profile-stat--curtidas {
+  justify-content: center;
+  gap: .35rem;
+}
+
+.profile-stat--curtidas strong {
+  color: var(--orby-accent);
+}
+
 @media (max-width: 575px) {
+  .profile-stat { padding: .8rem .2rem; font-size: .72rem; }
+  .profile-stat strong { font-size: 1.3rem; }
   .profile-body {
     flex-direction: column;
     align-items: flex-start;

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=62">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -42,10 +42,16 @@
                     <span class="d-block mb-1">Imagens atuais</span>
                     <div class="image-previews">
                         {{range $i := intervalo .Imagens}}
-                        <label class="image-thumb">
-                            <img src="/publicacoes/{{$.ID}}/imagens/{{$i}}" alt="Imagem {{inc $i}} atual da publicação">
-                            <span class="image-remove"><input type="checkbox" class="remover-imagem-atual" data-posicao="{{$i}}"> Remover</span>
-                        </label>
+                        <div class="image-preview-item">
+                            <label class="image-thumb">
+                                <img src="/publicacoes/{{$.ID}}/imagens/{{$i}}" alt="{{descricaoImagem $.DescricoesImagens $i}}">
+                                <span class="image-remove"><input type="checkbox" class="remover-imagem-atual" data-posicao="{{$i}}"> Remover</span>
+                            </label>
+                            <div class="image-description">
+                                <label for="descricao-atual-{{$i}}">Descrição da imagem {{inc $i}} (opcional)</label>
+                                <textarea id="descricao-atual-{{$i}}" class="form-control descricao-imagem-atual" data-posicao="{{$i}}" maxlength="500" rows="2">{{textoImagem $.DescricoesImagens $i}}</textarea>
+                            </div>
+                        </div>
                         {{end}}
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,6 +16,27 @@ import (
 
 	"github.com/gorilla/mux"
 )
+
+// AtualizarDescricaoDaImagem repassa a descrição ao servidor autenticado.
+func AtualizarDescricaoDaImagem(w http.ResponseWriter, r *http.Request) {
+	publicacaoID, erro := strconv.ParseUint(mux.Vars(r)["publicacaoId"], 10, 64)
+	posicao, valida := posicaoDaImagem(r)
+	if erro != nil || !valida {
+		respostas.Erro(w, http.StatusBadRequest, "Imagem inválida.")
+		return
+	}
+	if erro = r.ParseForm(); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, "Descrição inválida.")
+		return
+	}
+	corpo, erro := json.Marshal(map[string]string{"descricao": r.FormValue("descricao")})
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, "Descrição inválida.")
+		return
+	}
+	caminho := fmt.Sprintf("/publicacoes/%d/imagens/%d/descricao", publicacaoID, posicao)
+	repassar(w, r, http.MethodPut, caminho, bytes.NewReader(corpo))
+}
 
 // limiteDaImagemDePublicacao é o tamanho máximo da imagem anexada a uma publicação (a API também confere)
 const limiteDaImagemDePublicacao = 4 << 20
@@ -101,6 +123,7 @@ func SalvarImagemDaPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 	requisicao.Header.Set("Authorization", "Bearer "+dados["token"])
 	requisicao.Header.Set("Content-Type", r.Header.Get("Content-Type"))
+	requisicao.Header.Set("X-Orby-Descricao", r.Header.Get("X-Orby-Descricao"))
 
 	response, erro := http.DefaultClient.Do(requisicao)
 	if erro != nil {

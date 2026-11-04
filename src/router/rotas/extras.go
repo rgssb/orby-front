@@ -6,6 +6,20 @@ import (
 )
 
 var rotasExtras = []Rota{
+	{URI: "/privacidade/curtidas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/privacidade/curtidas"), RequerAutenticacao: true},
+	{URI: "/privacidade/curtidas", Metodo: http.MethodPut, Funcao: controllers.RepassarJSON(http.MethodPut, "/privacidade/curtidas"), RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/reacoes", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/publicacoes/{publicacaoId}/reacoes"), RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/reacoes", Metodo: http.MethodPut, Funcao: controllers.RepassarJSON(http.MethodPut, "/publicacoes/{publicacaoId}/reacoes"), RequerAutenticacao: true},
+	{URI: "/comentarios/{comentarioId}/reacoes", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/comentarios/{comentarioId}/reacoes"), RequerAutenticacao: true},
+	{URI: "/comentarios/{comentarioId}/reacoes", Metodo: http.MethodPut, Funcao: controllers.RepassarJSON(http.MethodPut, "/comentarios/{comentarioId}/reacoes"), RequerAutenticacao: true},
+	{URI: "/pastas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/pastas"), RequerAutenticacao: true},
+	{URI: "/pastas", Metodo: http.MethodPost, Funcao: controllers.RepassarJSON(http.MethodPost, "/pastas"), RequerAutenticacao: true},
+	{URI: "/pastas/{pastaId}", Metodo: http.MethodPut, Funcao: controllers.RepassarJSON(http.MethodPut, "/pastas/{pastaId}"), RequerAutenticacao: true},
+	{URI: "/pastas/{pastaId}", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/pastas/{pastaId}"), RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/pastas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/publicacoes/{publicacaoId}/pastas"), RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/pastas", Metodo: http.MethodPost, Funcao: controllers.RepassarJSON(http.MethodPost, "/publicacoes/{publicacaoId}/pastas"), RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/pastas", Metodo: http.MethodPut, Funcao: controllers.RepassarJSON(http.MethodPut, "/publicacoes/{publicacaoId}/pastas"), RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/enquete/{opcaoId}/votar", Metodo: http.MethodPost, Funcao: controllers.Repassar(http.MethodPost, "/publicacoes/{publicacaoId}/enquete/{opcaoId}/votar"), RequerAutenticacao: true},
 	{URI: "/privacidade/interacoes", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/privacidade/interacoes"), RequerAutenticacao: true},
 	{URI: "/privacidade/interacoes", Metodo: http.MethodPut, Funcao: controllers.SalvarPrivacidadeInteracoes, RequerAutenticacao: true},
 	{URI: "/mencoes/visibilidade", Metodo: http.MethodPost, Funcao: controllers.VisibilidadeDasMencoes, RequerAutenticacao: true},
@@ -96,6 +110,7 @@ var rotasExtras = []Rota{
 	{URI: "/publicacoes/{publicacaoId}/imagens/{posicao}", Metodo: http.MethodGet, Funcao: controllers.BuscarImagemDaPublicacao, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/imagens", Metodo: http.MethodPost, Funcao: controllers.SalvarImagemDaPublicacao, RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/imagens/{posicao}", Metodo: http.MethodDelete, Funcao: controllers.RemoverImagemDaPublicacao, RequerAutenticacao: true},
+	{URI: "/publicacoes/{publicacaoId}/imagens/{posicao}/descricao", Metodo: http.MethodPut, Funcao: controllers.AtualizarDescricaoDaImagem, RequerAutenticacao: true},
 
 	{URI: "/usuarios/{usuarioId}/foto", Metodo: http.MethodGet, Funcao: controllers.BuscarFotoDoUsuario, RequerAutenticacao: true},
 	{URI: "/perfil/foto", Metodo: http.MethodPost, Funcao: controllers.SalvarFotoDoUsuario, RequerAutenticacao: true},

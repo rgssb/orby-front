@@ -35,6 +35,34 @@ type Usuario struct {
 	AcessoModeracao    bool `json:"acessoModeracao"`
 }
 
+type CurtidasPerfil struct {
+	Total        uint64       `json:"total"`
+	TotalVisivel bool         `json:"totalVisivel"`
+	ListaPublica bool         `json:"listaPublica"`
+	PodeVer      bool         `json:"podeVer"`
+	Publicacoes  []Publicacao `json:"publicacoes"`
+}
+
+func BuscarCurtidasPerfil(usuarioID uint64, listar bool, r *http.Request) (CurtidasPerfil, error) {
+	url := fmt.Sprintf("%s/usuarios/%d/curtidas", config.ApiURL, usuarioID)
+	if listar {
+		url += "?lista=1"
+	}
+	resposta, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
+	if erro != nil {
+		return CurtidasPerfil{}, erro
+	}
+	defer resposta.Body.Close()
+	if resposta.StatusCode != http.StatusOK {
+		return CurtidasPerfil{}, fmt.Errorf("erro ao carregar curtidas: %s", resposta.Status)
+	}
+	var curtidas CurtidasPerfil
+	if erro = json.NewDecoder(resposta.Body).Decode(&curtidas); erro != nil {
+		return CurtidasPerfil{}, erro
+	}
+	return curtidas, nil
+}
+
 // ErroUsuarioNaoEncontrado indica que a API não conhece o usuário pedido
 var ErroUsuarioNaoEncontrado = errors.New("Erro ao buscar dados do usuário")
 

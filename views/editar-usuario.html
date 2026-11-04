@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=62">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=29">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
@@ -32,6 +32,11 @@
                         <p>Atualize suas informações de perfil.</p>
                     </div>
                 </header>
+                <nav class="config-nav" aria-label="Seções de configurações">
+                    <a href="#editar-usuario">Perfil</a>
+                    <a href="#privacidade-interacoes">Privacidade</a>
+                    <a href="#preferencias-notificacoes">Notificações</a>
+                </nav>
                 <section class="banner-editor" aria-labelledby="banner-titulo">
                     <h2 id="banner-titulo" class="banner-editor-title">Banner do perfil</h2>
                     <div class="profile-banner banner-editor-preview{{if .BannerVersao}} has-image{{else if .BannerPreset}} banner-{{.BannerPreset}}{{end}}" id="banner-previa" data-tema="{{.BannerPreset}}"{{if .BannerVersao}} data-imagem="/usuarios/{{.ID}}/banner?v={{.BannerVersao}}"{{end}} aria-hidden="true">{{if .BannerVersao}}<img class="profile-banner-img" src="/usuarios/{{.ID}}/banner?v={{.BannerVersao}}" alt="">{{end}}</div>
@@ -79,14 +84,26 @@
                             <small>Quem você aceitar pode seguir e ver suas publicações. Administradores também podem acessá-las para moderação; esse acesso é registrado. Vale na hora, sem precisar salvar.</small></span>
                         </label>
                     </div>
+                    <p class="config-help">Nome, e-mail, nick e bio são salvos pelo botão abaixo. Fotos, banner e perfil privado são atualizados separadamente.</p>
                     <div class="edit-profile-actions">
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Salvar alterações</button>
                     </div>
                 </form>
+                <form id="privacidade-curtidas" class="edit-profile-form mt-4">
+                    <fieldset disabled>
+                        <legend class="fs-5">Curtidas</legend>
+                        <label class="switch-row" for="curtidas-publicas">
+                            <input type="checkbox" id="curtidas-publicas">
+                            <span><strong>Mostrar minhas publicações curtidas</strong><small>Desativado por padrão. A privacidade do seu perfil continua valendo.</small></span>
+                        </label>
+                        <button type="submit" class="btn btn-primary mt-3">Salvar curtidas</button>
+                    </fieldset>
+                    <p id="privacidade-curtidas-status" role="status">Carregando preferência...</p>
+                </form>
                 <form id="privacidade-interacoes" class="edit-profile-form mt-4">
                     <fieldset disabled>
                         <legend class="fs-5">Privacidade das interações</legend>
-                        <p>“Pessoas que sigo” significa as contas que você segue. As regras de mensagens também valem para conversas e grupos existentes: o envio ao grupo é bloqueado se algum destinatário não permitir.</p>
+                        <p>Essas escolhas também valem para conversas e grupos existentes.</p>
                         <div class="form-group">
                             <label for="privacidade-mensagens">Quem pode enviar mensagens para mim</label>
                             <select class="form-control" id="privacidade-mensagens" name="mensagens">
@@ -104,7 +121,7 @@
                             <select class="form-control" id="privacidade-mencoes" name="mencoes">
                                 <option value="todos">Todos</option><option value="seguindo">Pessoas que sigo</option><option value="ninguem">Ninguém</option>
                             </select>
-                            <small>Menções fora da regra não geram aviso. Quando limitada a pessoas que você segue, a menção aparece como link para quem segue você ou é seguido por você; os demais veem texto comum.</small>
+                            <small>Menções fora da regra não enviam aviso e podem aparecer como texto comum.</small>
                         </div>
                         <button type="submit" class="btn btn-primary">Salvar privacidade</button>
                     </fieldset>
@@ -113,7 +130,7 @@
                 <form id="preferencias-notificacoes" class="edit-profile-form mt-4">
                     <fieldset disabled>
                         <legend class="fs-5">Notificações</legend>
-                        <p>Escolha quais interações aparecem no sino. As notificações ocultas continuam guardadas e reaparecem se você ativá-las novamente. Avisos de moderação e pedidos para seguir continuam aparecendo.</p>
+                        <p>Escolha o que aparece no sino. Avisos ocultos ficam guardados; pedidos e avisos de moderação continuam visíveis.</p>
                         <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-curtida-publicacao" value="curtida_publicacao"><label class="form-check-label" for="notif-curtida-publicacao">Curtidas nas publicações</label></div>
                         <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-curtida-comentario" value="curtida_comentario"><label class="form-check-label" for="notif-curtida-comentario">Curtidas nos comentários</label></div>
                         <div class="form-check"><input class="form-check-input" type="checkbox" id="notif-comentario" value="comentario"><label class="form-check-label" for="notif-comentario">Comentários</label></div>
@@ -132,6 +149,6 @@
     {{template "rodape"}}
     {{template "scripts"}}
     <script src="/assets/js/recorte.js?v=1"></script>
-    <script src="/assets/js/usuario.js?v=13"></script>
+    <script src="/assets/js/usuario.js?v=14"></script>
 </body>
 </html>

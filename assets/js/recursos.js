@@ -3,25 +3,184 @@
 $(document).on('click', '.salvar-publicacao', function () {
     const botao = $(this);
     const id = botao.closest('[data-publicacao-id]').data('publicacao-id');
-    const salvar = !botao.hasClass('is-saved');
+    if (botao.hasClass('is-saved')) {
+        organizarPublicacao(botao, id);
+        return;
+    }
     botao.prop('disabled', true);
-
-    $.ajax({ url: '/publicacoes/' + id + '/salvar', method: salvar ? 'POST' : 'DELETE' }).done(function () {
-        botao.toggleClass('is-saved', salvar).attr('aria-pressed', salvar)
-            .attr('aria-label', salvar ? 'Remover dos salvos' : 'Salvar publicação')
-            .attr('title', salvar ? 'Remover dos salvos' : 'Salvar publicação');
-        // O kit do FontAwesome troca <i> por <svg>, então o ícone inteiro é recriado
-        botao.html('<i class="' + (salvar ? 'fa-solid fa-circle-check' : 'fa-regular fa-bookmark') + '" aria-hidden="true"></i>');
-        // Na página de salvos, a publicação some ao ser removida
-        if (!salvar && window.location.pathname === '/salvos') {
-            botao.closest('.jumbotron').fadeOut(180, function () { $(this).remove(); });
-        }
-    }).fail(function () {
-        Swal.fire('Ops...', 'Não foi possível atualizar seus salvos.', 'error');
-    }).always(function () {
-        botao.prop('disabled', false);
-    });
+    $.ajax({ url: '/publicacoes/' + encodeURIComponent(id) + '/salvar', method: 'POST' })
+        .done(function () {
+            atualizarBotaoSalvo(botao, true);
+            organizarPublicacao(botao, id);
+        }).fail(function () {
+            Swal.fire('Ops...', 'Não foi possível salvar esta publicação.', 'error');
+            botao.prop('disabled', false);
+        });
 });
+
+function atualizarBotaoSalvo(botao, salvo) {
+    const texto = salvo ? 'Organizar publicação salva' : 'Salvar publicação';
+    botao.toggleClass('is-saved', salvo).attr({ 'aria-pressed': String(salvo), 'aria-label': texto, title: texto });
+    botao.html('<i class="' + (salvo ? 'fa-solid fa-circle-check' : 'fa-regular fa-bookmark') + '" aria-hidden="true"></i>');
+}
+
+function requisicaoPastas(url, metodo, corpo) {
+    return $.ajax({
+        url: url, method: metodo,
+        contentType: 'application/json',
+        data: corpo === undefined ? undefined : JSON.stringify(corpo)
+    });
+}
+
+function editarNomePasta(pasta) {
+    Swal.fire({
+        title: 'Renomear pasta',
+        input: 'text',
+        inputValue: pasta.nome,
+        inputAttributes: { maxlength: '80', 'aria-label': 'Nome da pasta' },
+        showCancelButton: true,
+        confirmButtonText: 'Salvar',
+        cancelButtonText: 'Cancelar',
+        showLoaderOnConfirm: true,
+        preConfirm: function (valor) {
+            const nome = valor.trim();
+            if (!nome || Array.from(nome).length > 80) {
+                Swal.showValidationMessage('Use um nome de 1 a 80 caracteres.');
+                return false;
+            }
+            return requisicaoPastas('/pastas/' + pasta.id, 'PUT', { nome: nome })
+                .then(function () { return true; }, function () {
+                    Swal.showValidationMessage('Não foi possível salvar a pasta.');
+                    return false;
+                });
+        },
+        allowOutsideClick: function () { return !Swal.isLoading(); }
+    }).then(function (resultado) {
+        if (resultado.isConfirmed) carregarPastas();
+    });
+}
+
+function carregarPastas() {
+    const area = $('#pastas-lista');
+    if (!area.length) return;
+    const atual = String($('.pastas-salvos').data('pasta-atual'));
+    area.empty().append($('<p>').text('Carregando pastas...'));
+    requisicaoPastas('/pastas', 'GET').done(function (pastas) {
+        area.empty();
+        const todas = $('<a class="pasta-todas">').attr('href', '/salvos')
+            .append('<i class="fa-regular fa-bookmark" aria-hidden="true"></i> ', document.createTextNode('Todos os salvos'));
+        if (atual === '0') todas.attr('aria-current', 'page');
+        area.append(todas);
+        pastas.forEach(function (pasta) {
+            const linha = $('<div class="pasta-item">');
+            const link = $('<a class="pasta-link">').attr('href', '/salvos?pasta=' + encodeURIComponent(pasta.id))
+                .append('<i class="fa-regular fa-folder" aria-hidden="true"></i> ', $('<span>').text(pasta.nome));
+            if (atual === String(pasta.id)) link.attr('aria-current', 'page');
+            linha.append(link);
+            $('<button type="button" class="pasta-acao">Renomear</button>')
+                .attr('aria-label', 'Renomear pasta ' + pasta.nome)
+                .on('click', function () { editarNomePasta(pasta); }).appendTo(linha);
+            $('<button type="button" class="pasta-acao">Excluir</button>')
+                .attr('aria-label', 'Excluir pasta ' + pasta.nome)
+                .on('click', function () {
+                    Swal.fire({
+                        title: 'Excluir pasta?',
+                        text: 'As publicações continuarão nos seus salvos e nas outras pastas.',
+                        icon: 'warning', showCancelButton: true,
+                        confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar'
+                    }).then(function (resultado) {
+                        if (!resultado.isConfirmed) return;
+                        requisicaoPastas('/pastas/' + pasta.id, 'DELETE').done(function () {
+                            if (atual === String(pasta.id)) window.location.assign('/salvos');
+                            else carregarPastas();
+                        }).fail(function () { Swal.fire('Ops...', 'Não foi possível excluir a pasta.', 'error'); });
+                    });
+                }).appendTo(linha);
+            area.append(linha);
+        });
+        if (!pastas.length) area.append($('<p class="pastas-vazio">').text('Ao salvar uma publicação, você pode criar sua primeira pasta.'));
+    }).fail(function () {
+        area.empty().append($('<p>').text('Não foi possível carregar suas pastas.'));
+        $('<button type="button" class="btn btn-outline-secondary">Tentar novamente</button>').on('click', carregarPastas).appendTo(area);
+    });
+}
+
+carregarPastas();
+
+function organizarPublicacao(botao, id) {
+    botao.prop('disabled', true);
+    requisicaoPastas('/publicacoes/' + encodeURIComponent(id) + '/pastas', 'GET').done(function (pastas) {
+        const lista = document.createElement('div');
+        lista.className = 'pastas-escolha';
+        const explicacao = document.createElement('p');
+        explicacao.textContent = 'Esta publicação já está nos seus salvos. Se quiser, escolha uma pasta.';
+        lista.appendChild(explicacao);
+        pastas.forEach(function (pasta) {
+            const label = document.createElement('label');
+            const caixa = document.createElement('input');
+            caixa.type = 'checkbox';
+            caixa.value = pasta.id;
+            caixa.checked = pasta.incluida;
+            label.append(caixa, document.createTextNode(' ' + pasta.nome));
+            lista.appendChild(label);
+        });
+        const rotulo = document.createElement('label');
+        rotulo.className = 'pasta-nova';
+        rotulo.textContent = 'Criar uma pasta';
+        const nome = document.createElement('input');
+        nome.type = 'text';
+        nome.className = 'form-control';
+        nome.maxLength = 80;
+        nome.placeholder = 'Nome da nova pasta (opcional)';
+        rotulo.appendChild(nome);
+        lista.appendChild(rotulo);
+        Swal.fire({
+            title: 'Guardar publicação', html: lista,
+            showCancelButton: true, confirmButtonText: 'Salvar', cancelButtonText: 'Cancelar',
+            showDenyButton: true, denyButtonText: 'Remover dos salvos',
+            showLoaderOnConfirm: true,
+            preConfirm: function () {
+                const escolhidas = Array.from(lista.querySelectorAll('input:checked')).map(function (caixa) { return Number(caixa.value); });
+                const nomePasta = nome.value.trim();
+                if (Array.from(nomePasta).length > 80) {
+                    Swal.showValidationMessage('Use um nome de até 80 caracteres.');
+                    return false;
+                }
+                return requisicaoPastas('/publicacoes/' + encodeURIComponent(id) + '/pastas', 'PUT', { pastas: escolhidas })
+                    .then(function () {
+                        if (!nomePasta) return true;
+                        return requisicaoPastas('/publicacoes/' + encodeURIComponent(id) + '/pastas', 'POST', { nome: nomePasta })
+                            .then(function () { return true; }, function () {
+                                Swal.showValidationMessage('As pastas escolhidas foram salvas, mas não foi possível criar a nova pasta.');
+                                return false;
+                            });
+                    }, function () {
+                        Swal.showValidationMessage('Não foi possível atualizar as pastas. Confira se a publicação ainda está salva.');
+                        return false;
+                    });
+            },
+            allowOutsideClick: function () { return !Swal.isLoading(); }
+        }).then(function (resultado) {
+            if (resultado.isDenied) {
+                botao.prop('disabled', true);
+                $.ajax({ url: '/publicacoes/' + encodeURIComponent(id) + '/salvar', method: 'DELETE' })
+                    .done(function () {
+                        atualizarBotaoSalvo(botao, false);
+                        if (window.location.pathname === '/salvos') botao.closest('.jumbotron').fadeOut(180, function () { $(this).remove(); });
+                    }).fail(function () { Swal.fire('Ops...', 'Não foi possível remover dos salvos.', 'error'); })
+                    .always(function () { botao.prop('disabled', false); });
+                return;
+            }
+            if (resultado.isConfirmed && window.location.pathname === '/salvos' && new URLSearchParams(window.location.search).has('pasta')) {
+                window.location.reload();
+            } else if (resultado.isConfirmed && window.location.pathname === '/salvos') {
+                carregarPastas();
+            }
+        });
+    }).fail(function () {
+        Swal.fire('Ops...', 'A publicação continua salva, mas não conseguimos carregar suas pastas.', 'error');
+    }).always(function () { botao.prop('disabled', false); });
+}
 
 $(document).on('click', '.compartilhar-publicacao', function () {
     const id = $(this).closest('[data-publicacao-id]').data('publicacao-id');
@@ -84,7 +243,11 @@ function carregarPedidos(aoCarregar) {
     return $.get('/pedidos-seguir').done(function (pedidos) {
         const total = $('#pedidos-total');
         total.text(pedidos.length).prop('hidden', pedidos.length === 0);
+        $('#abrir-pedidos').toggleClass('has-pedidos', pedidos.length > 0)
+            .attr('aria-label', 'Pedidos para seguir' + (pedidos.length ? ': ' + pedidos.length + ' pendente(s)' : ''));
         if (aoCarregar) aoCarregar(pedidos);
+    }).fail(function () {
+        $('#abrir-pedidos').attr('title', 'Não foi possível carregar os pedidos. Clique para tentar novamente.');
     });
 }
 
@@ -101,6 +264,8 @@ $(document).on('click', '#abrir-pedidos', function () {
             showCloseButton: true,
             didClose: function () { window.location.reload(); }
         });
+    }).fail(function () {
+        Swal.fire('Não foi possível carregar os pedidos', 'Verifique sua conexão e tente novamente.', 'error');
     });
 });
 

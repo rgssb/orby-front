@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=62">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=30">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -44,6 +44,7 @@
                             <div class="profile-chips">
                                 <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
                                 {{if .Usuario.Privado}}<span class="profile-chip"><i class="fa-solid fa-lock" aria-hidden="true"></i> Perfil privado</span>{{end}}
+                                {{if .Curtidas.TotalVisivel}}<span class="profile-chip profile-chip-muted" role="img" aria-label="{{.Curtidas.Total}} curtidas recebidas"><i class="fa-solid fa-heart" aria-hidden="true"></i> {{.Curtidas.Total}}</span>{{end}}
                                 <span class="profile-chip profile-chip-muted"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</span>
                             </div>
                         </div>
@@ -92,15 +93,26 @@
                 <div class="profile-stats">
                     <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguidores"><i class="fa-solid fa-users" aria-hidden="true"></i><strong>{{len .Usuario.Seguidores}}</strong><span>Seguidores</span></a>
                     <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguindo"><i class="fa-solid fa-user-check" aria-hidden="true"></i><strong>{{len .Usuario.Seguindo}}</strong><span>Seguindo</span></a>
-                    <a href="#feed-title" class="profile-stat"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i><strong>{{len .Usuario.Publicacoes}}</strong><span>Publicações</span></a>
+                    <a href="/usuarios/{{.Usuario.ID}}#feed-title" class="profile-stat"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i><strong>{{len .Usuario.Publicacoes}}</strong><span>Publicações</span></a>
+                    <a href="/usuarios/{{.Usuario.ID}}?aba=curtidas#feed-title" class="profile-stat profile-stat--curtidas" aria-label="Publicações curtidas, lista {{if .Curtidas.ListaPublica}}pública{{else}}privada{{end}}" title="Publicações curtidas · lista {{if .Curtidas.ListaPublica}}pública{{else}}privada{{end}}"><strong><i class="fa-solid {{if .Curtidas.ListaPublica}}fa-heart{{else}}fa-lock{{end}}" aria-hidden="true"></i></strong><span>Curtidas</span></a>
                 </div>
             </article>
 
             <header class="feed-header">
-                <h2 id="feed-title">Publicações de @{{.Usuario.Nick}}</h2>
+                <h2 id="feed-title">{{if .AbaCurtidas}}Curtidas de @{{.Usuario.Nick}}{{else}}Publicações de @{{.Usuario.Nick}}{{end}}</h2>
                 {{if .Usuario.AcessoModeracao}}<p><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Acesso de moderação a perfil privado. Esta visualização é registrada.</p>{{end}}
             </header>
-            {{if not .Usuario.PodeVerPublicacoes}}
+            {{if .AbaCurtidas}}
+            {{if not .Curtidas.PodeVer}}
+            <div class="users-empty"><span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-lock"></i></span><h2>Curtidas privadas</h2><p>Esta lista não está disponível.</p></div>
+            {{else}}
+            {{range .Curtidas.Publicacoes}}
+                {{template "publicacao-sem-permissao" .}}
+            {{else}}
+            <div class="users-empty"><h2>Nenhuma publicação curtida</h2></div>
+            {{end}}
+            {{end}}
+            {{else if not .Usuario.PodeVerPublicacoes}}
             <div class="users-empty">
                 <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
                 <h2>Este perfil é privado</h2>

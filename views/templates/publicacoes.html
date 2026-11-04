@@ -1,12 +1,14 @@
 {{define "curtidas"}}
+<span class="publication-action-group">
 <button type="button" class="like-button curtir-publicacao{{if .CurtidoPorUsuario}} is-liked{{end}}" aria-label="{{if .CurtidoPorUsuario}}Remover curtida{{else}}Curtir publicação{{end}}" aria-pressed="{{.CurtidoPorUsuario}}" title="{{if .CurtidoPorUsuario}}Remover curtida{{else}}Curtir publicação{{end}}">
     <i class="fa-solid fa-heart" aria-hidden="true"></i>
 </button>
 <span class="like-count">{{.Curtidas}}</span>
+</span>
 {{end}}
 
 {{define "salvar-compartilhar"}}
-<button type="button" class="action-icon salvar-publicacao{{if .SalvoPorUsuario}} is-saved{{end}}" aria-pressed="{{.SalvoPorUsuario}}" aria-label="{{if .SalvoPorUsuario}}Remover dos salvos{{else}}Salvar publicação{{end}}" title="{{if .SalvoPorUsuario}}Remover dos salvos{{else}}Salvar publicação{{end}}">
+<button type="button" class="action-icon salvar-publicacao{{if .SalvoPorUsuario}} is-saved{{end}}" aria-pressed="{{.SalvoPorUsuario}}" aria-label="{{if .SalvoPorUsuario}}Organizar publicação salva{{else}}Salvar publicação{{end}}" title="{{if .SalvoPorUsuario}}Organizar publicação salva{{else}}Salvar publicação{{end}}">
     <i class="{{if .SalvoPorUsuario}}fa-solid fa-circle-check{{else}}fa-regular fa-bookmark{{end}}" aria-hidden="true"></i>
 </button>
 <button type="button" class="action-icon compartilhar-publicacao" aria-label="Copiar link da publicação" title="Copiar link">
@@ -45,10 +47,12 @@
 
 {{define "repostar"}}
 {{if not .Felas}}
+<span class="publication-action-group repost-action">
 <button type="button" class="action-icon repostar-publicacao{{if .RepostadoPorUsuario}} is-reposted{{end}}" aria-pressed="{{.RepostadoPorUsuario}}" aria-label="{{if .RepostadoPorUsuario}}Desfazer repost{{else}}Repostar publicação{{end}}" title="{{if .RepostadoPorUsuario}}Desfazer repost{{else}}Repostar{{end}}">
     <i class="fa-solid fa-retweet" aria-hidden="true"></i>
 </button>
 <span class="repost-count">{{.Reposts}}</span>
+</span>
 {{end}}
 {{end}}
 
@@ -88,6 +92,46 @@
     {{end}}
 {{end}}
 {{template "imagens-publicacao" .}}
+{{if .Enquete}}
+<section class="enquete" aria-label="Enquete">
+    <form class="enquete-voto">
+        <fieldset {{if or .Enquete.Votou .Enquete.Encerrada .AcessoModeracao}}disabled{{end}}>
+            {{if .Enquete.Titulo}}<legend>{{.Enquete.Titulo}}</legend>{{else}}<legend class="sr-only">Enquete</legend>{{end}}
+            {{range .Enquete.Opcoes}}
+            <label class="enquete-opcao">
+                {{if not (or $.Enquete.Votou $.Enquete.Encerrada $.AcessoModeracao)}}<input type="radio" name="opcao" value="{{.ID}}" required>{{end}}
+                <span>{{.Texto}}{{if .Minha}} (seu voto){{end}}</span>
+                {{if or $.Enquete.Votou $.Enquete.Encerrada}}<strong>{{.Votos}} voto(s)</strong>{{end}}
+            </label>
+            {{end}}
+        </fieldset>
+        {{if or .Enquete.Votou .Enquete.Encerrada}}
+        <p>{{.Enquete.TotalVotos}} voto(s){{if .Enquete.Encerrada}} · Enquete encerrada{{end}}</p>
+        {{else if not .AcessoModeracao}}
+        <p>Resultados disponíveis depois de votar ou do encerramento. O voto não pode ser alterado.</p>
+        <button type="submit" class="btn btn-primary">Votar</button>
+        {{end}}
+        {{with .Enquete.EncerraEm}}
+        <div class="enquete-prazo" data-encerrada="{{$.Enquete.Encerrada}}">
+            <div class="enquete-prazo-contagem" hidden>
+                <span class="enquete-prazo-rotulo">Tempo restante</span>
+                <span class="enquete-relogio" aria-label="Tempo restante">
+                    <span><strong data-unidade="dias">00</strong><small>dias</small></span>
+                    <span><strong data-unidade="horas">00</strong><small>horas</small></span>
+                    <span><strong data-unidade="minutos">00</strong><small>min</small></span>
+                    <span><strong data-unidade="segundos">00</strong><small>seg</small></span>
+                </span>
+            </div>
+            <div class="enquete-prazo-data">
+                <span class="enquete-prazo-rotulo">Encerra em</span>
+                <time data-enquete-prazo datetime="{{.Format "2006-01-02T15:04:05Z07:00"}}">{{.Format "02/01/2006 15:04"}} UTC</time>
+            </div>
+            <p class="enquete-prazo-expirou" role="status" hidden>O prazo terminou neste dispositivo. <a href="/publicacoes/{{$.ID}}">Confira o resultado atualizado.</a></p>
+        </div>
+        {{end}}
+    </form>
+</section>
+{{end}}
 <hr class="my-4">
 {{end}}
 
@@ -103,6 +147,7 @@
         {{if .Conteudo}}{{template "editar" .}}{{end}}
         {{template "deletar" .}}
     </div>
+    {{if not .AcessoModeracao}}<div class="reacoes" data-reacoes-tipo="publicacoes" data-reacoes-id="{{.ID}}"></div>{{end}}
     {{template "comentarios-area" .}}
 </article>
 {{end}}
@@ -122,6 +167,7 @@
         {{end}}
         {{if .AutorSuspenso}}{{template "deletar-admin" .}}{{end}}
     </div>
+    {{if not .AcessoModeracao}}<div class="reacoes" data-reacoes-tipo="publicacoes" data-reacoes-id="{{.ID}}"></div>{{end}}
     {{template "comentarios-area" .}}
 </article>
 {{end}}
@@ -142,14 +188,13 @@
 {{end}}
 
 {{define "imagens-publicacao"}}
-{{if .Imagens}}<div class="post-images post-images--{{.Imagens}}">{{range $i := intervalo .Imagens}}<a class="post-image-link" href="/publicacoes/{{$.ID}}/imagens/{{$i}}" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{$.ID}}/imagens/{{$i}}" alt="Imagem {{inc $i}} da publicação" loading="lazy"></a>{{end}}</div>{{end}}
+{{if .Imagens}}<div class="post-images post-images--{{.Imagens}}">{{range $i := intervalo .Imagens}}<a class="post-image-link" href="/publicacoes/{{$.ID}}/imagens/{{$i}}" target="_blank" rel="noopener"><img class="post-image" src="/publicacoes/{{$.ID}}/imagens/{{$i}}" alt="{{descricaoImagem $.DescricoesImagens $i}}" loading="lazy"></a>{{end}}</div>{{end}}
 {{end}}
 
 {{define "campo-imagem"}}
 <div class="form-group image-field">
-    <span class="image-field-title"><i class="fa-solid fa-image" aria-hidden="true"></i> Imagens <small class="text-muted" title="Até 4 MB por imagem">Max. 4<span class="sr-only"> imagens de até 4 MB cada</span></small></span>
     <input type="file" class="image-input" id="imagem-publicacao" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
-    <label class="image-add-button" for="imagem-publicacao"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> <span id="imagem-nome">Adicionar imagens</span></label>
+    <label class="image-add-button" for="imagem-publicacao"><i class="fa-solid fa-image" aria-hidden="true"></i> <span id="imagem-nome">Adicionar imagens</span> <small class="text-muted" title="Até 4 MB por imagem">Até 4<span class="sr-only"> imagens de até 4 MB cada</span></small></label>
     <div class="image-previews" id="imagem-previa" hidden></div>
 </div>
 {{end}}

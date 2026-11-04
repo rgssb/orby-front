@@ -149,6 +149,30 @@ function atualizarSenha(evento) {
 }
 
 (function () {
+    const form = document.getElementById('privacidade-curtidas');
+    if (!form) return;
+    const campos = form.querySelector('fieldset');
+    const status = document.getElementById('privacidade-curtidas-status');
+    const publica = document.getElementById('curtidas-publicas');
+    $.get('/privacidade/curtidas').done(function (dados) {
+        publica.checked = dados.publica;
+        campos.disabled = false;
+        status.textContent = '';
+    }).fail(function () {
+        status.textContent = 'Não foi possível carregar a preferência. Recarregue a página para tentar novamente.';
+    });
+    form.addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        campos.disabled = true;
+        status.textContent = 'Salvando...';
+        $.ajax({ url: '/privacidade/curtidas', method: 'PUT', contentType: 'application/json', data: JSON.stringify({ publica: publica.checked }) })
+            .done(function () { status.textContent = 'Preferência salva.'; })
+            .fail(function () { status.textContent = 'Não foi possível salvar. Tente novamente.'; })
+            .always(function () { campos.disabled = false; });
+    });
+})();
+
+(function () {
     const form = document.getElementById('privacidade-interacoes');
     if (!form) return;
     const campos = form.querySelector('fieldset');

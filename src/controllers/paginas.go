@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/gorilla/mux"
@@ -84,6 +85,11 @@ type DadosDoFeed struct {
 	ProximaPagina int
 	ProximaURL    string
 	Busca         string
+	Autor         string
+	Inicio        string
+	Fim           string
+	BuscaFeita    bool
+	PastaID       uint64
 	Aviso         string
 	Aba           string
 	Ordem         string
@@ -112,12 +118,29 @@ func CarregarPaginaDeSalvos(w http.ResponseWriter, r *http.Request) {
 	if pagina < 1 {
 		pagina = 1
 	}
-	feed, ok := buscarPublicacoes(w, r, pagina, "/publicacoes/salvas?", func(proxima int) string {
+	var pastaID uint64
+	if valor := r.URL.Query().Get("pasta"); valor != "" {
+		id, erro := strconv.ParseUint(valor, 10, 64)
+		if erro != nil || id == 0 {
+			utils.PaginaDeErro(w, http.StatusBadRequest, "Pasta inválida", "Não foi possível abrir esta pasta.")
+			return
+		}
+		pastaID = id
+	}
+	caminho := "/publicacoes/salvas?"
+	if pastaID != 0 {
+		caminho += fmt.Sprintf("pasta=%d&", pastaID)
+	}
+	feed, ok := buscarPublicacoes(w, r, pagina, caminho, func(proxima int) string {
+		if pastaID != 0 {
+			return fmt.Sprintf("/salvos?pasta=%d&pagina=%d", pastaID, proxima)
+		}
 		return fmt.Sprintf("/salvos?pagina=%d", proxima)
 	})
 	if !ok {
 		return
 	}
+	feed.PastaID = pastaID
 	if pagina > 1 {
 		utils.ExecutarTemplate(w, "feed-itens", feed)
 		return
@@ -229,34 +252,55 @@ func CarregarPaginaDeHashtag(w http.ResponseWriter, r *http.Request) {
 // Com pagina >= 2 devolve só os itens, para o botão "carregar mais".
 func CarregarPaginaDeBuscaDePublicacoes(w http.ResponseWriter, r *http.Request) {
 	termo := strings.TrimSpace(r.URL.Query().Get("q"))
+	autor := strings.TrimPrefix(strings.TrimSpace(r.URL.Query().Get("autor")), "@")
+	inicio, fim := r.URL.Query().Get("inicio"), r.URL.Query().Get("fim")
+	dados := DadosDoFeed{Busca: termo, Autor: autor, Inicio: inicio, Fim: fim, BuscaFeita: termo != "" || autor != "" || inicio != "" || fim != ""}
 	pagina, _ := strconv.Atoi(r.URL.Query().Get("pagina"))
 	if pagina < 1 {
 		pagina = 1
 	}
 
-	if termo == "" {
-		utils.ExecutarTemplate(w, "buscar-publicacoes.html", DadosDoFeed{})
+	if !dados.BuscaFeita {
+		utils.ExecutarTemplate(w, "buscar-publicacoes.html", dados)
 		return
 	}
 
-	if expressaoDeHashtag.MatchString(termo) {
+	if expressaoDeHashtag.MatchString(termo) && autor == "" && inicio == "" && fim == "" {
 		http.Redirect(w, r, "/hashtags/"+neturl.PathEscape(strings.TrimPrefix(termo, "#")), http.StatusSeeOther)
 		return
 	}
 
-	if aviso := validarBuscaDePublicacoes(termo); aviso != "" {
-		utils.ExecutarTemplate(w, "buscar-publicacoes.html", DadosDoFeed{Busca: termo, Aviso: aviso})
+	if termo != "" {
+		dados.Aviso = validarBuscaDePublicacoes(termo)
+	}
+	if utf8.RuneCountInString(autor) > 50 {
+		dados.Aviso = "O nick deve ter no máximo 50 caracteres."
+	}
+	for _, data := range []string{inicio, fim} {
+		if data != "" {
+			if _, erro := time.Parse("2006-01-02", data); erro != nil {
+				dados.Aviso = "Confira as datas informadas."
+			}
+		}
+	}
+	if inicio != "" && fim != "" && inicio > fim {
+		dados.Aviso = "A data inicial deve ser anterior à final."
+	}
+	if dados.Aviso != "" {
+		utils.ExecutarTemplate(w, "buscar-publicacoes.html", dados)
 		return
 	}
 
-	consulta := "/publicacoes/busca?q=" + neturl.QueryEscape(termo) + "&"
+	parametros := neturl.Values{"q": {termo}, "autor": {autor}, "inicio": {inicio}, "fim": {fim}}
+	consulta := "/publicacoes/busca?" + parametros.Encode() + "&"
 	feed, ok := buscarPublicacoes(w, r, pagina, consulta, func(proxima int) string {
-		return fmt.Sprintf("/buscar-publicacoes?q=%s&pagina=%d", neturl.QueryEscape(termo), proxima)
+		proximaBusca := neturl.Values{"q": {termo}, "autor": {autor}, "inicio": {inicio}, "fim": {fim}, "pagina": {strconv.Itoa(proxima)}}
+		return "/buscar-publicacoes?" + proximaBusca.Encode()
 	})
 	if !ok {
 		return
 	}
-	feed.Busca = termo
+	feed.Busca, feed.Autor, feed.Inicio, feed.Fim, feed.BuscaFeita = termo, autor, inicio, fim, true
 
 	if pagina > 1 {
 		utils.ExecutarTemplate(w, "feed-itens", feed)
@@ -435,6 +479,13 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	abaCurtidas := r.URL.Query().Get("aba") == "curtidas"
+	curtidas, erro := modelos.BuscarCurtidasPerfil(usuarioID, abaCurtidas, r)
+	if erro != nil {
+		utils.ServidorIndisponivel(w)
+		return
+	}
+
 	var bloqueio struct {
 		Bloqueei  bool `json:"bloqueei"`
 		Bloqueado bool `json:"bloqueado"`
@@ -453,12 +504,16 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		Bloqueei        bool
 		Bloqueado       bool
 		Silenciei       bool
+		Curtidas        modelos.CurtidasPerfil
+		AbaCurtidas     bool
 	}{
 		Usuario:         usuario,
 		UsuarioLogadoID: usuarioLogadoID,
 		Bloqueei:        bloqueio.Bloqueei,
 		Bloqueado:       bloqueio.Bloqueado,
 		Silenciei:       bloqueio.Silenciei,
+		Curtidas:        curtidas,
+		AbaCurtidas:     abaCurtidas,
 	})
 }
 
@@ -473,12 +528,23 @@ func CarregarPerfilDoUsuarioLogado(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	abaCurtidas := r.URL.Query().Get("aba") == "curtidas"
+	curtidas, erro := modelos.BuscarCurtidasPerfil(usuarioID, abaCurtidas, r)
+	if erro != nil {
+		utils.ServidorIndisponivel(w)
+		return
+	}
+
 	utils.ExecutarTemplate(w, "perfil.html", struct {
 		Usuario         modelos.Usuario
 		UsuarioLogadoID uint64
+		Curtidas        modelos.CurtidasPerfil
+		AbaCurtidas     bool
 	}{
 		Usuario:         usuario,
 		UsuarioLogadoID: usuarioID,
+		Curtidas:        curtidas,
+		AbaCurtidas:     abaCurtidas,
 	})
 }
 

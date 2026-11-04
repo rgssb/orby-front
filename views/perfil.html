@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=62">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=30">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -26,7 +26,7 @@
 
     <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page profile-page">
         <section class="users-column" aria-labelledby="profile-title">
-            <article class="jumbotron profile-card">
+            <article class="jumbotron profile-card profile-card--own">
                 <div class="profile-banner{{if .Usuario.BannerVersao}} has-image{{else if .Usuario.BannerPreset}} banner-{{.Usuario.BannerPreset}}{{end}}" aria-hidden="true">{{if .Usuario.BannerVersao}}<img class="profile-banner-img" src="/usuarios/{{.Usuario.ID}}/banner?v={{.Usuario.BannerVersao}}" alt="">{{end}}</div>
                 <div class="profile-body">
                     <span class="user-avatar profile-avatar" aria-hidden="true">{{if .Usuario.FotoVersao}}<img src="/usuarios/{{.Usuario.ID}}/foto?v={{.Usuario.FotoVersao}}" alt="">{{else}}<i class="fa-solid fa-user"></i>{{end}}</span>
@@ -37,12 +37,13 @@
                             <div class="profile-chips">
                                 <span class="profile-chip"><i class="fa-solid fa-at" aria-hidden="true"></i> {{.Usuario.Nick}}</span>
                                 {{if .Usuario.Privado}}<span class="profile-chip"><i class="fa-solid fa-lock" aria-hidden="true"></i> Perfil privado</span>{{end}}
+                                {{if .Curtidas.TotalVisivel}}<span class="profile-chip profile-chip-muted" role="img" aria-label="{{.Curtidas.Total}} curtidas recebidas"><i class="fa-solid fa-heart" aria-hidden="true"></i> {{.Curtidas.Total}}</span>{{end}}
                                 <span class="profile-chip profile-chip-muted"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Membro desde {{.Usuario.CriadoEm.Format "02/01/2006"}}</span>
                             </div>
                         </div>
                         <div class="profile-actions">
                             <a href="/editar-perfil" class="btn btn-primary"><i class="fa-solid fa-pen" aria-hidden="true"></i> Editar perfil</a>
-                            {{if .Usuario.Privado}}<button type="button" id="abrir-pedidos" class="btn btn-outline-primary"><i class="fa-solid fa-user-clock" aria-hidden="true"></i> Pedidos de seguir <span class="nav-badge" id="pedidos-total" hidden></span></button>{{end}}
+                            {{if .Usuario.Privado}}<button type="button" id="abrir-pedidos" class="btn btn-outline-primary profile-pedidos"><i class="fa-solid fa-user-clock" aria-hidden="true"></i> <span>Pedidos para seguir</span> <span class="nav-badge" id="pedidos-total" hidden></span></button>{{end}}
                             <a href="/atualizar-senha" class="btn btn-outline-secondary"><i class="fa-solid fa-key" aria-hidden="true"></i> Alterar senha</a>
                         </div>
                     </div>
@@ -50,21 +51,35 @@
                 <div class="profile-stats">
                     <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguidores"><i class="fa-solid fa-users" aria-hidden="true"></i><strong>{{len .Usuario.Seguidores}}</strong><span>Seguidores</span></a>
                     <a href="#" class="profile-stat" data-toggle="modal" data-target="#modal-seguindo"><i class="fa-solid fa-user-check" aria-hidden="true"></i><strong>{{len .Usuario.Seguindo}}</strong><span>Seguindo</span></a>
-                    <a href="#feed-title" class="profile-stat"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i><strong>{{len .Usuario.Publicacoes}}</strong><span>Publicações</span></a>
+                    <a href="/perfil#feed-title" class="profile-stat"><i class="fa-solid fa-feather-pointed" aria-hidden="true"></i><strong>{{len .Usuario.Publicacoes}}</strong><span>Publicações</span></a>
+                    <a href="/perfil?aba=curtidas#feed-title" class="profile-stat profile-stat--curtidas" aria-label="Publicações curtidas, lista {{if .Curtidas.ListaPublica}}pública{{else}}privada{{end}}" title="Publicações curtidas · lista {{if .Curtidas.ListaPublica}}pública{{else}}privada{{end}}"><strong><i class="fa-solid {{if .Curtidas.ListaPublica}}fa-heart{{else}}fa-lock{{end}}" aria-hidden="true"></i></strong><span>Curtidas</span></a>
                 </div>
             </article>
 
-            <section class="composer-card mt-3" aria-labelledby="meus-felas-titulo">
-                <h2 id="meus-felas-titulo"><i class="fa-solid fa-star" aria-hidden="true"></i> Meus Felas</h2>
-                <p>Só você vê esta lista. Para adicionar alguém que segue você e que você também segue, abra o perfil da pessoa e escolha “Adicionar aos Felas”.</p>
-                <p>Em perfis privados, as pessoas também precisam seguir você para ver suas publicações exclusivas.</p>
+            <section class="composer-card mt-3 profile-felas" aria-labelledby="meus-felas-titulo">
+                <div class="profile-felas-heading">
+                    <h2 id="meus-felas-titulo"><i class="fa-solid fa-star" aria-hidden="true"></i> Meus Felas</h2>
+                    <button type="button" class="felas-info" id="felas-info" aria-label="Saiba mais sobre Felas" aria-expanded="false" aria-controls="felas-info-conteudo"><span aria-hidden="true">i</span></button>
+                </div>
+                <div class="felas-info-conteudo" id="felas-info-conteudo" hidden>
+                    <p>Essa é a sua rodinha no Orby, e só você pode ver a lista!</p>
+                    <p>Para trazer alguém, vocês precisam se seguir. Depois, abra o perfil da pessoa e toque em “Adicionar aos Felas”.</p>
+                    <p>As publicações para Felas são visíveis às pessoas da lista que podem ver seu perfil. Elas não podem ser repostadas e podem ser vistas pela moderação.</p>
+                </div>
                 <ul id="felas-lista" class="suggest-list" aria-live="polite"></ul>
                 <p id="felas-status" role="status">Carregando Felas...</p>
             </section>
 
             <header class="feed-header">
-                <h2 id="feed-title">Minhas publicações</h2>
+                <h2 id="feed-title">{{if .AbaCurtidas}}Publicações que curti{{else}}Minhas publicações{{end}}</h2>
             </header>
+            {{if .AbaCurtidas}}
+            {{range .Curtidas.Publicacoes}}
+                {{template "publicacao-sem-permissao" .}}
+            {{else}}
+            <div class="users-empty"><h2>Nenhuma publicação curtida</h2><p>Suas curtidas aparecerão aqui.</p></div>
+            {{end}}
+            {{else}}
             {{range .Usuario.Publicacoes}}
                 {{template "publicacao-com-permissao" .}}
             {{else}}
@@ -73,6 +88,7 @@
                 <h2>Nenhuma publicação</h2>
                 <p>Você ainda não publicou nada.</p>
             </div>
+            {{end}}
             {{end}}
 
             <aside class="danger-zone" aria-label="Zona de perigo">

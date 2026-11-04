@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=48">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=62">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 <body>
@@ -25,7 +25,7 @@
 
     {{template "cabecalho"}}
 
-    <main id="conteudo-principal" tabindex="-1" class="container-fluid home-page">
+    <main id="conteudo-principal" tabindex="-1" class="container-fluid home-page" data-usuario-id="{{.UsuarioID}}">
         <div class="row mt-4 home-layout">
             <section class="compose-column" aria-labelledby="compose-title" tabindex="0">
                 <div class="composer-card">
@@ -40,18 +40,55 @@
                     </header>
                     <form id="nova-publicacao">
                         <div class="form-group">
-                            <label for="titulo-publicacao">Título <small>(opcional)</small></label>
+                            <label class="sr-only" for="titulo-publicacao">Título (opcional)</label>
                             <input type="text" class="form-control" id="titulo-publicacao" name="titulo" maxlength="150" placeholder="Título (opcional)">
                         </div>
                         <div class="form-group">
-                            <label for="conteudo-publicacao">Conteúdo</label>
-                            <textarea class="form-control" id="conteudo-publicacao" name="conteudo" required="required" maxlength="5000" placeholder="Escreva sua publicação..."></textarea>
+                            <label class="sr-only" for="conteudo-publicacao">Conteúdo</label>
+                            <textarea class="form-control" id="conteudo-publicacao" name="conteudo" required="required" maxlength="5000" placeholder="Conteúdo"></textarea>
                             <small class="char-counter" id="contador-conteudo" aria-live="polite">0 / 5000</small>
                         </div>
-                        <button type="button" class="composer-felas" id="audiencia-publicacao" aria-label="Publicar somente para Felas" aria-pressed="false">
-                            <i class="fa-solid fa-star" aria-hidden="true"></i> Felas
-                            <i class="fa-solid fa-check composer-felas-check" aria-hidden="true"></i>
-                        </button>
+                        <div class="enquete-compositor">
+                            <label class="enquete-toggle">
+                                <input type="checkbox" id="enquete-ativa" aria-controls="enquete-campos" aria-expanded="false">
+                                <span class="enquete-toggle-icone" aria-hidden="true"><i class="fa-solid fa-chart-simple"></i></span>
+                                <span class="enquete-toggle-texto"><strong>Adicionar enquete</strong></span>
+                                <span class="enquete-toggle-chave" aria-hidden="true"></span>
+                            </label>
+                            <div id="enquete-campos" hidden>
+                                <div class="enquete-titulo-campo">
+                                    <label for="enquete-titulo">Título <small>Opcional</small></label>
+                                    <input type="text" class="form-control" id="enquete-titulo" maxlength="150" placeholder="O que você quer perguntar?">
+                                </div>
+                                <p class="enquete-ajuda">Adicione de 2 a 10 opções. Cada pessoa pode votar uma vez.</p>
+                                <div id="enquete-opcoes"></div>
+                                <button type="button" class="enquete-adicionar" id="enquete-adicionar"><span aria-hidden="true">+</span> Adicionar opção</button>
+                                <div class="enquete-definir-prazo">
+                                    <label for="enquete-prazo">Quando a enquete termina? <small>Opcional</small></label>
+                                    <p>Sem data, ela fica aberta até você excluir a publicação.</p>
+                                    <div class="enquete-atalhos-prazo" aria-label="Sugestões de prazo">
+                                        <button type="button" data-enquete-horas="1">1 hora</button>
+                                        <button type="button" data-enquete-horas="24">1 dia</button>
+                                        <button type="button" data-enquete-horas="168">7 dias</button>
+                                    </div>
+                                    <input type="datetime-local" class="form-control" id="enquete-prazo" aria-describedby="enquete-prazo-ajuda">
+                                    <small id="enquete-prazo-ajuda">Data e horário no seu fuso local.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="audiencia-controles">
+                            <button type="button" class="composer-felas" id="audiencia-publicacao" aria-label="Publicar somente para Felas" aria-pressed="false">
+                                <i class="fa-solid fa-star" aria-hidden="true"></i> Felas
+                                <i class="fa-solid fa-check composer-felas-check" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="felas-info" id="felas-info" aria-label="Saiba mais sobre Felas" aria-expanded="false" aria-controls="felas-info-conteudo"><span aria-hidden="true">i</span></button>
+                        </div>
+                        <div class="felas-info-conteudo" id="felas-info-conteudo" hidden>
+                            <p>Felas é sua rodinha no Orby! Compartilhe aquele momento só com as pessoas da sua lista que podem ver seu perfil.</p>
+                            <p>Para trazer alguém para a sua rodinha, vocês precisam se seguir. Depois, é só abrir o perfil da pessoa e tocar em “Adicionar aos Felas”.</p>
+                            <p>Publicações para Felas não podem ser repostadas e podem ser vistas pela moderação.</p>
+                        </div>
+                        <p class="rascunho-status" id="rascunho-status" role="status"></p>
                         <div class="composer-preview" id="previa" hidden>
                             <span class="composer-preview-label">Pré-visualização</span>
                             <h3 id="previa-titulo"></h3>
@@ -59,6 +96,7 @@
                         </div>
                         {{template "campo-imagem"}}
                         <div class="composer-actions">
+                            <button type="button" class="btn btn-outline-secondary" id="descartar-rascunho" hidden>Descartar rascunho</button>
                             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Publicar</button>
                         </div>
                     </form>
@@ -112,6 +150,7 @@
 
 {{template "scripts" }}
 <script src="/assets/js/home.js?v=3"></script>
+<script src="/assets/js/tutorial.js?v=3"></script>
 <script src="/assets/js/pwa.js?v=1"></script>
 </body>
 </html>

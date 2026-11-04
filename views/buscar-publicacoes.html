@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="/assets/css/mascote.css?v=4">
     <link rel="stylesheet" href="/assets/css/swal-orby.css">
     <link rel="stylesheet" href="/assets/css/themes.css?v=12">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=43">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=26">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=62">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=29">
     <script src="/assets/js/tema.js?v=3"></script>
 </head>
 
@@ -31,8 +31,22 @@
                 {{template "abas-busca" "publicacoes"}}
             </header>
             <form class="search-posts-form" action="/buscar-publicacoes" method="get" role="search">
-                <label class="sr-only" for="busca-publicacoes">Buscar publicações</label>
-                <input type="search" class="form-control" id="busca-publicacoes" name="q" value="{{.Busca}}" maxlength="100" placeholder="Busque por texto ou #hashtag" required>
+                <div class="search-posts-field search-posts-term">
+                    <label for="busca-publicacoes">Texto ou hashtag</label>
+                    <input type="search" class="form-control" id="busca-publicacoes" name="q" value="{{.Busca}}" maxlength="100" placeholder="Busque por texto ou #hashtag">
+                </div>
+                <div class="search-posts-field">
+                    <label for="busca-autor">Autor</label>
+                    <input type="text" class="form-control" id="busca-autor" name="autor" value="{{.Autor}}" maxlength="50" placeholder="@nick">
+                </div>
+                <div class="search-posts-field">
+                    <label for="busca-inicio">De</label>
+                    <input type="date" class="form-control" id="busca-inicio" name="inicio" value="{{.Inicio}}">
+                </div>
+                <div class="search-posts-field">
+                    <label for="busca-fim">Até</label>
+                    <input type="date" class="form-control" id="busca-fim" name="fim" value="{{.Fim}}">
+                </div>
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Buscar</button>
             </form>
             {{if .Aviso}}
@@ -43,17 +57,17 @@
             </div>
             {{else if .Publicacoes}}
             <div id="feed-lista">{{template "feed-itens" .}}</div>
-            {{else if .Busca}}
+            {{else if .BuscaFeita}}
             <div class="users-empty">
                 <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
                 <h2>Nenhuma publicação encontrada</h2>
-                <p>Tente outro termo ou outra hashtag.</p>
+                <p>Tente outro termo ou ajuste os filtros.</p>
             </div>
             {{else}}
             <div class="users-empty">
                 <span class="composer-icon" aria-hidden="true"><i class="fa-solid fa-hashtag"></i></span>
                 <h2>Busque publicações</h2>
-                <p>Digite um texto ou uma #hashtag para começar.</p>
+                <p>Digite um texto, uma #hashtag ou escolha filtros para começar.</p>
             </div>
             {{end}}
         </section>

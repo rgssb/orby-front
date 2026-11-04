@@ -28,6 +28,17 @@ func Repassar(metodo, modelo string) http.HandlerFunc {
 	}
 }
 
+// RepassarJSON encaminha um corpo JSON às rotas autenticadas da API.
+func RepassarJSON(metodo, modelo string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		caminho, ok := montarCaminho(w, r, modelo)
+		if !ok {
+			return
+		}
+		repassar(w, r, metodo, caminho, r.Body)
+	}
+}
+
 func montarCaminho(w http.ResponseWriter, r *http.Request, modelo string) (string, bool) {
 	valido := true
 	vars := mux.Vars(r)
