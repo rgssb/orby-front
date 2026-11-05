@@ -1,7 +1,7 @@
 /* ==========================================================
    Temas do Orby
-   Padrão (Completo) = visual do login. Alternativos via
-   selecionados pelo atributo data-theme no elemento html.
+   Padrão (Completo) = visual do login. Alternativos selecionados
+   pelo atributo data-theme no elemento html.
    Carregar DEPOIS de home.css / login.css.
    ========================================================== */
 
@@ -68,9 +68,9 @@ html[data-theme="nerd"] {
   --orby-border-strong: #454545;
   --orby-text: #E1E1E1;
   --orby-text-muted: #AAAAAA;
-  --orby-accent: #9CDCFE;
-  --orby-accent-strong: #569CD6;
-  --orby-like: #C586C0;
+  --orby-accent: #4FC1FF;
+  --orby-accent-strong: #4FC1FF;
+  --orby-like: #F08BC3;
   --orby-danger: #F48771;
   --orby-input-bg: #111111;
   --orby-input-border: #3C3C3C;
@@ -78,35 +78,65 @@ html[data-theme="nerd"] {
   --orby-radius-sm: 5px;
   --orby-card-shadow: none;
   --orby-login-shadow: none;
-  --orby-btn-bg: #245680;
-  --orby-btn-bg-hover: #32678D;
+  --orby-btn-bg: #007ACC;
+  --orby-btn-bg-hover: #0069B0;
   --orby-btn-text: #FFFFFF;
   --orby-btn-shadow: none;
   --orby-page-bg: #111111;
   --orby-login-bg: #111111;
   --orby-nav-bg: #181818;
-  --orby-focus-ring: 0 0 0 3px rgba(86, 156, 214, 0.28);
-  --orby-nerd-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --orby-focus-ring: 0 0 0 3px rgba(79, 193, 255, 0.3);
+  --orby-nerd-mono: 'Cascadia Code', 'Fira Code', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   color-scheme: dark;
   scrollbar-color: #555555 #181818;
 }
 
-html[data-theme="nerd"] .navbar-brand,
-html[data-theme="nerd"] .feed-header h1,
-html[data-theme="nerd"] .feed-header h2,
-html[data-theme="nerd"] .composer-header h2,
-html[data-theme="nerd"] .auth-title,
-html[data-theme="nerd"] .Orby-form > span[role="heading"],
-html[data-theme="nerd"] .documento-legal h1,
-html[data-theme="nerd"] .documento-legal h2,
-html[data-theme="nerd"] .char-counter,
-html[data-theme="nerd"] .msg-item-hora {
+html[data-theme="nerd"] :where(body, body *:not([class~="fa"]):not([class~="fas"]):not([class~="far"]):not([class~="fab"]):not([class^="fa-"]):not([class*=" fa-"])) {
   font-family: var(--orby-nerd-mono);
+}
+
+html[data-theme="nerd"] .feed-header h1,
+html[data-theme="nerd"] .home-page .feed-header h1,
+html[data-theme="nerd"] .feed-header h2,
+html[data-theme="nerd"] .msg-page-title,
+html[data-theme="nerd"] .documento-legal h1 {
+  color: #4EC9B0;
+}
+
+html[data-theme="nerd"] .composer-header h2,
+html[data-theme="nerd"] .documento-legal h2 {
+  color: #DCDCAA;
+}
+
+html[data-theme="nerd"] .jumbotron .display-4,
+html[data-theme="nerd"] .Orby-form > span[role="heading"] {
+  color: #E8A98F;
+}
+
+html[data-theme="nerd"] .publication-meta-button .publication-author {
+  color: #9CDCFE;
+}
+
+html[data-theme="nerd"] .navbar-nav [data-nav="/home"] .nav-link :is(i, svg) { color: #4EC9B0; }
+html[data-theme="nerd"] .navbar-nav [data-nav="/perfil"] .nav-link :is(i, svg) { color: #E2A3E5; }
+html[data-theme="nerd"] .navbar-nav [data-nav="/salvos"] .nav-link :is(i, svg) { color: #DCDCAA; }
+html[data-theme="nerd"] .navbar-nav [data-nav="/mensagens"] .nav-link :is(i, svg) { color: #9CDCFE; }
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  html[data-theme="nerd"] .navbar.navbar-light .navbar-nav .nav-link {
+    padding-inline: .4rem;
+    font-size: .75rem;
+    white-space: nowrap;
+  }
+
+  html[data-theme="nerd"] .navbar-expand-lg .navbar-nav {
+    column-gap: .15rem;
+  }
 }
 
 html[data-theme="nerd"] .composer-icon,
 html[data-theme="nerd"] .enquete-toggle-icone {
-  color: #C586C0;
+  color: #E2A3E5;
   box-shadow: none;
 }
 
@@ -123,7 +153,8 @@ html[data-theme="nerd"] .grp-msg--minha {
 }
 
 html[data-theme="nerd"] .nav-badge,
-html[data-theme="nerd"] .msg-dock-badge {
+html[data-theme="nerd"] .msg-dock-badge,
+html[data-theme="nerd"] .feed-new-posts {
   color: #111111;
 }
 
@@ -826,7 +857,7 @@ html .btn-outline-danger:hover {
 }
 
 .tema-amostra--nerd {
-  background: linear-gradient(135deg, #C586C0, #569CD6 48%, #181818 49%);
+  background: linear-gradient(135deg, #E2A3E5, #4FC1FF 36%, #4EC9B0 68%, #DCDCAA);
 }
 
 .navbar .tema-seletor {
