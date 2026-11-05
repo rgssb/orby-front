@@ -1,7 +1,7 @@
     {{define "cabecalho"}}
     <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/home">{{template "mascote" "orby-mascot--nav"}}Orby</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" aria-label="Navegação principal">
+        <div class="navbar-brand">{{template "mascote" "orby-mascot--nav"}}<a class="navbar-brand-link" href="/home">Orby</a></div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Menu de navegação">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -33,7 +33,7 @@
                 </li>
             </ul>
             <div class="notif-wrap">
-                <button class="notif-toggle" id="notif-toggle" type="button" aria-label="Notificações" aria-haspopup="true" aria-expanded="false" aria-controls="notif-painel">
+                <button class="notif-toggle" id="notif-toggle" type="button" aria-label="Notificações" aria-expanded="false" aria-controls="notif-painel">
                     <i class="fa-solid fa-bell" aria-hidden="true"></i>
                     <span class="notif-badge" id="notif-badge" hidden></span>
                 </button>

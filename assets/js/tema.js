@@ -4,7 +4,8 @@
         { id: 'completo', nome: 'Espaço' },
         { id: 'neutro', nome: 'Neutro' },
         { id: 'claro', nome: 'Claro' },
-        { id: 'acolhedor', nome: 'Antigo' }
+        { id: 'acolhedor', nome: 'Antigo' },
+        { id: 'nerd', nome: 'Nerd' }
     ];
 
     function temaSalvo() {
@@ -60,6 +61,7 @@
             botao.setAttribute('aria-expanded', String(abrir));
             if (abrir) {
                 marcar();
+                menu.querySelector('[aria-checked="true"]').focus();
             }
         }
 
@@ -79,6 +81,19 @@
             marcar();
             abrir(false);
             botao.focus();
+        });
+
+        menu.addEventListener('keydown', function (evento) {
+            const opcoes = Array.from(menu.querySelectorAll('.tema-opcao'));
+            const atual = opcoes.indexOf(document.activeElement);
+            let proximo;
+            if (evento.key === 'ArrowDown') proximo = (atual + 1) % opcoes.length;
+            else if (evento.key === 'ArrowUp') proximo = (atual + opcoes.length - 1) % opcoes.length;
+            else if (evento.key === 'Home') proximo = 0;
+            else if (evento.key === 'End') proximo = opcoes.length - 1;
+            else return;
+            evento.preventDefault();
+            opcoes[proximo].focus();
         });
 
         document.addEventListener('click', function (evento) {

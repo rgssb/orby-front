@@ -469,7 +469,7 @@ footer.text-muted {
   font-size: 1rem;
 }
 
-.composer-header h1 {
+.composer-header h2 {
   margin: 0;
   color: #E5E7EB;
   font-size: 1.12rem;
@@ -544,6 +544,7 @@ footer.text-muted {
   letter-spacing: 0.12em;
 }
 
+.home-page .feed-header h1,
 .feed-header h2 {
   margin: 0;
   color: #E8E9EC;
@@ -883,6 +884,7 @@ body {
   border-bottom-color: rgba(148, 163, 184, 0.12);
 }
 
+.home-page .feed-header h1,
 .feed-header h2 {
   font-weight: 700;
 }
@@ -1012,7 +1014,7 @@ footer.text-muted {
   font-size: 1.1rem;
 }
 
-.composer-header h1 {
+.composer-header h2 {
   font-size: 1.15rem;
   font-weight: 700;
 }
@@ -1060,7 +1062,7 @@ footer.text-muted .container {
   margin-bottom: 1.75rem;
 }
 
-.composer-header h1 {
+.composer-header h2 {
   font-size: 1.4rem;
 }
 

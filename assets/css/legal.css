@@ -28,14 +28,64 @@
     margin-top: 40px;
 }
 
-.termos-aceite {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 0.9rem;
-    margin-bottom: 12px;
+#form-cadastro .termos-aceite {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: start;
+    column-gap: .3rem;
+    margin: .25rem 0 1.15rem;
+    text-align: left;
 }
 
-.termos-aceite input {
-    margin-top: 4px;
+#form-cadastro .termos-aceite input {
+    appearance: auto;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    margin: 3px 12px;
+    accent-color: var(--orby-accent-strong);
+    cursor: pointer;
+}
+
+#form-cadastro .termos-aceite input:focus-visible {
+    outline: 2px solid var(--orby-accent-strong);
+    outline-offset: 3px;
+}
+
+html #form-cadastro .termos-aceite label {
+    margin: 0;
+    color: var(--orby-text-muted);
+    font-size: .86rem;
+    line-height: 1.55;
+    cursor: pointer;
+}
+
+html #form-cadastro .termos-aceite a {
+    display: inline;
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+    text-align: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+#form-cadastro .termos-aceite .invalid-feedback {
+    grid-column: 2;
+    margin-top: .35rem;
+    text-align: left;
+}
+
+#form-cadastro.was-validated .termos-aceite input:invalid ~ .invalid-feedback {
+    display: block;
+}
+
+#form-cadastro .cadastro-login {
+    margin: 1.1rem 0 0;
+    padding: .35rem;
+}
+
+@media (max-width: 575px) {
+    #form-cadastro input.form-control { font-size: 16px; }
+    #form-cadastro .termos-aceite label { font-size: .9rem; }
 }

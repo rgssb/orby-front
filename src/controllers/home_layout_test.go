@@ -26,7 +26,7 @@ func TestHomeRenderizaComposerEFeed(t *testing.T) {
 		resposta := httptest.NewRecorder()
 		utils.ExecutarTemplate(resposta, "home.html", dados)
 		html := resposta.Body.String()
-		for _, texto := range []string{`aria-controls="nova-publicacao"`, `id="sugestoes-seguir"`, `id="sugestoes-lista"`, `aria-controls="sugestoes-lista"`, `/assets/js/home.js?v=3`, `/assets/js/tutorial.js?v=3`, `aria-controls="enquete-campos"`, `id="enquete-prazo"`, `aria-controls="felas-info-conteudo"`, `id="felas-info-conteudo" hidden`, `aria-label="Saiba mais sobre Felas"`, `id="rascunho-status"`} {
+		for _, texto := range []string{`<h1 id="feed-title">Publicações</h1>`, `<h2 id="compose-title">Nova publicação</h2>`, `aria-controls="nova-publicacao"`, `id="sugestoes-seguir"`, `id="sugestoes-lista"`, `aria-controls="sugestoes-lista"`, `/assets/js/home.js?v=3`, `/assets/js/tutorial.js?v=3`, `aria-controls="enquete-campos"`, `id="enquete-prazo"`, `aria-controls="felas-info-conteudo"`, `id="felas-info-conteudo" hidden`, `aria-label="Saiba mais sobre Felas"`, `id="rascunho-status"`} {
 			if !strings.Contains(html, texto) {
 				t.Errorf("home sem %q", texto)
 			}
@@ -55,6 +55,9 @@ func TestHomeRenderizaComposerEFeed(t *testing.T) {
 		if len(dados.Publicacoes) == 0 && !strings.Contains(html, "Ainda não há publicações") {
 			t.Error("estado vazio ausente")
 		}
+		if !strings.Contains(html, `<a class="navbar-brand-link" href="/home">Orby</a>`) {
+			t.Error("a marca deve manter o link para a página inicial separado do mascote interativo")
+		}
 	}
 }
 
@@ -76,7 +79,7 @@ func TestPerfilExibeAjudaDosFelasRecolhida(t *testing.T) {
 		AbaCurtidas     bool
 	}{Usuario: modelos.Usuario{ID: 1, Privado: true}, UsuarioLogadoID: 1})
 	html := resposta.Body.String()
-	for _, texto := range []string{`aria-label="Saiba mais sobre Felas" aria-expanded="false" aria-controls="felas-info-conteudo"`, `id="felas-info-conteudo" hidden`, `id="abrir-pedidos"`, `profile-card--own`} {
+	for _, texto := range []string{`aria-label="Saiba mais sobre Felas" aria-expanded="false" aria-controls="felas-info-conteudo"`, `id="felas-info-conteudo" hidden`, `id="abrir-pedidos"`, `profile-card--own`, `aria-labelledby="modal-seguidores-titulo"`, `id="modal-seguidores-titulo"`, `aria-labelledby="modal-seguindo-titulo"`, `id="modal-seguindo-titulo"`} {
 		if !strings.Contains(html, texto) {
 			t.Errorf("perfil sem %q", texto)
 		}

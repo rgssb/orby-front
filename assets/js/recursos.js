@@ -113,29 +113,46 @@ function organizarPublicacao(botao, id) {
         const lista = document.createElement('div');
         lista.className = 'pastas-escolha';
         const explicacao = document.createElement('p');
-        explicacao.textContent = 'Esta publicação já está nos seus salvos. Se quiser, escolha uma pasta.';
+        explicacao.className = 'pastas-descricao';
+        explicacao.textContent = 'Escolha uma pasta para organizar sua publicação.';
         lista.appendChild(explicacao);
+        const grupo = document.createElement('fieldset');
+        grupo.className = 'pastas-opcoes';
+        const legenda = document.createElement('legend');
+        legenda.textContent = 'Suas pastas';
+        grupo.appendChild(legenda);
         pastas.forEach(function (pasta) {
             const label = document.createElement('label');
+            label.className = 'pasta-opcao';
             const caixa = document.createElement('input');
             caixa.type = 'checkbox';
             caixa.value = pasta.id;
             caixa.checked = pasta.incluida;
-            label.append(caixa, document.createTextNode(' ' + pasta.nome));
-            lista.appendChild(label);
+            const texto = document.createElement('span');
+            texto.textContent = pasta.nome;
+            label.append(caixa, texto);
+            grupo.appendChild(label);
         });
+        if (!pastas.length) {
+            const vazio = document.createElement('p');
+            vazio.className = 'pastas-sem-itens';
+            vazio.textContent = 'Você ainda não tem pastas.';
+            grupo.appendChild(vazio);
+        }
+        lista.appendChild(grupo);
         const rotulo = document.createElement('label');
         rotulo.className = 'pasta-nova';
-        rotulo.textContent = 'Criar uma pasta';
+        rotulo.textContent = 'Nova pasta';
         const nome = document.createElement('input');
         nome.type = 'text';
         nome.className = 'form-control';
         nome.maxLength = 80;
-        nome.placeholder = 'Nome da nova pasta (opcional)';
+        nome.placeholder = 'Nome da pasta (opcional)';
         rotulo.appendChild(nome);
         lista.appendChild(rotulo);
         Swal.fire({
             title: 'Guardar publicação', html: lista,
+            customClass: { popup: 'swal-orby modal-pastas' },
             showCancelButton: true, confirmButtonText: 'Salvar', cancelButtonText: 'Cancelar',
             showDenyButton: true, denyButtonText: 'Remover dos salvos',
             showLoaderOnConfirm: true,
@@ -284,43 +301,191 @@ $(document).on('click', '.pedidos-lista [data-acao]', function () {
     });
 });
 
-// Ampliar imagens no centro da tela, com o fundo desfocado
+// Visualizador de imagens da publicação, mensagens e perfil
 (function () {
     const alvos = '.post-image-link, .msg-imagem-link, .profile-avatar';
     let fundo = null;
+    let origem = null;
+    let restaurarRolagem = '';
+    let imagens = [];
+    let indice = 0;
+    let zoom = 1;
+    let imagem = null;
+    let area = null;
+    let anterior = null;
+    let proxima = null;
+    let reduzir = null;
+    let ampliar = null;
+    let contador = null;
+    let nivel = null;
+    let erroImagem = null;
+    let toque = null;
+    let ultimoDeslize = 0;
 
     function fechar() {
         if (!fundo) return;
         const el = fundo;
         fundo = null;
         el.classList.remove('is-open');
+        el.setAttribute('aria-hidden', 'true');
+        el.inert = true;
         document.removeEventListener('keydown', aoTeclar);
+        window.removeEventListener('resize', ajustarImagem);
+        document.body.style.overflow = restaurarRolagem;
+        if (origem && origem.isConnected) origem.focus();
+        origem = null;
         window.setTimeout(function () { el.remove(); }, 180);
     }
 
-    function aoTeclar(evento) { if (evento.key === 'Escape') fechar(); }
+    function aoTeclar(evento) {
+        if (evento.key === 'Escape') fechar();
+        else if (evento.key === 'ArrowLeft' && imagens.length > 1) { evento.preventDefault(); mudarImagem(-1); }
+        else if (evento.key === 'ArrowRight' && imagens.length > 1) { evento.preventDefault(); mudarImagem(1); }
+        else if (evento.key === 'Tab') {
+            const botoes = Array.from(fundo.querySelectorAll('button:not([disabled]):not([hidden])'));
+            const posicao = botoes.indexOf(document.activeElement);
+            if (posicao < 0 || (evento.shiftKey && posicao === 0)) {
+                evento.preventDefault();
+                botoes[botoes.length - 1].focus();
+            } else if (!evento.shiftKey && posicao === botoes.length - 1) {
+                evento.preventDefault();
+                botoes[0].focus();
+            }
+        }
+    }
 
-    function abrir(src, alt) {
+    function ajustarImagem() {
+        if (!fundo || !imagem.naturalWidth || !imagem.naturalHeight) return;
+        const proporcao = Math.min(area.clientWidth / imagem.naturalWidth, area.clientHeight / imagem.naturalHeight, 1100 / imagem.naturalWidth, 1);
+        imagem.style.width = (imagem.naturalWidth * proporcao * zoom) + 'px';
+        imagem.style.height = (imagem.naturalHeight * proporcao * zoom) + 'px';
+    }
+
+    function definirZoom(valor) {
+        zoom = Math.max(1, Math.min(4, valor));
+        ajustarImagem();
+        area.scrollLeft = (area.scrollWidth - area.clientWidth) / 2;
+        area.scrollTop = (area.scrollHeight - area.clientHeight) / 2;
+        reduzir.disabled = zoom === 1;
+        ampliar.disabled = zoom === 4;
+        if (document.activeElement === reduzir && reduzir.disabled) ampliar.focus();
+        if (document.activeElement === ampliar && ampliar.disabled) reduzir.focus();
+        nivel.textContent = Math.round(zoom * 100) + '%';
+        imagem.classList.toggle('is-ampliada', zoom > 1);
+    }
+
+    function mostrarImagem() {
+        const item = imagens[indice];
+        imagem.removeAttribute('style');
+        imagem.hidden = false;
+        erroImagem.textContent = '';
+        imagem.alt = item.alt;
+        imagem.src = item.src;
+        contador.textContent = 'Imagem ' + (indice + 1) + ' de ' + imagens.length;
+        anterior.disabled = indice === 0;
+        proxima.disabled = indice === imagens.length - 1;
+        if (document.activeElement === anterior && anterior.disabled) proxima.focus();
+        if (document.activeElement === proxima && proxima.disabled) anterior.focus();
+        definirZoom(1);
+    }
+
+    function mudarImagem(direcao) {
+        const novoIndice = indice + direcao;
+        if (novoIndice < 0 || novoIndice >= imagens.length) return;
+        indice = novoIndice;
+        mostrarImagem();
+    }
+
+    function botao(classe, rotulo, texto, acao) {
+        const elemento = document.createElement('button');
+        elemento.type = 'button';
+        elemento.className = classe;
+        elemento.setAttribute('aria-label', rotulo);
+        elemento.title = rotulo;
+        elemento.textContent = texto;
+        elemento.addEventListener('click', acao);
+        return elemento;
+    }
+
+    function abrir(itens, posicao, focoAnterior) {
         fechar();
+        imagens = itens;
+        indice = posicao;
+        zoom = 1;
+        toque = null;
+        ultimoDeslize = 0;
+        origem = focoAnterior;
+        restaurarRolagem = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
         fundo = document.createElement('div');
         fundo.className = 'lightbox';
         fundo.setAttribute('role', 'dialog');
         fundo.setAttribute('aria-modal', 'true');
-        fundo.setAttribute('aria-label', 'Imagem ampliada');
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = alt || '';
-        const botao = document.createElement('button');
-        botao.type = 'button';
-        botao.className = 'lightbox-fechar';
-        botao.setAttribute('aria-label', 'Fechar');
-        botao.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
-        fundo.append(img, botao);
-        fundo.addEventListener('click', fechar);
+        fundo.setAttribute('aria-label', 'Visualizador de imagens');
+        const barra = document.createElement('div');
+        barra.className = 'lightbox-barra';
+        contador = document.createElement('span');
+        contador.className = 'lightbox-contador';
+        contador.setAttribute('aria-live', 'polite');
+        reduzir = botao('lightbox-controle', 'Reduzir imagem', '−', function () { definirZoom(zoom - .5); });
+        ampliar = botao('lightbox-controle', 'Ampliar imagem', '+', function () { definirZoom(zoom + .5); });
+        nivel = document.createElement('span');
+        nivel.className = 'lightbox-nivel';
+        nivel.setAttribute('aria-live', 'polite');
+        const botaoFechar = botao('lightbox-controle lightbox-fechar', 'Fechar visualizador', '×', fechar);
+        barra.append(contador, reduzir, nivel, ampliar, botaoFechar);
+        const palco = document.createElement('div');
+        palco.className = 'lightbox-palco';
+        area = document.createElement('div');
+        area.className = 'lightbox-area';
+        imagem = document.createElement('img');
+        const caixa = fundo;
+        imagem.addEventListener('load', function () {
+            if (fundo === caixa) ajustarImagem();
+        });
+        imagem.addEventListener('error', function () {
+            if (fundo !== caixa) return;
+            imagem.hidden = true;
+            erroImagem.textContent = 'Não foi possível carregar esta imagem.';
+        });
+        imagem.addEventListener('click', function () {
+            if (Date.now() - ultimoDeslize < 400) return;
+            definirZoom(zoom === 1 ? 2 : 1);
+        });
+        area.addEventListener('touchstart', function (evento) {
+            if (zoom === 1 && evento.touches.length === 1) toque = { x: evento.touches[0].clientX, y: evento.touches[0].clientY };
+            else toque = null;
+        }, { passive: true });
+        area.addEventListener('touchend', function (evento) {
+            if (!toque || !evento.changedTouches.length) return;
+            const dx = evento.changedTouches[0].clientX - toque.x;
+            const dy = evento.changedTouches[0].clientY - toque.y;
+            toque = null;
+            if (Math.abs(dx) >= 60 && Math.abs(dx) > Math.abs(dy)) {
+                ultimoDeslize = Date.now();
+                mudarImagem(dx < 0 ? 1 : -1);
+            }
+        }, { passive: true });
+        area.appendChild(imagem);
+        erroImagem = document.createElement('p');
+        erroImagem.className = 'lightbox-erro';
+        erroImagem.setAttribute('role', 'status');
+        anterior = botao('lightbox-controle lightbox-anterior', 'Imagem anterior', '‹', function () { mudarImagem(-1); });
+        proxima = botao('lightbox-controle lightbox-proxima', 'Próxima imagem', '›', function () { mudarImagem(1); });
+        anterior.hidden = proxima.hidden = imagens.length < 2;
+        palco.append(anterior, area, proxima, erroImagem);
+        fundo.append(barra, palco);
+        fundo.addEventListener('click', function (evento) {
+            if (Date.now() - ultimoDeslize >= 400 && (evento.target === fundo || evento.target === palco || evento.target === area)) fechar();
+        });
         document.body.appendChild(fundo);
         document.addEventListener('keydown', aoTeclar);
-        window.requestAnimationFrame(function () { fundo.classList.add('is-open'); });
-        botao.focus();
+        window.addEventListener('resize', ajustarImagem);
+        mostrarImagem();
+        window.requestAnimationFrame(function () {
+            if (fundo === caixa) caixa.classList.add('is-open');
+        });
+        botaoFechar.focus();
     }
 
     document.addEventListener('click', function (evento) {
@@ -330,7 +495,13 @@ $(document).on('click', '.pedidos-lista [data-acao]', function () {
         if (!img || !img.getAttribute('src')) return;
         evento.preventDefault();
         evento.stopPropagation();
-        abrir(img.currentSrc || img.src, img.alt);
+        const grupo = alvo.classList.contains('post-image-link') ? alvo.closest('.post-images') : null;
+        const links = grupo ? Array.from(grupo.querySelectorAll('.post-image-link')) : [alvo];
+        const itens = links.map(function (link) {
+            const foto = link.querySelector('img');
+            return { src: link.tagName === 'A' ? link.href : (foto.currentSrc || foto.src), alt: foto.alt };
+        });
+        abrir(itens, links.indexOf(alvo), alvo.closest('a, button') || document.activeElement);
     }, true);
 })();
 

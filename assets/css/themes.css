@@ -1,7 +1,7 @@
 /* ==========================================================
    Temas do Orby
    Padrão (Completo) = visual do login. Alternativos via
-   <html data-theme="neutro"> e <html data-theme="claro">.
+   selecionados pelo atributo data-theme no elemento html.
    Carregar DEPOIS de home.css / login.css.
    ========================================================== */
 
@@ -59,6 +59,89 @@ html[data-theme="neutro"] {
   --orby-nav-bg: #121418;
   --orby-focus-ring: 0 0 0 2px rgba(115, 127, 159, 0.2);
 }
+
+html[data-theme="nerd"] {
+  --orby-bg: #111111;
+  --orby-surface: #181818;
+  --orby-surface-hover: #202020;
+  --orby-border: #303030;
+  --orby-border-strong: #454545;
+  --orby-text: #E1E1E1;
+  --orby-text-muted: #AAAAAA;
+  --orby-accent: #9CDCFE;
+  --orby-accent-strong: #569CD6;
+  --orby-like: #C586C0;
+  --orby-danger: #F48771;
+  --orby-input-bg: #111111;
+  --orby-input-border: #3C3C3C;
+  --orby-radius: 8px;
+  --orby-radius-sm: 5px;
+  --orby-card-shadow: none;
+  --orby-login-shadow: none;
+  --orby-btn-bg: #245680;
+  --orby-btn-bg-hover: #32678D;
+  --orby-btn-text: #FFFFFF;
+  --orby-btn-shadow: none;
+  --orby-page-bg: #111111;
+  --orby-login-bg: #111111;
+  --orby-nav-bg: #181818;
+  --orby-focus-ring: 0 0 0 3px rgba(86, 156, 214, 0.28);
+  --orby-nerd-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  color-scheme: dark;
+  scrollbar-color: #555555 #181818;
+}
+
+html[data-theme="nerd"] .navbar-brand,
+html[data-theme="nerd"] .feed-header h1,
+html[data-theme="nerd"] .feed-header h2,
+html[data-theme="nerd"] .composer-header h2,
+html[data-theme="nerd"] .auth-title,
+html[data-theme="nerd"] .Orby-form > span[role="heading"],
+html[data-theme="nerd"] .documento-legal h1,
+html[data-theme="nerd"] .documento-legal h2,
+html[data-theme="nerd"] .char-counter,
+html[data-theme="nerd"] .msg-item-hora {
+  font-family: var(--orby-nerd-mono);
+}
+
+html[data-theme="nerd"] .composer-icon,
+html[data-theme="nerd"] .enquete-toggle-icone {
+  color: #C586C0;
+  box-shadow: none;
+}
+
+html[data-theme="nerd"] .pasta-link i,
+html[data-theme="nerd"] .pasta-todas i {
+  color: #DCDCAA;
+}
+
+html[data-theme="nerd"] .search-tab.is-active,
+html[data-theme="nerd"] .grp-msg--minha {
+  color: var(--orby-btn-text);
+  background: var(--orby-btn-bg);
+  border-color: var(--orby-btn-bg);
+}
+
+html[data-theme="nerd"] .nav-badge,
+html[data-theme="nerd"] .msg-dock-badge {
+  color: #111111;
+}
+
+html[data-theme="nerd"] .documento-legal a {
+  color: var(--orby-accent);
+}
+
+html[data-theme="nerd"] .orby-mascot:not(.is-tapped) {
+  --ring-color: #569CD6;
+  --orbit-color: #C586C0;
+  --ring-shadow: rgba(86, 156, 214, .65);
+  --orbit-shadow: rgba(197, 134, 192, .65);
+  --ring-glow: rgba(86, 156, 214, .35);
+}
+
+html[data-theme="nerd"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(1) { stop-color: #283D55; }
+html[data-theme="nerd"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(2) { stop-color: #17191F; }
+html[data-theme="nerd"] .orby-mascot:not(.is-tapped) #orby-body-gradient stop:nth-child(3) { stop-color: #0D0E10; }
 
 html[data-theme="claro"] {
   --orby-bg: #FAF7F0;
@@ -192,7 +275,8 @@ html .jumbotron .publication-actions {
   margin-top: 0.75rem;
 }
 
-html .composer-header h1,
+html .composer-header h2,
+html .home-page .feed-header h1,
 html .feed-header h2,
 html .jumbotron .display-4,
 html .publication-meta span:first-child {
@@ -550,7 +634,7 @@ html[data-theme="claro"] .orby-mascot.is-tapped svg {
 }
 
 /* ---------- SweetAlert2 ---------- */
-.swal2-popup.swal-orby {
+.swal2-popup:is(.swal2-modal, .swal2-toast) {
   color: var(--orby-text);
   background: var(--orby-surface);
   border: 1px solid var(--orby-border);
@@ -558,28 +642,63 @@ html[data-theme="claro"] .orby-mascot.is-tapped svg {
   box-shadow: var(--orby-card-shadow);
 }
 
-.swal2-popup.swal-orby .swal2-title {
+.swal2-popup .swal2-title {
   color: var(--orby-text);
 }
 
-.swal2-popup.swal-orby .swal2-html-container {
+.swal2-popup .swal2-html-container {
   color: var(--orby-text-muted);
 }
 
-.swal2-popup.swal-orby .swal2-styled.swal2-confirm {
+.swal2-popup .swal2-styled.swal2-confirm {
   color: var(--orby-btn-text);
   background: var(--orby-btn-bg);
   border-radius: var(--orby-radius-sm);
 }
 
-.swal2-popup.swal-orby .swal2-styled.swal2-cancel {
+.swal2-popup .swal2-styled.swal2-cancel {
   color: var(--orby-text);
   background: var(--orby-input-border);
   border-radius: var(--orby-radius-sm);
 }
 
-.swal2-popup.swal-orby .swal2-timer-progress-bar {
+.swal2-popup .swal2-timer-progress-bar {
   background: var(--orby-accent-strong);
+}
+
+.swal2-popup .swal2-input,
+.swal2-popup .swal2-textarea,
+.swal2-popup .swal2-select {
+  color: var(--orby-text);
+  background: var(--orby-input-bg);
+  border-color: var(--orby-input-border);
+}
+
+.swal2-popup .swal2-validation-message {
+  color: var(--orby-danger);
+  background: color-mix(in srgb, var(--orby-danger) 10%, var(--orby-surface));
+}
+
+html .btn-outline-secondary {
+  color: var(--orby-text-muted);
+  border-color: var(--orby-border-strong);
+}
+
+html .btn-outline-secondary:hover {
+  color: var(--orby-text);
+  background: var(--orby-surface-hover);
+  border-color: var(--orby-border-strong);
+}
+
+html .btn-outline-danger {
+  color: var(--orby-danger);
+  border-color: var(--orby-danger);
+}
+
+html .btn-outline-danger:hover {
+  color: var(--orby-surface);
+  background: var(--orby-danger);
+  border-color: var(--orby-danger);
 }
 
 /* ---------- Seletor de aparência ---------- */
@@ -706,6 +825,10 @@ html[data-theme="claro"] .orby-mascot.is-tapped svg {
   background: linear-gradient(135deg, #F0B47F, #151310);
 }
 
+.tema-amostra--nerd {
+  background: linear-gradient(135deg, #C586C0, #569CD6 48%, #181818 49%);
+}
+
 .navbar .tema-seletor {
   margin-left: 0.5rem;
 }
@@ -757,7 +880,7 @@ html[data-theme="acolhedor"] {
   --orby-login-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 60px -20px rgba(0, 0, 0, 0.6);
   --orby-btn-bg: #B9783A;
   --orby-btn-bg-hover: #C98746;
-  --orby-btn-text: #fff;
+  --orby-btn-text: #1E1B17;
   --orby-btn-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 6px 16px -6px rgba(185, 120, 58, 0.55);
   --orby-page-bg: radial-gradient(ellipse 70% 320px at 50% 0, rgba(240, 180, 127, 0.07), transparent), #151310;
   --orby-login-bg:
@@ -791,9 +914,10 @@ html[data-theme="acolhedor"] ::selection {
 
 /* ---------- Títulos com voz própria ---------- */
 html[data-theme="acolhedor"] .navbar.navbar-light .navbar-brand,
+html[data-theme="acolhedor"] .home-page .feed-header h1,
 html[data-theme="acolhedor"] .feed-header h2,
 html[data-theme="acolhedor"] .users-column .feed-header h1,
-html[data-theme="acolhedor"] .composer-header h1,
+html[data-theme="acolhedor"] .composer-header h2,
 html[data-theme="acolhedor"] .jumbotron .display-4,
 html[data-theme="acolhedor"] .users-empty h2 {
   font-family: var(--orby-display);
@@ -806,6 +930,7 @@ html[data-theme="acolhedor"] .navbar.navbar-light .navbar-brand {
   font-size: 1.45rem;
 }
 
+html[data-theme="acolhedor"] .home-page .feed-header h1,
 html[data-theme="acolhedor"] .feed-header h2,
 html[data-theme="acolhedor"] .users-column .feed-header h1 {
   font-size: 1.75rem;
@@ -1107,4 +1232,3 @@ html[data-theme="acolhedor"] .orby-mascot.is-tapped svg {
 }
 
 html[data-theme="acolhedor"] .orby-mascot:not(.is-tapped) .orby-pupil { fill: #F6C89A; }
-

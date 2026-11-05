@@ -202,6 +202,51 @@ input:focus {
   display: none;
 }
 
+#reenviar-confirmacao {
+  display: inline-flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  padding: .65rem .85rem;
+  color: var(--orby-accent);
+  background: color-mix(in srgb, var(--orby-accent) 8%, var(--orby-surface));
+  border: 1px solid var(--orby-border-strong);
+  border-radius: var(--orby-radius-sm);
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: normal;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+#reenviar-confirmacao svg {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#reenviar-confirmacao:hover:not(:disabled) {
+  color: var(--orby-text);
+  background: var(--orby-surface-hover);
+  border-color: var(--orby-accent);
+}
+
+#reenviar-confirmacao:focus-visible {
+  outline: 2px solid var(--orby-accent-strong);
+  outline-offset: 3px;
+}
+
+#reenviar-confirmacao:disabled {
+  cursor: wait;
+}
+
 /* Link de cadastro */
 a {
   display: block;

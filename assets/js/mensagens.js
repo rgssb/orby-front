@@ -23,9 +23,31 @@
         abaGrupos.append(criar('span', '', 'Grupos'), contagemGrupos);
         abas.append(abaConversas, abaPedidos, abaGrupos);
         let grupos = null;
+        const novaConversa = criar('button', 'btn btn-outline-secondary btn-sm msg-nova-conversa', 'Nova conversa');
+        novaConversa.type = 'button';
         const lista = criar('ul', 'msg-lista');
         const vazio = criar('p', 'msg-vazio');
-        colLista.append(abas, lista, vazio);
+        const escolha = criar('div', 'msg-escolha');
+        escolha.hidden = true;
+        const topoEscolha = criar('div', 'msg-escolha-topo');
+        const voltarEscolha = criar('button', 'msg-icon');
+        voltarEscolha.type = 'button';
+        voltarEscolha.setAttribute('aria-label', 'Voltar para as conversas');
+        voltarEscolha.innerHTML = '<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>';
+        topoEscolha.append(voltarEscolha, criar('strong', '', 'Nova conversa'));
+        const buscaPessoas = criar('input', 'form-control msg-busca-pessoas');
+        buscaPessoas.type = 'search';
+        buscaPessoas.maxLength = 50;
+        buscaPessoas.placeholder = 'Buscar por nome ou @nick';
+        buscaPessoas.setAttribute('aria-label', 'Buscar pessoas que seguem você de volta');
+        const statusPessoas = criar('p', 'msg-escolha-status');
+        statusPessoas.setAttribute('role', 'status');
+        const pessoas = criar('ul', 'msg-lista msg-escolha-lista');
+        const tentarPessoas = criar('button', 'btn btn-outline-secondary btn-sm msg-tentar-pessoas', 'Tentar novamente');
+        tentarPessoas.type = 'button';
+        tentarPessoas.hidden = true;
+        escolha.append(topoEscolha, buscaPessoas, statusPessoas, tentarPessoas, pessoas);
+        colLista.append(abas, novaConversa, lista, vazio, escolha);
 
         const colChat = criar('div', 'msg-chat-col');
         const cabecalho = criar('div', 'msg-chat-head');
@@ -90,7 +112,10 @@
             grupos = window.OrbyGrupos.montar(colLista, colChat, app, function (total) { mostrarSelo(contagemGrupos, total); });
         }
 
-        const estado = { aba: 'conversas', conversas: [], aberta: null, ultimoId: 0, dialogo: null, timerChat: null, timerLista: null, respondendo: null, imagem: null, temMais: false, ultimoAviso: 0, timerDigitando: null };
+        const estado = { aba: 'conversas', conversas: [], aberta: null, ultimoId: 0, dialogo: null, timerChat: null, timerLista: null, respondendo: null, imagem: null, temMais: false, ultimoAviso: 0, timerDigitando: null, escolhendo: false };
+        let timerBuscaPessoas = null;
+        let buscaPessoasAtual = 0;
+        let aberturaAtual = 0;
 
         function definirView(view) {
             app.dataset.view = view;
@@ -111,8 +136,11 @@
 
             const itens = estado.aba === 'pedidos' ? pedidos : normais;
             lista.textContent = '';
-            vazio.hidden = itens.length > 0;
-            vazio.textContent = estado.aba === 'pedidos' ? 'Nenhum pedido de conversa.' : 'Você ainda não tem conversas. Visite o perfil de alguém e envie uma mensagem.';
+            novaConversa.hidden = estado.aba !== 'conversas' || estado.escolhendo;
+            escolha.hidden = !estado.escolhendo;
+            lista.hidden = estado.escolhendo || itens.length === 0;
+            vazio.hidden = estado.escolhendo || itens.length > 0;
+            vazio.textContent = estado.aba === 'pedidos' ? 'Nenhum pedido de conversa.' : 'Você ainda não tem conversas.';
 
             itens.forEach(function (c) {
                 const li = criar('li');
@@ -139,6 +167,66 @@
                 desenharLista();
             }).catch(function () {});
         }
+
+        function fecharEscolha() {
+            estado.escolhendo = false;
+            buscaPessoasAtual++;
+            aberturaAtual++;
+            window.clearTimeout(timerBuscaPessoas);
+            desenharLista();
+        }
+
+        function buscarPessoas() {
+            const requisicao = ++buscaPessoasAtual;
+            const termo = buscaPessoas.value.trim();
+            pessoas.replaceChildren();
+            tentarPessoas.hidden = true;
+            statusPessoas.textContent = 'Buscando pessoas...';
+            api('/grupos/candidatos?q=' + encodeURIComponent(termo)).then(function (candidatos) {
+                if (!estado.escolhendo || requisicao !== buscaPessoasAtual) return;
+                const mutuos = candidatos.filter(function (pessoa) { return pessoa.mutuo; });
+                statusPessoas.textContent = mutuos.length ? 'Pessoas que seguem você de volta' : (termo ? 'Nenhuma pessoa encontrada.' : 'Ninguém que você segue segue você de volta ainda.');
+                mutuos.forEach(function (pessoa) {
+                    const item = criar('li');
+                    const botao = criar('button', 'msg-item');
+                    botao.type = 'button';
+                    botao.setAttribute('aria-label', 'Conversar com ' + pessoa.nome + ', @' + pessoa.nick);
+                    const texto = criar('span', 'msg-item-corpo');
+                    texto.append(criar('strong', 'msg-item-nome', pessoa.nome), criar('span', 'msg-item-previa', '@' + pessoa.nick));
+                    botao.append(avatar(pessoa.id, pessoa.fotoVersao, 'msg-avatar'), texto);
+                    botao.addEventListener('click', function () {
+                        pessoas.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+                        abrir(pessoa.id).then(function (abriu) {
+                            if (!abriu && estado.escolhendo) pessoas.querySelectorAll('button').forEach(function (b) { b.disabled = false; });
+                        });
+                    });
+                    item.appendChild(botao);
+                    pessoas.appendChild(item);
+                });
+            }).catch(function () {
+                if (!estado.escolhendo || requisicao !== buscaPessoasAtual) return;
+                statusPessoas.textContent = 'Não foi possível carregar as pessoas.';
+                tentarPessoas.hidden = false;
+            });
+        }
+
+        novaConversa.addEventListener('click', function () {
+            estado.escolhendo = true;
+            buscaPessoas.value = '';
+            desenharLista();
+            buscarPessoas();
+            buscaPessoas.focus();
+        });
+        voltarEscolha.addEventListener('click', function () { fecharEscolha(); novaConversa.focus(); });
+        tentarPessoas.addEventListener('click', buscarPessoas);
+        buscaPessoas.addEventListener('input', function () {
+            buscaPessoasAtual++;
+            window.clearTimeout(timerBuscaPessoas);
+            pessoas.replaceChildren();
+            tentarPessoas.hidden = true;
+            statusPessoas.textContent = 'Buscando pessoas...';
+            timerBuscaPessoas = window.setTimeout(buscarPessoas, 250);
+        });
 
         function assinatura(m) {
             return JSON.stringify([m.lida, m.temImagem, m.reacoes]);
@@ -445,12 +533,16 @@
         }
 
         function abrir(usuarioId) {
-            estado.aberta = usuarioId;
-            window.clearInterval(estado.timerChat);
-            limparResposta();
-            limparImagem();
-            digitando.hidden = true;
+            const aberturaDaEscolha = estado.escolhendo;
+            const requisicao = ++aberturaAtual;
             return api('/conversas/' + usuarioId + '/mensagens').then(function (d) {
+                if (requisicao !== aberturaAtual || (aberturaDaEscolha && !estado.escolhendo)) return false;
+                estado.aberta = usuarioId;
+                window.clearInterval(estado.timerChat);
+                limparResposta();
+                limparImagem();
+                digitando.hidden = true;
+                if (aberturaDaEscolha) fecharEscolha();
                 quem.textContent = d.nome;
                 if (d.admin) quem.appendChild(criar('span', 'admin-badge', '🛡 Administrador'));
                 quem.href = '/usuarios/' + d.usuarioId;
@@ -464,8 +556,11 @@
                 estado.timerChat = window.setInterval(atualizarChat, INTERVALO_CHAT);
                 if (modo === 'pagina' && window.history && history.replaceState) history.replaceState(null, '', '/mensagens?com=' + usuarioId);
                 campo.focus({ preventScroll: true });
+                return true;
             }).catch(function (erro) {
-                if (erro.erro) alertar(erro.erro);
+                if (requisicao !== aberturaAtual) return false;
+                alertar((erro && erro.erro) || 'Não foi possível abrir a conversa.');
+                return false;
             });
         }
 
@@ -492,6 +587,7 @@
         });
 
         function fecharChat() {
+            aberturaAtual++;
             window.clearInterval(estado.timerChat);
             estado.aberta = null;
             estado.dialogo = null;
@@ -514,6 +610,7 @@
 
         function trocarAba(aba) {
             const saindoDosGrupos = estado.aba === 'grupos';
+            if (estado.escolhendo) fecharEscolha();
             estado.aba = aba;
             if (grupos) grupos.definirAtivo(aba === 'grupos');
             if (saindoDosGrupos) {

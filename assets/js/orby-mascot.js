@@ -177,6 +177,9 @@
       if (mascot.contains(event.target)) reactToTap();
     });
     window.addEventListener('blur', resetPointer);
+    window.addEventListener('pageshow', function () {
+      mascot.classList.remove('is-leaving');
+    });
     if (form) {
       form.addEventListener('focusin', function () {
         markActivity();
