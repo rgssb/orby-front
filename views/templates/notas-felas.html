@@ -1,0 +1,25 @@
+{{define "notas-felas"}}
+<aside class="profile-notes" id="notas-felas" data-perfil="{{.Usuario.ID}}" data-proprio="{{if eq .Usuario.ID .UsuarioLogadoID}}true{{else}}false{{end}}" aria-labelledby="notas-felas-titulo">
+    <div class="profile-notes-controls">
+        <div class="profile-notes-heading">
+            <span class="profile-notes-icon" aria-hidden="true"><i class="fa-solid fa-star"></i></span>
+            <div><h2 id="notas-felas-titulo">Notas dos Felas</h2><p>Um carinho de quem está por perto</p></div>
+        </div>
+        <label class="profile-notes-setting" id="notas-configuracao" hidden>
+            <input type="checkbox" id="notas-ativas">
+            <span>Permitir notas dos meus Felas</span>
+        </label>
+        <p class="profile-notes-status" id="notas-status" role="status" aria-live="polite">Carregando notas...</p>
+        <form id="notas-form" hidden>
+            <label for="notas-texto">Deixe uma nota</label>
+            <textarea id="notas-texto" class="form-control" rows="3" maxlength="280" required placeholder="Escreva algo especial..."></textarea>
+            <div class="profile-notes-form-footer"><small>Até 280 caracteres</small><button class="btn btn-primary btn-sm" type="submit">Publicar</button></div>
+        </form>
+    </div>
+    <ul class="profile-notes-list" id="notas-lista"></ul>
+    <button class="btn btn-outline-secondary btn-sm" id="notas-mais" type="button" hidden>Carregar mais</button>
+</aside>
+<aside class="profile-notes-secondary" id="notas-lateral" aria-label="Mais notas dos Felas" hidden>
+    <ul class="profile-notes-list" id="notas-lista-esquerda"></ul>
+</aside>
+{{end}}

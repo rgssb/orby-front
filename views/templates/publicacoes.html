@@ -73,7 +73,7 @@
     <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <time datetime="{{.CriadaEm.Format "2006-01-02T15:04:05Z07:00"}}" data-relativo>{{.CriadaEm.Format "02/01/2006 15:04"}}</time>{{if .Editado}} <span class="comment-edited">(editado)</span>{{end}}</span>
 </a>
 {{if .RepostDe}}<p class="repost-label"><i class="fa-solid fa-retweet" aria-hidden="true"></i> {{.AutorNick}} repostou</p>{{end}}
-{{if .Felas}}<p class="repost-label"><i class="fa-solid fa-star" aria-hidden="true"></i> Publicação para Felas</p>{{end}}
+{{if .Felas}}<p class="publicacao-felas-selo"><i class="fa-solid fa-star" aria-hidden="true"></i> Publicação para Felas</p>{{end}}
 {{if .AcessoModeracao}}<p class="repost-label"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Acesso de moderação registrado</p>{{end}}
 {{if .Titulo}}<h2 class="display-4">{{.Titulo}}</h2>{{end}}
 {{if .Conteudo}}<p class="lead">{{.Conteudo}}</p>{{end}}
@@ -137,7 +137,7 @@
 
 
 {{define "publicacao-com-permissao"}}
-<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}"{{if .AcessoModeracao}} data-moderacao="true"{{end}}>
+<article class="jumbotron publicacao{{if .Felas}} publicacao--felas{{end}}" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}"{{if .AcessoModeracao}} data-moderacao="true"{{end}}>
     {{template "cabecalho-publicacao" .}}
     <div class="publication-actions">
         {{template "curtidas" .}}
@@ -153,7 +153,7 @@
 {{end}}
 
 {{define "publicacao-sem-permissao"}}
-<article class="jumbotron" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}"{{if .AcessoModeracao}} data-moderacao="true"{{end}}>
+<article class="jumbotron publicacao{{if .Felas}} publicacao--felas{{end}}" data-publicacao-id="{{.ID}}" data-autor-id="{{.AutorID}}"{{if .AcessoModeracao}} data-moderacao="true"{{end}}>
     {{template "cabecalho-publicacao" .}}
     <div class="publication-actions">
         {{if not .AcessoModeracao}}

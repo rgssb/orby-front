@@ -1020,7 +1020,25 @@ html[data-theme="acolhedor"] .fa-solid.fa-magnifying-glass::before { content: "\
 .reacoes-lista[hidden], .reacoes-resumo[hidden] { display: none; }
 .reacoes-aviso { color: var(--orby-text-muted); font-size: .8rem; }
 
-.home-page #feed-lista > article.jumbotron { margin-bottom: 0; }
+.home-page #feed-lista > article.jumbotron { margin-bottom: 1rem; }
+html .publicacao--felas,
+html[data-theme] .publicacao--felas:hover {
+  border-color: color-mix(in srgb, var(--orby-accent) 45%, var(--orby-border));
+  background: linear-gradient(110deg, color-mix(in srgb, var(--orby-accent) 7%, var(--orby-surface)), var(--orby-surface) 55%);
+}
+html .jumbotron .publicacao-felas-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin: .7rem 0;
+  padding: .3rem .6rem;
+  border: 1px solid color-mix(in srgb, var(--orby-accent) 35%, var(--orby-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--orby-accent) 10%, var(--orby-surface));
+  color: var(--orby-accent);
+  font-size: .78rem;
+  font-weight: 700;
+}
 html .jumbotron .publication-actions { flex-wrap: wrap; gap: .15rem; padding-top: .5rem; border-top: 1px solid var(--orby-border); }
 .publication-action-group { display: inline-flex; flex: 0 0 auto; align-items: center; }
 html .publication-actions .action-icon { width: 2.75rem; height: 2.75rem; }

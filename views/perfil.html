@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="/assets/css/orby-egg.css?v=6">
     <link rel="stylesheet" href="/assets/css/swal-orby.css?v=2">
     <link rel="stylesheet" href="/assets/css/themes.css?v=16">
-    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=67">
-    <link rel="stylesheet" href="/assets/css/usuarios.css?v=30">
+    <link rel="stylesheet" href="/assets/css/refinamentos.css?v=68">
+    <link rel="stylesheet" href="/assets/css/usuarios.css?v=34">
     <script src="/assets/js/tema.js?v=5"></script>
 </head>
 
@@ -26,7 +26,7 @@
     {{template "cabecalho"}}
 
     <main id="conteudo-principal" tabindex="-1" class="container-fluid users-page profile-page">
-        <section class="users-column" aria-labelledby="profile-title">
+        <section class="users-column profile-layout" aria-labelledby="profile-title">
             <article class="jumbotron profile-card profile-card--own">
                 <div class="profile-banner{{if .Usuario.BannerVersao}} has-image{{else if .Usuario.BannerPreset}} banner-{{.Usuario.BannerPreset}}{{end}}" aria-hidden="true">{{if .Usuario.BannerVersao}}<img class="profile-banner-img" src="/usuarios/{{.Usuario.ID}}/banner?v={{.Usuario.BannerVersao}}" alt="">{{end}}</div>
                 <div class="profile-body">
@@ -57,19 +57,28 @@
                 </div>
             </article>
 
-            <section class="composer-card mt-3 profile-felas" aria-labelledby="meus-felas-titulo">
-                <div class="profile-felas-heading">
-                    <h2 id="meus-felas-titulo"><i class="fa-solid fa-star" aria-hidden="true"></i> Meus Felas</h2>
-                    <button type="button" class="felas-info" id="felas-info" aria-label="Saiba mais sobre Felas" aria-expanded="false" aria-controls="felas-info-conteudo"><span aria-hidden="true">i</span></button>
+            {{template "notas-felas" .}}
+            <div class="profile-content">
+            <details class="profile-felas">
+                <summary class="profile-felas-resumo">
+                    <span class="profile-felas-icone"><i class="fa-solid fa-star" aria-hidden="true"></i></span>
+                    <span class="profile-felas-texto"><strong>Meus Felas</strong><small>Gerenciar minha lista privada</small></span>
+                    <span class="profile-felas-seta" aria-hidden="true"></span>
+                </summary>
+                <div class="profile-felas-corpo">
+                    <div class="profile-felas-heading">
+                        <h2 id="meus-felas-titulo">Minha lista de Felas</h2>
+                        <button type="button" class="felas-info" id="felas-info" aria-label="Saiba mais sobre Felas" aria-expanded="false" aria-controls="felas-info-conteudo"><span aria-hidden="true">i</span></button>
+                    </div>
+                    <div class="felas-info-conteudo" id="felas-info-conteudo" hidden>
+                        <p>Essa é a sua rodinha no Orby, e só você pode ver a lista!</p>
+                        <p>Para trazer alguém, vocês precisam se seguir. Depois, abra o perfil da pessoa e toque em “Adicionar aos Felas”.</p>
+                        <p>As publicações para Felas são visíveis às pessoas da lista que podem ver seu perfil. Elas não podem ser repostadas e podem ser vistas pela moderação.</p>
+                    </div>
+                    <ul id="felas-lista" class="suggest-list" aria-live="polite"></ul>
+                    <p id="felas-status" role="status">Carregando Felas...</p>
                 </div>
-                <div class="felas-info-conteudo" id="felas-info-conteudo" hidden>
-                    <p>Essa é a sua rodinha no Orby, e só você pode ver a lista!</p>
-                    <p>Para trazer alguém, vocês precisam se seguir. Depois, abra o perfil da pessoa e toque em “Adicionar aos Felas”.</p>
-                    <p>As publicações para Felas são visíveis às pessoas da lista que podem ver seu perfil. Elas não podem ser repostadas e podem ser vistas pela moderação.</p>
-                </div>
-                <ul id="felas-lista" class="suggest-list" aria-live="polite"></ul>
-                <p id="felas-status" role="status">Carregando Felas...</p>
-            </section>
+            </details>
 
             <header class="feed-header">
                 <h2 id="feed-title">{{if .AbaCurtidas}}Publicações que curti{{else}}Minhas publicações{{end}}</h2>
@@ -99,13 +108,15 @@
                 </div>
                 <button type="button" class="btn btn-outline-danger" id="deletar-usuario" aria-describedby="danger-desc"><i class="fa-solid fa-trash" aria-hidden="true"></i> Deletar conta</button>
             </section>
+            </div>
         </section>
     </main>
 
     {{template "rodape"}}
     {{template "scripts" .}}
     <script src="/assets/js/usuario.js?v=9"></script>
-    <script src="/assets/js/felas.js?v=2"></script>
+    <script src="/assets/js/felas.js?v=3"></script>
+    <script src="/assets/js/notas-felas.js?v=2"></script>
     {{template "modal-seguidores" .Usuario}}
     {{template "modal-seguindo" .Usuario}}
 </body>

@@ -38,8 +38,18 @@
             status.textContent = pessoas.length ? '' : 'Você ainda não adicionou ninguém aos Felas.';
             pessoas.forEach(function (pessoa) {
                 const item = $('<li>');
-                const perfil = $('<a>').attr('href', '/usuarios/' + pessoa.id).text(pessoa.nome + ' @' + pessoa.nick);
-                const remover = $('<button type="button" class="btn btn-outline-secondary btn-sm">').text('Remover');
+                const perfil = $('<a class="pedido-pessoa">').attr('href', '/usuarios/' + pessoa.id);
+                const avatar = $('<span class="user-avatar" aria-hidden="true">');
+                if (pessoa.fotoVersao) {
+                    avatar.append($('<img alt="" loading="lazy">').attr('src', '/usuarios/' + pessoa.id + '/foto?v=' + pessoa.fotoVersao));
+                } else {
+                    avatar.append($('<i class="fa-solid fa-user" aria-hidden="true">'));
+                }
+                const identidade = $('<span class="modal-user-info">')
+                    .append($('<strong>').text(pessoa.nome), $('<small>').text('@' + pessoa.nick));
+                perfil.append(avatar, identidade);
+                const remover = $('<button type="button" class="btn btn-outline-secondary btn-sm">')
+                    .attr('aria-label', 'Remover ' + pessoa.nome + ' (@' + pessoa.nick + ') dos Felas').text('Remover');
                 remover.on('click', function () {
                     remover.prop('disabled', true);
                     $.ajax({ url: '/felas/' + pessoa.id, method: 'DELETE' }).done(carregar).fail(function () {

@@ -39,6 +39,22 @@ func RepassarJSON(metodo, modelo string) http.HandlerFunc {
 	}
 }
 
+func BuscarNotasFelas(w http.ResponseWriter, r *http.Request) {
+	caminho, ok := montarCaminho(w, r, "/usuarios/{usuarioId}/notas-felas")
+	if !ok {
+		return
+	}
+	if valor := r.URL.Query().Get("antes"); valor != "" {
+		id, err := strconv.ParseUint(valor, 10, 64)
+		if err != nil || id == 0 {
+			respostas.Erro(w, http.StatusBadRequest, "Página inválida.")
+			return
+		}
+		caminho += "?antes=" + strconv.FormatUint(id, 10)
+	}
+	repassar(w, r, http.MethodGet, caminho, nil)
+}
+
 func montarCaminho(w http.ResponseWriter, r *http.Request, modelo string) (string, bool) {
 	valido := true
 	vars := mux.Vars(r)

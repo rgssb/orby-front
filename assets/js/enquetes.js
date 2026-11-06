@@ -1,6 +1,6 @@
 (function () {
     const ativas = new Map();
-    let intervalo = null;
+    let intervalo = null;   
 
     function atualizar() {
         const agora = Date.now();

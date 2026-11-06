@@ -6,6 +6,10 @@ import (
 )
 
 var rotasExtras = []Rota{
+	{URI: "/usuarios/{usuarioId}/notas-felas", Metodo: http.MethodGet, Funcao: controllers.BuscarNotasFelas, RequerAutenticacao: true},
+	{URI: "/usuarios/{usuarioId}/notas-felas", Metodo: http.MethodPost, Funcao: controllers.RepassarJSON(http.MethodPost, "/usuarios/{usuarioId}/notas-felas"), RequerAutenticacao: true},
+	{URI: "/notas-felas/{notaId}", Metodo: http.MethodDelete, Funcao: controllers.Repassar(http.MethodDelete, "/notas-felas/{notaId}"), RequerAutenticacao: true},
+	{URI: "/privacidade/notas-felas", Metodo: http.MethodPut, Funcao: controllers.RepassarJSON(http.MethodPut, "/privacidade/notas-felas"), RequerAutenticacao: true},
 	{URI: "/privacidade/curtidas", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/privacidade/curtidas"), RequerAutenticacao: true},
 	{URI: "/privacidade/curtidas", Metodo: http.MethodPut, Funcao: controllers.RepassarJSON(http.MethodPut, "/privacidade/curtidas"), RequerAutenticacao: true},
 	{URI: "/publicacoes/{publicacaoId}/reacoes", Metodo: http.MethodGet, Funcao: controllers.Repassar(http.MethodGet, "/publicacoes/{publicacaoId}/reacoes"), RequerAutenticacao: true},
